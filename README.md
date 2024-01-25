@@ -5,3 +5,4 @@ Group A4 from Winter 2024
 Vy Tran vtranv
 Hoang Nguyen hoangr1010
 Andrae Barradas AndraeB
+Ryan Cabral cabralr2
