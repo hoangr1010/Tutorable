@@ -13,6 +13,11 @@
         android:theme="@style/Theme.TutorApp395Project"
         tools:targetApi="31">
         <activity
+            android:name=".StudentSchedule"
+            android:exported="false"
+            android:label="@string/title_activity_student_schedule"
+            android:theme="@style/Theme.TutorApp395Project" />
+        <activity
             android:name=".Settings"
             android:exported="false"
             android:label="@string/title_activity_settings" />
@@ -28,10 +33,6 @@
             android:name=".TutorSchedule"
             android:exported="false"
             android:label="@string/title_activity_tutor_schedule" />
-        <activity
-            android:name=".StudentSchedule"
-            android:exported="false"
-            android:label="@string/title_activity_student_schedule" />
         <activity
             android:name=".TutorRegistration"
             android:exported="false"
