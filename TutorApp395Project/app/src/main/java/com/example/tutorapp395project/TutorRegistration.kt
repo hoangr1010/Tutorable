@@ -27,23 +27,23 @@ class TutorRegistration : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            TutorApp395ProjectTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Background()
-                    RegistrationBox()
-                    TutorRegistrationFields(onClick = {
-                        Log.d("Registration button",
-                            "Registration Button clicked.")})
-                }
-            }
+            Background()
+            RegistrationBox()
+            TutorRegistrationFields(onClick = {
+                Log.d("Registration button",
+                    "Registration Button clicked.")})
         }
     }
 }
-
+/*
+    Function: Organizes all the fields into a column for the user to input all of their data into.
+              then once the register button is clicked, the data is sent to the backend for
+              processing
+    Parameters: onClick -> Sends the user to the next page and submits all of their data to the
+                           backend for processing
+                modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
 fun TutorRegistrationFields(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Column(

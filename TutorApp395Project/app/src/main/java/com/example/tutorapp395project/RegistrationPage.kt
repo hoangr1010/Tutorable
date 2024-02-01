@@ -39,29 +39,28 @@ class RegistrationPage : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            TutorApp395ProjectTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Background()
-                    LoginBox()
-                    RegistrationText()
-                }
-            }
+            Background()
+            LoginBox()
+            RegistrationText()
+
         }
     }
 }
 
+/*
+    Function: Creates the Registration text and the student and tutor buttons on the page
+    Parameters: modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
 fun RegistrationText(modifier: Modifier = Modifier) {
     Column(
         verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.Bottom),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .height(840.dp)
+            .height(870.dp)
             .fillMaxWidth()
+            .padding(bottom = 20.dp)
     ) {
         Text(
             text = "Choose Your Role",
@@ -71,7 +70,7 @@ fun RegistrationText(modifier: Modifier = Modifier) {
                 fontWeight = FontWeight(900),
                 color = Color(0xFF000000),
                 textAlign = TextAlign.Center
-            ) ,
+            ),
             modifier = Modifier
                 .width(282.dp)
                 .height(41.dp)
@@ -83,29 +82,61 @@ fun RegistrationText(modifier: Modifier = Modifier) {
     }
 }
 
+/*
+    Function: Creates a button that if chosen takes the user to the student registration page
+    Parameters: icon -> Image used on the button
+                text -> text printed on button
+                onClick -> Link to next page
+                modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
 fun StudentButton(icon: Painter, text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Button(
         onClick = { onClick() },
+        modifier = Modifier
+            .fillMaxWidth(0.8f),
         content = {
-            // Specify the icon using the icon parameter
-            Image(painter = icon, contentDescription = null)
-            Spacer(modifier = Modifier.width(8.dp)) // Adjust spacing
-            Text(text, fontSize = 40.sp)
+            Column() {
+                Image(painter = icon,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .height(125.dp)
+                        .align(Alignment.CenterHorizontally))
+                Spacer(modifier = Modifier.width(8.dp)) // Adjust spacing
+                Text(text, fontSize = 40.sp,
+                    style = TextStyle(
+                        textAlign = TextAlign.Center,
+                        color = Color(0xFFB24444)))
+            }
         },
         colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F))
     )
 }
 
+/*
+    Function: Creates a button that if chosen takes the user to the tutor registration page
+    Parameters: modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
-fun TutorButton(icon: Painter, text: String, onClick: () -> Unit) {
+fun TutorButton(icon: Painter, text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Button(
         onClick = { onClick() },
+        modifier = Modifier
+            .fillMaxWidth(0.8f),
         content = {
-            // Specify the icon using the icon parameter
-            Image(painter = icon, contentDescription = null)
-            Spacer(modifier = Modifier.width(8.dp)) // Adjust spacing
-            Text(text, fontSize = 40.sp)
+            Column() {
+                // Specify the icon using the icon parameter
+                Image(painter = icon, contentDescription = null, modifier = Modifier
+                    .height(125.dp)
+                    .align(Alignment.CenterHorizontally))
+                Spacer(modifier = Modifier.width(8.dp)) // Adjust spacing
+                Text(text,
+                    fontSize = 40.sp,
+                    style = TextStyle(color = Color(0xFFB24444))
+                )
+            }
         },
         colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F))
     )

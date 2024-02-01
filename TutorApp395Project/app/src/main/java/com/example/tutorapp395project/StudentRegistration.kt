@@ -36,23 +36,20 @@ class StudentRegistration : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            TutorApp395ProjectTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Background()
-                    RegistrationBox()
-                    StudentRegistrationFields(onClick = {
-                        Log.d("Registration button",
-                            "Registration Button clicked.")})
-                }
-            }
+            Background()
+            RegistrationBox()
+            StudentRegistrationFields(onClick = {
+                Log.d("Registration button",
+                    "Registration Button clicked.")})
         }
     }
 }
 
+/*
+    Function: Creates a box that is the background for the user input fields
+    Parameters: modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
 fun RegistrationBox(modifier: Modifier = Modifier) {
     Box(
@@ -67,6 +64,12 @@ fun RegistrationBox(modifier: Modifier = Modifier) {
     )
 }
 
+/*
+    Function: Creates a field that takes the user input and sends it to the backend for processing
+    Parameters: field -> name of the string field name
+                modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
 fun TextField(field: String, modifier: Modifier = Modifier) {
     var userText by remember { mutableStateOf("Enter $field") }
@@ -79,7 +82,13 @@ fun TextField(field: String, modifier: Modifier = Modifier) {
     //return TODO("Provide the return value")
 }
 
-
+/*
+    Function: Organizes all the fields into a column for the user to input all of their data into.
+              then once the register button is clicked, the data is sent to the backend for
+              processing
+    Parameters: modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
 fun StudentRegistrationFields(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Column(
