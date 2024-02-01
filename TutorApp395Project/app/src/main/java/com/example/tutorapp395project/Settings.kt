@@ -26,20 +26,18 @@ class Settings : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            TutorApp395ProjectTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    BackgroundNoLogo()
-                    HomeBar()
-                }
-            }
+            BackgroundNoLogo()
+            HomeBar()
+            SettingsColumn()
         }
     }
 }
 
+/*
+    Function: Creates a column for all the settings buttons to be placed into
+    Parameters: modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
 fun SettingsColumn(modifier: Modifier = Modifier) {
     Column(
@@ -57,6 +55,14 @@ fun SettingsColumn(modifier: Modifier = Modifier) {
     }
 }
 
+/*
+    Function: Creates a button for the settings options to be placed into
+    Parameters: option -> name of the option
+                onClick() -> Link to the activity the button will send the user to
+                color -> Hex code of the color used for the button
+                modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
 fun SettingButton(option: String, onClick: () -> Unit, color: Long, modifier: Modifier = Modifier) {
     Button(
@@ -75,9 +81,9 @@ fun SettingButton(option: String, onClick: () -> Unit, color: Long, modifier: Mo
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun GreetingPreview4() {
+fun SettingsPreview() {
     TutorApp395ProjectTheme {
         BackgroundNoLogo()
         HomeBar()

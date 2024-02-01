@@ -44,23 +44,20 @@ class LoginPage : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            TutorApp395ProjectTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = Color(0xFF55FFAD)
-                ) {
-                    Background()
-                    LoginBox()
-                    LoginButton()
-                    Fields()
-                }
-            }
+            Background()
+            LoginBox()
+            //LoginButton()
+            Fields()
+
         }
     }
 }
 
-
+/*
+    Function: Creates the off white box that is used as the background for user input
+    Parameters: modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
 fun LoginBox(modifier: Modifier = Modifier) {
     Box (
@@ -75,6 +72,11 @@ fun LoginBox(modifier: Modifier = Modifier) {
     )
 }
 
+/*
+    Function: Creates the Username and Password fields for the Login Box
+    Parameters: modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
 fun Fields(modifier: Modifier = Modifier){
     var userText by remember { mutableStateOf("Username") }
@@ -115,7 +117,7 @@ fun LoginPagePreview() {
     TutorApp395ProjectTheme {
         Background()
         LoginBox()
-        LoginButton()
+        //LoginButton()
         Fields()
     }
 }

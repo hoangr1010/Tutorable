@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,41 +43,56 @@ class StudentProfile : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            TutorApp395ProjectTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    BackgroundNoLogo()
-                    HomeBar()
-                    StudentProfileColumn(R.drawable.student_id_photo)
-                }
-            }
+            BackgroundNoLogo()
+            HomeBar()
+            StudentProfileColumn(R.drawable.student_id_photo)
         }
     }
 }
 
+/*
+    Function: Creates a column for all the students data will be displayed into
+    Parameters: image -> students profile image
+                modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
 fun StudentProfileColumn(image: Int, modifier: Modifier = Modifier) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(15.dp, Alignment.Top),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(20.dp)
-    ){
-        ProfilePic(image)
-        ProfileName(name = "Tommy McStudent")
-        ProfileField(title = "Email", value = "tommyMcstudent@gmail.com")
-        ProfileField(title = "Date of Birth", value = "September 4, 2010")
-        ProfileField(title = "School", value = "Macewan Elemntary")
-        ProfileField(title = "Grade", value = "6")
-        ProfileField(title = "Contact Number", value = "(780) 555-1234")
-        ProfileField(title = "Address", value = "1234 87 Ave NW Edmonton AB, T5T 8C5")
+            .fillMaxSize()
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(15.dp, Alignment.Top),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(20.dp)
+                .align(Alignment.TopCenter)
+        ) {
+            ProfilePic(image)
+            ProfileName(name = "Tommy McStudent")
+        }
+        Column(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(start = 30.dp, top = 300.dp)
+        ) {
+            ProfileField(title = "Email", value = "tommyMcstudent@gmail.com")
+            ProfileField(title = "Date of Birth", value = "September 4, 2010")
+            ProfileField(title = "School", value = "Macewan Elementary")
+            ProfileField(title = "Grade", value = "6")
+            ProfileField(title = "Contact Number", value = "(780) 555-1234")
+            ProfileField(title = "Address", value = "1234 87 Ave NW Edmonton AB, T5T 8C5")
+        }
     }
 }
 
+/*
+    Function: Displays the profile pic in a circle
+    Parameters: icon -> The image used for the home bar button
+                modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
 fun ProfilePic(image: Int, modifier: Modifier = Modifier) {
     Image(
@@ -102,6 +118,12 @@ fun ProfilePic(image: Int, modifier: Modifier = Modifier) {
 
 }
 
+/*
+    Function: Prints out the students name on the page
+    Parameters: name -> Name of the student
+                modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
 fun ProfileName(name: String, modifier: Modifier = Modifier) {
     Text(
@@ -116,6 +138,13 @@ fun ProfileName(name: String, modifier: Modifier = Modifier) {
     )
 }
 
+/*
+    Function: Prints out the user's profile field and the description attached to the profile field
+    Parameters: title -> The title of the field in the profile
+                value -> The description of the field set by the user
+                modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
 fun ProfileField(title: String, value: String, modifier: Modifier = Modifier) {
     Column(

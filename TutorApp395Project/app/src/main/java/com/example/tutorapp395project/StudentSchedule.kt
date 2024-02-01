@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,44 +40,52 @@ class StudentSchedule : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            TutorApp395ProjectTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    BackgroundNoLogo()
-                    HomeBar()
-                    StudentAppointmentLayout()
-                }
-            }
+            BackgroundNoLogo()
+            HomeBar()
+            StudentAppointmentLayout()
         }
     }
 }
+
+/*
+    Function: This creates a column that lays out all the users scheduled appointments
+    Parameters: modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
 fun StudentAppointmentLayout(modifier: Modifier = Modifier) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(15.dp, Alignment.Bottom),
+        verticalArrangement = Arrangement.spacedBy(15.dp, Alignment.Top),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
+            .padding(top = 20.dp)
     )
         {
         Appointment("3:00PM - 4:00PM", "January 24th, 2024", "Math",
-                    "Karen McTutor")
+                    "Tutor","Karen McTutor")
         Appointment("4:00PM - 5:00PM", "January 24th, 2024", "History",
-                    "Karen McTutor")
+                    "Tutor","Karen McTutor")
     }
 }
 
+/*
+    Function: This shows the scheduled appointment on the users schedule page
+    Parameters: time -> time in which the appointment is scheduled
+                date -> date for the session
+                subject -> subject for the tutor session
+                with -> tutor or student
+                person -> name of the person
+                modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
-fun Appointment(time: String, date: String, subject: String, tutor: String,
+fun Appointment(time: String, date: String, subject: String, with: String, person: String,
                 modifier: Modifier = Modifier) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
+
     ) {
         Box(
             modifier = Modifier
@@ -99,7 +108,7 @@ fun Appointment(time: String, date: String, subject: String, tutor: String,
                     )
             )
             Text(
-                text = "Tutor: $tutor\n",
+                text = "$with: $person\n",
                 modifier = Modifier
                     .padding(start = 10.dp, top = 90.dp),
                 style = TextStyle(
@@ -113,6 +122,11 @@ fun Appointment(time: String, date: String, subject: String, tutor: String,
     }
 }
 
+/*
+    Function: Creates just a simple blue background without a logo
+    Parameters: modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
 fun BackgroundNoLogo(modifier: Modifier = Modifier) {
     Column (
@@ -121,20 +135,36 @@ fun BackgroundNoLogo(modifier: Modifier = Modifier) {
             .background(color = Color(0xFF00539C))
     ){}
 }
+
+/*
+    Function: Creates a single homebar option that the user can use to navigate to the
+              corresponding page
+    Parameters: icon -> The image used for the home bar button
+                option -> the name of the page the user wants to navigate to
+                onClick -> Link to the next activity being accessed
+                modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
-fun HomeBarOption(icon: Painter, option: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun HomeBarOption(icon: Painter, option: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Button(
         onClick = { onClick() },
-        colors = ButtonDefaults.buttonColors(Color(0xFF939393)),
+        colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
         modifier = Modifier
             .padding(16.dp)
         ) {
         Text(
-            text = "$option"
+            text = "$option",
+            style = TextStyle(color = Color(0xFFB24444))
         )
     }
 }
 
+/*
+    Function: Creates the homebar that the user will use to navigate between pages
+    Parameters: modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
 fun HomeBar(modifier: Modifier = Modifier) {
     Column(

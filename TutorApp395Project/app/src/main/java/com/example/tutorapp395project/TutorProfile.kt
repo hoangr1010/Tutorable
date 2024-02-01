@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,38 +23,46 @@ class TutorProfile : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            TutorApp395ProjectTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    BackgroundNoLogo()
-                    HomeBar()
-                    TutorProfileColumn(R.drawable.tutor_headshot)
-                }
-            }
+            BackgroundNoLogo()
+            HomeBar()
+            TutorProfileColumn(R.drawable.tutor_headshot)
         }
     }
 }
-
+/*
+    Function: Creates a column for all the tutors data will be displayed into
+    Parameters: image -> students profile image
+                modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
 fun TutorProfileColumn(image: Int, modifier: Modifier = Modifier) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(15.dp, Alignment.Top),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(20.dp)
-    ){
-        ProfilePic(image)
-        ProfileName("Karen McTutor")
-        ProfileField(title = "Email", value = "tommyMcstudent@gmail.com")
-        ProfileField(title = "Date of Birth", value = "September 4, 2010")
-        ProfileField(title = "School", value = "Macewan Elementary")
-        ProfileField(title = "Grade", value = "6")
-        ProfileField(title = "Contact Number", value = "(780) 555-1234")
-        ProfileField(title = "Address", value = "1234 87 Ave NW Edmonton AB, T5T 8C5")
+            .fillMaxSize()
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(15.dp, Alignment.Top),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(20.dp)
+                .align(Alignment.TopCenter)
+        ) {
+            ProfilePic(image)
+            ProfileName("Karen McTutor")
+        }
+        Column(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(start = 30.dp, top = 300.dp)
+        ) {
+            ProfileField(title = "Email", value = "tommyMcstudent@gmail.com")
+            ProfileField(title = "Date of Birth", value = "September 4, 2010")
+            ProfileField(title = "School", value = "Macewan Elementary")
+            ProfileField(title = "Grade", value = "6")
+            ProfileField(title = "Contact Number", value = "(780) 555-1234")
+            ProfileField(title = "Address", value = "1234 87 Ave NW Edmonton AB, T5T 8C5")
+        }
     }
 }
 
