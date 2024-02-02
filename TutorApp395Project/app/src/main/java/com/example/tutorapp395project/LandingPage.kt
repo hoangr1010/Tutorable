@@ -1,7 +1,9 @@
 package com.example.tutorapp395project
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,10 +13,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -22,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role.Companion.Button
 import androidx.compose.ui.text.TextStyle
@@ -29,25 +36,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            TutorApp395ProjectTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Background()
-                    Display("LOGIN")
-                }
-            }
+            Background()
+            LoginButton()
+            BackHandler (enabled = true){}
+
         }
     }
 }
+
+/*
+    Function: Creates the background color and logo
+    Parameters: modifier -> Takes modifier parameters
+    Return: None
+ */
 @Composable
 fun Background(modifier: Modifier = Modifier) {
     val image = painterResource(R.drawable.logo)
@@ -56,57 +64,47 @@ fun Background(modifier: Modifier = Modifier) {
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color(0xFF00539C))
-    ){
+    ) {
         Image(
             painter = image, // image file
             contentDescription = null,
             modifier = Modifier
                 .padding(top = 68.dp, bottom = 508.dp)
-
-
-            // Add Modifiers
         )
     }
 }
 
+/*
+    Function: Creates the Login button which when clicked takes the user to the next page.
+    Parameters: modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
-fun Display(name: String, modifier: Modifier = Modifier) {
-
-    Column( // Main column to align all elements onto
+fun LoginButton(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    Column(
         verticalArrangement = Arrangement.spacedBy(438.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .width(360.dp)
+            .width(600.dp)
             .height(800.dp)
-            .padding(start = 63.dp, top = 68.dp, end = 62.dp, bottom = 70.dp)
-    ) {
-        Row(
-            //horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
-            //verticalAlignment = Alignment.Bottom,
+            .padding(start = 62.dp, top = 700.dp, end = 62.dp, bottom = 10.dp)
+    ){
+        Button(
+            onClick = {
+                val intent = Intent(context, LoginPage::class.java)
+                context.startActivity(intent)
+            },
+            colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
             modifier = Modifier
-                .border(
-                    width = 1.dp, color = Color(0xFF000000),
-                    shape = RoundedCornerShape(size = 15.dp)
-                )
-                .width(235.dp)
-                .height(44.dp)
-                .background(color = Color(0xFFEEA47F), shape = RoundedCornerShape(size = 15.dp))
-                .padding(start = 99.dp, top = 15.dp, end = 99.dp, bottom = 15.dp)
-                .clickable { }
-
-
-        ) {
+                .fillMaxWidth(0.8f)
+                .padding(bottom = 30.dp)
+        ){
             Text(
-                text = name,
+                text = "LOGIN",
                 style = TextStyle(
-                    fontSize = 12.sp,
-                    //fontFamily = FontFamily(Font(R.font.roboto)),
-                    fontWeight = FontWeight(400),
                     color = Color(0xFFB24444)
-                ),
-                modifier = Modifier
-                    .width(35.dp)
-                    .height(14.dp)
+                )
             )
         }
     }
@@ -118,6 +116,6 @@ fun Display(name: String, modifier: Modifier = Modifier) {
 fun LandingPagePreview() {
     TutorApp395ProjectTheme {
         Background()
-        Display("LOGIN")
+        LoginButton()
     }
 }
