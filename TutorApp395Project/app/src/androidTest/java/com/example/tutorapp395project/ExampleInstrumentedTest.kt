@@ -1,14 +1,7 @@
-import android.content.Intent
 import androidx.test.core.app.ActivityScenario
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.intent.Intents.intended
-import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
-import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.example.tutorapp395project.LoginPage
-import com.example.tutorapp395project.MainActivity
+import com.example.tutorapp395project.ui.screens.MainActivity
 import junit.framework.TestCase.assertEquals
 import org.junit.After
 import org.junit.Before

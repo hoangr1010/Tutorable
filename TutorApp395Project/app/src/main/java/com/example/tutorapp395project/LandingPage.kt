@@ -39,16 +39,11 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            Background()
-            LoginButton()
-            BackHandler (enabled = true){}
-
-        }
-    }
+@Composable
+fun LandingPage() {
+        Background()
+        LoginButton()
+        BackHandler(enabled = true) {}
 }
 
 /*
@@ -91,10 +86,7 @@ fun LoginButton(modifier: Modifier = Modifier) {
             .padding(start = 62.dp, top = 700.dp, end = 62.dp, bottom = 10.dp)
     ){
         Button(
-            onClick = {
-                val intent = Intent(context, LoginPage::class.java)
-                context.startActivity(intent)
-            },
+            onClick = { },
             colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
             modifier = Modifier
                 .fillMaxWidth(0.8f)
