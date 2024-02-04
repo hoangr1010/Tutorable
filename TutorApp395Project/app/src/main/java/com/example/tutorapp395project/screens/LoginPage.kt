@@ -1,4 +1,4 @@
-package com.example.tutorapp395project
+package com.example.tutorapp395project.screens
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
