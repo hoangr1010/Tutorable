@@ -1,4 +1,4 @@
-package com.example.tutorapp395project
+package com.example.tutorapp395project.classes
 
 sealed class Screen(val route: String) {
     object LandingPage: Screen("LandingPage")

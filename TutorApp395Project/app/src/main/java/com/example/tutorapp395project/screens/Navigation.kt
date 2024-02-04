@@ -1,11 +1,11 @@
-package com.example.tutorapp395project
+package com.example.tutorapp395project.screens
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import androidx.navigation.*
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.tutorapp395project.classes.Screen
 
 @Composable
 fun Navigation (
