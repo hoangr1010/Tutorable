@@ -14,15 +14,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
-class TutorSchedule : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            BackgroundNoLogo()
-            HomeBar()
-            TutorAppointmentLayout()
-        }
-    }
+@Composable
+fun TutorSchedule() {
+    BackgroundNoLogo()
+    HomeBar()
+    TutorAppointmentLayout()
 }
 
 /*

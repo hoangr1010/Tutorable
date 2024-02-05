@@ -29,17 +29,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
-class StudentProfile : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            BackgroundNoLogo()
-            HomeBar()
-            StudentProfileColumn(R.drawable.student_id_photo)
-        }
-    }
+@Composable
+fun StudentProfile(navController: NavController) {
+    BackgroundNoLogo()
+    HomeBar()
+    StudentProfileColumn(R.drawable.student_id_photo)
 }
 
 /*

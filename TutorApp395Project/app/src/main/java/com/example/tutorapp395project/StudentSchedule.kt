@@ -29,17 +29,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
-class StudentSchedule : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            BackgroundNoLogo()
-            HomeBar()
-            StudentAppointmentLayout()
-        }
-    }
+@Composable
+fun StudentSchedule(navController: NavController) {
+    BackgroundNoLogo()
+    HomeBar()
+    StudentAppointmentLayout()
 }
 
 /*

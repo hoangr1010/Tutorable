@@ -31,19 +31,14 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
-class LoginPage : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            Background()
-            LoginBox()
-            //LoginButton()
-            Fields()
-
-        }
-    }
+@Composable
+fun LoginPage(navController: NavController) {
+    Background()
+    LoginBox()
+    Fields()
 }
 
 /*
@@ -56,7 +51,7 @@ fun LoginBox(modifier: Modifier = Modifier) {
     Box (
         modifier = Modifier
             .fillMaxWidth()
-            .height(850.dp)
+            .height(900.dp)
             .padding(top = 349.dp)
             .background(
                 color = Color(0xFFD9D9D9),
@@ -80,6 +75,7 @@ fun Fields(modifier: Modifier = Modifier){
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
+            .padding(top = 100.dp)
     ){
         OutlinedTextField(
             value = userText,
@@ -96,7 +92,7 @@ fun Fields(modifier: Modifier = Modifier){
         Text(
             text = "Forgot Password?",
             fontWeight = FontWeight.Black,
-            fontSize = 12.sp
+            fontSize = 12.sp,
         )
     }
 }

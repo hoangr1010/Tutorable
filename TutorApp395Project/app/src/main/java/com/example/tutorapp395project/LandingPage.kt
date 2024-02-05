@@ -37,12 +37,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
+import androidx.navigation.NavController
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
 @Composable
-fun LandingPage() {
+fun LandingPage(navController: NavController) {
         Background()
-        LoginButton()
+        LoginButton(navController = navController)
         BackHandler(enabled = true) {}
 }
 
@@ -75,7 +76,7 @@ fun Background(modifier: Modifier = Modifier) {
     Return: None
  */
 @Composable
-fun LoginButton(modifier: Modifier = Modifier) {
+fun LoginButton(navController: NavController, dest: String,modifier: Modifier = Modifier) {
     val context = LocalContext.current
     Column(
         verticalArrangement = Arrangement.spacedBy(438.dp, Alignment.CenterVertically),
@@ -86,7 +87,7 @@ fun LoginButton(modifier: Modifier = Modifier) {
             .padding(start = 62.dp, top = 700.dp, end = 62.dp, bottom = 10.dp)
     ){
         Button(
-            onClick = { },
+            onClick = {navController.navigate(Screen.LoginPage.route)},
             colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
             modifier = Modifier
                 .fillMaxWidth(0.8f)
@@ -108,6 +109,6 @@ fun LoginButton(modifier: Modifier = Modifier) {
 fun LandingPagePreview() {
     TutorApp395ProjectTheme {
         Background()
-        LoginButton()
+        //LoginButton(navController = NavController)
     }
 }

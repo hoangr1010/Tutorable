@@ -13,18 +13,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
-class TutorProfile : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            BackgroundNoLogo()
-            HomeBar()
-            TutorProfileColumn(R.drawable.tutor_headshot)
-        }
-    }
+@Composable
+fun TutorProfile(navController: NavController) {
+    BackgroundNoLogo()
+    HomeBar()
+    TutorProfileColumn(R.drawable.tutor_headshot)
 }
+
 /*
     Function: Creates a column for all the tutors data will be displayed into
     Parameters: image -> students profile image

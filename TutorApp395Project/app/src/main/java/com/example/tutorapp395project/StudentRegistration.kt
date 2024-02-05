@@ -27,19 +27,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
-class StudentRegistration : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            Background()
-            RegistrationBox()
-            StudentRegistrationFields(onClick = {
-                Log.d("Registration button",
-                    "Registration Button clicked.")})
-        }
-    }
+@Composable
+fun StudentRegistration(navController: NavController) {
+    Background()
+    RegistrationBox()
+    StudentRegistrationFields(onClick = {
+        Log.d("Registration button",
+            "Registration Button clicked.")})
 }
 
 /*
