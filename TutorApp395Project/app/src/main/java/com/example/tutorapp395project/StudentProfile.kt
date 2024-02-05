@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -35,7 +36,7 @@ import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 @Composable
 fun StudentProfile(navController: NavController) {
     BackgroundNoLogo()
-    HomeBar()
+    HomeBar(navController = navController)
     StudentProfileColumn(R.drawable.student_id_photo)
 }
 
@@ -143,7 +144,7 @@ fun ProfileField(title: String, value: String, modifier: Modifier = Modifier) {
         Text(
             text = "$title",
             style = TextStyle(
-                fontSize = 15.sp,
+                fontSize = 20.sp,
                 //fontFamily = FontFamily(Font(roboto)),
                 fontWeight = FontWeight(900),
                 color = Color(0xFF000000),
@@ -152,7 +153,7 @@ fun ProfileField(title: String, value: String, modifier: Modifier = Modifier) {
         Text(
             text = "$value",
             style = TextStyle(
-                fontSize = 12.sp,
+                fontSize = 15.sp,
                 //fontFamily = FontFamily(Font(R.font.roboto)),
                 fontWeight = FontWeight(300),
                 color = Color(0xFF000000)
@@ -166,7 +167,7 @@ fun ProfileField(title: String, value: String, modifier: Modifier = Modifier) {
 fun StudentProfilePreview() {
     TutorApp395ProjectTheme {
         BackgroundNoLogo()
-        HomeBar()
+        HomeBar(navController = NavController(LocalContext.current))
         StudentProfileColumn(R.drawable.student_id_photo)
     }
 }

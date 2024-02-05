@@ -1,9 +1,6 @@
 package com.example.tutorapp395project
 
-import android.os.Bundle
 import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,9 +32,7 @@ import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 fun StudentRegistration(navController: NavController) {
     Background()
     RegistrationBox()
-    StudentRegistrationFields(onClick = {
-        Log.d("Registration button",
-            "Registration Button clicked.")})
+    StudentRegistrationFields(navController = navController)
 }
 
 /*
@@ -84,7 +80,7 @@ fun TextField(field: String, modifier: Modifier = Modifier) {
     Return: None
  */
 @Composable
-fun StudentRegistrationFields(onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun StudentRegistrationFields(navController: NavController, modifier: Modifier = Modifier) {
     Column(
         verticalArrangement = Arrangement.spacedBy(15.dp, Alignment.Bottom),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -99,7 +95,7 @@ fun StudentRegistrationFields(onClick: () -> Unit, modifier: Modifier = Modifier
         TextField("Email")
         TextField("Password")
         Button(
-            onClick = { onClick() },
+            onClick = {navController.navigate(Screen.StudentSchedule.route)},
             colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
             modifier = Modifier
                 .padding(16.dp)
@@ -116,8 +112,6 @@ fun StudentRegistrationPreview() {
     TutorApp395ProjectTheme {
         Background()
         RegistrationBox()
-        StudentRegistrationFields(onClick = {
-            Log.d("Registration button",
-                "Registration Button clicked.")})
+        StudentRegistrationFields(navController = NavController(LocalContext.current))
     }
 }
