@@ -38,7 +38,7 @@ fun TutorRegistration(navController: NavController) {
 @Composable
 fun TutorRegistrationFields(navController: NavController, modifier: Modifier = Modifier) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(15.dp, Alignment.Bottom),
+        verticalArrangement = Arrangement.spacedBy(7.dp, Alignment.Bottom),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .height(990.dp)
@@ -46,7 +46,7 @@ fun TutorRegistrationFields(navController: NavController, modifier: Modifier = M
     ) {
         TextField("Name")
         TextField("Date of Birth")
-        TextField("School")
+        TextField("Expertise")
         TextField("Degree")
         TextField("Email")
         TextField("Password")

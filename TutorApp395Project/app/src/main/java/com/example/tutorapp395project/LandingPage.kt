@@ -27,9 +27,8 @@ import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
 @Composable
 fun LandingPage(navController: NavController) {
-        Background()
-        NextButton(navController = navController)
-        BackHandler(enabled = true) {}
+    Background()
+    ButtonLayout(navController = navController)
 }
 
 /*
@@ -61,32 +60,35 @@ fun Background(modifier: Modifier = Modifier) {
     Return: None
  */
 @Composable
-fun NextButton(navController: NavController, modifier: Modifier = Modifier) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(438.dp, Alignment.CenterVertically),
-        horizontalAlignment = Alignment.CenterHorizontally,
+fun LoginButton(navController: NavController, target: String, modifier: Modifier = Modifier) {
+    Button(
+        onClick = {navController.navigate(target)},
+        colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
         modifier = Modifier
-            .width(600.dp)
-            .height(800.dp)
-            .padding(start = 62.dp, top = 700.dp, end = 62.dp, bottom = 10.dp)
+            .fillMaxWidth(0.7f)
+            //.padding(bottom = 30.dp)
     ){
-        Button(
-            onClick = {navController.navigate(Screen.LoginPage.route)},
-            colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .padding(bottom = 30.dp)
-        ){
-            Text(
-                text = "LOGIN",
-                style = TextStyle(
-                    color = Color(0xFFB24444)
-                )
+        Text(
+            text = "LOGIN",
+            style = TextStyle(
+                color = Color(0xFFB24444)
             )
-        }
+        )
     }
 }
 
+@Composable
+fun ButtonLayout(navController: NavController, modifier: Modifier = Modifier) {
+    Column(
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .padding(bottom = 50.dp)
+            .fillMaxSize()
+    ) {
+        LoginButton(navController = navController, target = Screen.LoginPage.route)
+    }
+}
 @Preview
     (showBackground = true,
             showSystemUi = true)
@@ -94,6 +96,6 @@ fun NextButton(navController: NavController, modifier: Modifier = Modifier) {
 fun LandingPagePreview() {
     TutorApp395ProjectTheme {
         Background()
-        LoginButton(navController = NavController(LocalContext.current))
+        ButtonLayout(navController = NavController(LocalContext.current))
     }
 }

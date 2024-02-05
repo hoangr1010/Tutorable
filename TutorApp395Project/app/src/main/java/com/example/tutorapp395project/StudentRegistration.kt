@@ -82,7 +82,7 @@ fun TextField(field: String, modifier: Modifier = Modifier) {
 @Composable
 fun StudentRegistrationFields(navController: NavController, modifier: Modifier = Modifier) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(15.dp, Alignment.Bottom),
+        verticalArrangement = Arrangement.spacedBy(7.dp, Alignment.Bottom),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .height(990.dp)

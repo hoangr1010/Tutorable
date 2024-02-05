@@ -87,7 +87,7 @@ fun StudentButton(icon: Painter, text: String, navController: NavController, mod
                 Image(painter = icon,
                     contentDescription = null,
                     modifier = Modifier
-                        .height(125.dp)
+                        .height(100.dp)
                         .align(Alignment.CenterHorizontally))
                 Spacer(modifier = Modifier.width(8.dp)) // Adjust spacing
                 Text(text, fontSize = 40.sp,
@@ -115,7 +115,7 @@ fun TutorButton(icon: Painter, text: String, navController: NavController, modif
             Column() {
                 // Specify the icon using the icon parameter
                 Image(painter = icon, contentDescription = null, modifier = Modifier
-                    .height(125.dp)
+                    .height(100.dp)
                     .align(Alignment.CenterHorizontally))
                 Spacer(modifier = Modifier.width(8.dp)) // Adjust spacing
                 Text(text,

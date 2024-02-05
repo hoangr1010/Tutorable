@@ -31,6 +31,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,9 +42,7 @@ import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 fun LoginPage(navController: NavController) {
     Background()
     LoginBox()
-    Fields()
-    LoginButton(navController = navController)
-    RegisterButton(navController = navController)
+    Fields(navController = navController)
 }
 
 /*
@@ -71,7 +70,7 @@ fun LoginBox(modifier: Modifier = Modifier) {
     Return: None
  */
 @Composable
-fun Fields(modifier: Modifier = Modifier){
+fun Fields(navController: NavController, modifier: Modifier = Modifier){
     var userText by remember { mutableStateOf("Username") }
     var password by rememberSaveable { mutableStateOf("") }
 
@@ -80,7 +79,7 @@ fun Fields(modifier: Modifier = Modifier){
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 100.dp)
+            .padding(top = 400.dp)
     ){
         OutlinedTextField(
             value = userText,
@@ -97,35 +96,16 @@ fun Fields(modifier: Modifier = Modifier){
         Text(
             text = "Forgot Password?",
             fontWeight = FontWeight.Black,
-            fontSize = 12.sp,
-        )
-    }
-}
-
-@Composable
-fun LoginButton(navController: NavController, modifier: Modifier = Modifier) {
-    Column(
-        //verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .width(600.dp)
-            .height(800.dp)
-            .padding(start = 62.dp, top = 700.dp, end = 62.dp, bottom = 10.dp)
-    ){
-        Button(
-            onClick = {navController.navigate(Screen.StudentSchedule.route)},
-            colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
+            fontSize = 15.sp,
             modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .padding(bottom = 30.dp)
-        ){
-            Text(
-                text = "LOGIN",
-                style = TextStyle(
-                    color = Color(0xFFB24444)
-                )
+                .align(Alignment.End)
+                .padding(end = 50.dp, bottom = 20.dp),
+            style = TextStyle(
+                color = Color(0xFFEEA47F)
             )
-        }
+        )
+        Spacer(modifier = Modifier.height(50.dp))
+        LoginButton(navController = navController, target = Screen.StudentSchedule.route)
         RegisterButton(navController = navController)
     }
 }
@@ -141,12 +121,13 @@ fun RegisterButton(navController: NavController, modifier: Modifier = Modifier) 
         Text(
             text = "Don't have an Account? Register Here!",
             style = TextStyle(
-                color = Color(0xFFB24444)
+                color = Color(0xFFEEA47F),
+                fontWeight = FontWeight.Black,
+                textAlign = TextAlign.End
             )
         )
     }
 }
-
 
 @Preview(
     showBackground = true
@@ -156,8 +137,6 @@ fun LoginPagePreview() {
     TutorApp395ProjectTheme {
         Background()
         LoginBox()
-        LoginButton(navController = NavController(LocalContext.current))
-        //RegisterButton(navController = NavController(LocalContext.current))
-        Fields()
+        Fields(navController = NavController(LocalContext.current))
     }
 }

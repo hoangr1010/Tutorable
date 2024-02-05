@@ -8,6 +8,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -68,10 +69,15 @@ fun StudentProfileColumn(image: Int, modifier: Modifier = Modifier) {
                 .padding(start = 30.dp, top = 300.dp)
         ) {
             ProfileField(title = "Email", value = "tommyMcstudent@gmail.com")
+            Spacer(modifier = Modifier.height(10.dp))
             ProfileField(title = "Date of Birth", value = "September 4, 2010")
+            Spacer(modifier = Modifier.height(10.dp))
             ProfileField(title = "School", value = "Macewan Elementary")
+            Spacer(modifier = Modifier.height(10.dp))
             ProfileField(title = "Grade", value = "6")
+            Spacer(modifier = Modifier.height(10.dp))
             ProfileField(title = "Contact Number", value = "(780) 555-1234")
+            Spacer(modifier = Modifier.height(10.dp))
             ProfileField(title = "Address", value = "1234 87 Ave NW Edmonton AB, T5T 8C5")
         }
     }
@@ -122,7 +128,7 @@ fun ProfileName(name: String, modifier: Modifier = Modifier) {
             fontSize = 24.sp,
             //fontFamily = FontFamily(Font(R.font.roboto)),
             fontWeight = FontWeight(800),
-            color = Color(0xFF000000),
+            color = Color(0xFFEEA47F),
             textAlign = TextAlign.Center,
         )
     )
@@ -147,16 +153,17 @@ fun ProfileField(title: String, value: String, modifier: Modifier = Modifier) {
                 fontSize = 20.sp,
                 //fontFamily = FontFamily(Font(roboto)),
                 fontWeight = FontWeight(900),
-                color = Color(0xFF000000),
+                color = Color(0xFFEEA47F),
             )
         )
+        Spacer(modifier = Modifier.height(5.dp))
         Text(
             text = "$value",
             style = TextStyle(
                 fontSize = 15.sp,
                 //fontFamily = FontFamily(Font(R.font.roboto)),
                 fontWeight = FontWeight(300),
-                color = Color(0xFF000000)
+                color = Color(0xFFEEA47F)
             )
         )
     }
