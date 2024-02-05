@@ -1,9 +1,6 @@
 package com.example.tutorapp395project.screens
 
-import android.os.Bundle
 import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,24 +20,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+<<<<<<< HEAD:TutorApp395Project/app/src/main/java/com/example/tutorapp395project/screens/StudentSchedule.kt
 import com.example.tutorapp395project.R
+=======
+import androidx.navigation.NavController
+>>>>>>> 33253c009102163d5de9ead1c37a24d35ae9c025:TutorApp395Project/app/src/main/java/com/example/tutorapp395project/StudentSchedule.kt
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
-class StudentSchedule : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            BackgroundNoLogo()
-            HomeBar()
-            StudentAppointmentLayout()
-        }
-    }
+@Composable
+fun StudentSchedule(navController: NavController) {
+    BackgroundNoLogo()
+    HomeBar(navController = navController)
+    StudentAppointmentLayout()
 }
 
 /*
@@ -142,9 +140,10 @@ fun BackgroundNoLogo(modifier: Modifier = Modifier) {
     Return: None
  */
 @Composable
-fun HomeBarOption(icon: Painter, option: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun HomeBarOption(icon: Painter, option: String, navController: NavController, target: String,
+                  modifier: Modifier = Modifier) {
     Button(
-        onClick = { onClick() },
+        onClick = {navController.navigate(target)},
         colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
         modifier = Modifier
             .padding(16.dp)
@@ -162,7 +161,7 @@ fun HomeBarOption(icon: Painter, option: String, onClick: () -> Unit, modifier: 
     Return: None
  */
 @Composable
-fun HomeBar(modifier: Modifier = Modifier) {
+fun HomeBar(navController: NavController, modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom,
@@ -181,11 +180,11 @@ fun HomeBar(modifier: Modifier = Modifier) {
             Row(
             ){
                 HomeBarOption(icon = painterResource(R.drawable.calendar), option = "Schedule",
-                    onClick = { Log.d("Schedule button", "Schedule Button clicked.") })
+                    navController = navController, target = Screen.StudentSchedule.route)
                 HomeBarOption(icon = painterResource(R.drawable.profile), option = "Profile",
-                    onClick = { Log.d("Profile button", "Profile Button clicked.") })
+                    navController = navController, target = Screen.StudentProfile.route)
                 HomeBarOption(icon = painterResource(R.drawable.settings), option = "Settings",
-                    onClick = { Log.d("Settings button", "Settings Button clicked.") })
+                    navController = navController, target = Screen.Settings.route)
             }
         }
     }
@@ -197,7 +196,7 @@ fun HomeBar(modifier: Modifier = Modifier) {
 fun StudentSchedulePreview() {
     TutorApp395ProjectTheme {
         BackgroundNoLogo()
-        HomeBar()
+        HomeBar(navController = NavController(LocalContext.current))
         StudentAppointmentLayout()
     }
 }

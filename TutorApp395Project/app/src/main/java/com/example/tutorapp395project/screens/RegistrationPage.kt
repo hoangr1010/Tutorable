@@ -1,9 +1,6 @@
 package com.example.tutorapp395project.screens
 
-import android.os.Bundle
 import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -27,19 +25,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+<<<<<<< HEAD:TutorApp395Project/app/src/main/java/com/example/tutorapp395project/screens/RegistrationPage.kt
 import com.example.tutorapp395project.R
+=======
+import androidx.navigation.NavController
+>>>>>>> 33253c009102163d5de9ead1c37a24d35ae9c025:TutorApp395Project/app/src/main/java/com/example/tutorapp395project/RegistrationPage.kt
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
-class RegistrationPage : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            Background()
-            LoginBox()
-            RegistrationText()
-
-        }
-    }
+@Composable
+fun RegistrationPage(navController: NavController) {
+    Background()
+    LoginBox()
+    RegistrationText(navController = navController)
 }
 
 /*
@@ -48,7 +45,7 @@ class RegistrationPage : ComponentActivity() {
     Return: None
  */
 @Composable
-fun RegistrationText(modifier: Modifier = Modifier) {
+fun RegistrationText(navController: NavController, modifier: Modifier = Modifier) {
     Column(
         verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.Bottom),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -70,10 +67,8 @@ fun RegistrationText(modifier: Modifier = Modifier) {
                 .width(282.dp)
                 .height(41.dp)
         )
-        StudentButton(painterResource(R.drawable.student), "Student",
-                      onClick = { Log.d("Student button", "Student Button clicked.")})
-        TutorButton(painterResource(R.drawable.teacher), "Teacher",
-            onClick = { Log.d("Student button", "Student Button clicked.")})
+        StudentButton(painterResource(R.drawable.student), "Student", navController = navController)
+        TutorButton(painterResource(R.drawable.teacher), "Tutor", navController = navController)
     }
 }
 
@@ -86,9 +81,9 @@ fun RegistrationText(modifier: Modifier = Modifier) {
     Return: None
  */
 @Composable
-fun StudentButton(icon: Painter, text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun StudentButton(icon: Painter, text: String, navController: NavController, modifier: Modifier = Modifier) {
     Button(
-        onClick = { onClick() },
+        onClick = {navController.navigate(Screen.StudentRegistration.route)},
         modifier = Modifier
             .fillMaxWidth(0.8f),
         content = {
@@ -96,7 +91,7 @@ fun StudentButton(icon: Painter, text: String, onClick: () -> Unit, modifier: Mo
                 Image(painter = icon,
                     contentDescription = null,
                     modifier = Modifier
-                        .height(125.dp)
+                        .height(100.dp)
                         .align(Alignment.CenterHorizontally))
                 Spacer(modifier = Modifier.width(8.dp)) // Adjust spacing
                 Text(text, fontSize = 40.sp,
@@ -115,16 +110,16 @@ fun StudentButton(icon: Painter, text: String, onClick: () -> Unit, modifier: Mo
     Return: None
  */
 @Composable
-fun TutorButton(icon: Painter, text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun TutorButton(icon: Painter, text: String, navController: NavController, modifier: Modifier = Modifier) {
     Button(
-        onClick = { onClick() },
+        onClick = {navController.navigate(Screen.TutorRegistration.route)},
         modifier = Modifier
             .fillMaxWidth(0.8f),
         content = {
             Column() {
                 // Specify the icon using the icon parameter
                 Image(painter = icon, contentDescription = null, modifier = Modifier
-                    .height(125.dp)
+                    .height(100.dp)
                     .align(Alignment.CenterHorizontally))
                 Spacer(modifier = Modifier.width(8.dp)) // Adjust spacing
                 Text(text,
@@ -143,6 +138,6 @@ fun RegistrationPagePreview() {
     TutorApp395ProjectTheme {
         Background()
         LoginBox()
-        RegistrationText()
+        RegistrationText(navController = NavController(LocalContext.current))
     }
 }

@@ -1,8 +1,5 @@
 package com.example.tutorapp395project.screens
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,21 +8,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+<<<<<<< HEAD:TutorApp395Project/app/src/main/java/com/example/tutorapp395project/screens/TutorProfile.kt
 import com.example.tutorapp395project.R
+=======
+import androidx.navigation.NavController
+>>>>>>> 33253c009102163d5de9ead1c37a24d35ae9c025:TutorApp395Project/app/src/main/java/com/example/tutorapp395project/TutorProfile.kt
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
-class TutorProfile : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            BackgroundNoLogo()
-            HomeBar()
-            TutorProfileColumn(R.drawable.tutor_headshot)
-        }
-    }
+@Composable
+fun TutorProfile(navController: NavController) {
+    BackgroundNoLogo()
+    HomeBar(navController = navController)
+    TutorProfileColumn(R.drawable.tutor_headshot)
 }
+
 /*
     Function: Creates a column for all the tutors data will be displayed into
     Parameters: image -> students profile image
@@ -68,7 +67,7 @@ fun TutorProfileColumn(image: Int, modifier: Modifier = Modifier) {
 fun TutorProfilePreview() {
     TutorApp395ProjectTheme {
         BackgroundNoLogo()
-        HomeBar()
+        HomeBar(navController = NavController(LocalContext.current))
         TutorProfileColumn(R.drawable.tutor_headshot)
     }
 }
