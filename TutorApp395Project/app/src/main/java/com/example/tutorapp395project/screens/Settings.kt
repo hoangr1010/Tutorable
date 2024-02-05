@@ -1,8 +1,5 @@
 package com.example.tutorapp395project.screens
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,20 +12,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
-class Settings : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            BackgroundNoLogo()
-            HomeBar()
-            SettingsColumn()
-        }
-    }
+@Composable
+fun SettingsPage(navController: NavController) {
+    BackgroundNoLogo()
+    HomeBar(navController = navController)
+    SettingsColumn(navController = navController)
 }
 
 /*
@@ -37,19 +32,19 @@ class Settings : ComponentActivity() {
     Return: None
  */
 @Composable
-fun SettingsColumn(modifier: Modifier = Modifier) {
+fun SettingsColumn(navController: NavController, modifier: Modifier = Modifier) {
     Column(
         verticalArrangement = Arrangement.spacedBy(15.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
     ) {
-        SettingButton(option = "Edit Profile", color = 0xFFEEA47F,
-            onClick = { /*TODO*/ })
-        SettingButton(option = "About", color = 0xFFEEA47F,
-            onClick = { /*TODO*/ })
-        SettingButton(option = "Logout", color = 0xFFEEA47F,
-            onClick = { /*TODO*/ })
+        SettingButton(option = "Edit Profile", navController = navController,
+            target = Screen.Settings.route, color = 0xFFEEA47F)
+        SettingButton(option = "About", navController = navController,
+            target = Screen.Settings.route, color = 0xFFEEA47F)
+        SettingButton(option = "Logout", navController = navController,
+            target = Screen.LandingPage.route, color = 0xFFEEA47F)
     }
 }
 
@@ -62,9 +57,10 @@ fun SettingsColumn(modifier: Modifier = Modifier) {
     Return: None
  */
 @Composable
-fun SettingButton(option: String, onClick: () -> Unit, color: Long, modifier: Modifier = Modifier) {
+fun SettingButton(option: String, navController: NavController, target: String, color: Long,
+                  modifier: Modifier = Modifier) {
     Button(
-        onClick = { onClick() },
+        onClick = {navController.navigate(target)},
         colors = ButtonDefaults.buttonColors(Color(color)),
         modifier = Modifier
             .fillMaxWidth()
@@ -84,7 +80,7 @@ fun SettingButton(option: String, onClick: () -> Unit, color: Long, modifier: Mo
 fun SettingsPreview() {
     TutorApp395ProjectTheme {
         BackgroundNoLogo()
-        HomeBar()
-        SettingsColumn()
+        HomeBar(navController = NavController(LocalContext.current))
+        SettingsColumn(navController = NavController(LocalContext.current))
     }
 }

@@ -22,14 +22,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+<<<<<<< HEAD:TutorApp395Project/app/src/main/java/com/example/tutorapp395project/screens/LandingPage.kt
 import com.example.tutorapp395project.R
+=======
+import androidx.navigation.NavController
+>>>>>>> 33253c009102163d5de9ead1c37a24d35ae9c025:TutorApp395Project/app/src/main/java/com/example/tutorapp395project/LandingPage.kt
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
 @Composable
-fun LandingPage() {
-        Background()
-        LoginButton()
-        BackHandler(enabled = true) {}
+fun LandingPage(navController: NavController) {
+    Background()
+    ButtonLayout(navController = navController)
 }
 
 /*
@@ -61,39 +64,42 @@ fun Background(modifier: Modifier = Modifier) {
     Return: None
  */
 @Composable
-fun LoginButton(modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-    Column(
-        verticalArrangement = Arrangement.spacedBy(438.dp, Alignment.CenterVertically),
-        horizontalAlignment = Alignment.CenterHorizontally,
+fun LoginButton(navController: NavController, target: String, modifier: Modifier = Modifier) {
+    Button(
+        onClick = {navController.navigate(target)},
+        colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
         modifier = Modifier
-            .width(600.dp)
-            .height(800.dp)
-            .padding(start = 62.dp, top = 700.dp, end = 62.dp, bottom = 10.dp)
+            .fillMaxWidth(0.7f)
+            //.padding(bottom = 30.dp)
     ){
-        Button(
-            onClick = { },
-            colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .padding(bottom = 30.dp)
-        ){
-            Text(
-                text = "LOGIN",
-                style = TextStyle(
-                    color = Color(0xFFB24444)
-                )
+        Text(
+            text = "LOGIN",
+            style = TextStyle(
+                color = Color(0xFFB24444)
             )
-        }
+        )
     }
 }
 
+@Composable
+fun ButtonLayout(navController: NavController, modifier: Modifier = Modifier) {
+    Column(
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .padding(bottom = 50.dp)
+            .fillMaxSize()
+    ) {
+        LoginButton(navController = navController, target = Screen.LoginPage.route)
+    }
+}
 @Preview
-    (showBackground = true)
+    (showBackground = true,
+            showSystemUi = true)
 @Composable
 fun LandingPagePreview() {
     TutorApp395ProjectTheme {
         Background()
-        LoginButton()
+        ButtonLayout(navController = NavController(LocalContext.current))
     }
 }

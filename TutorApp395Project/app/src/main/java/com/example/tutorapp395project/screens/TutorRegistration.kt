@@ -1,9 +1,6 @@
 package com.example.tutorapp395project.screens
 
-import android.os.Bundle
 import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,22 +13,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
-class TutorRegistration : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            Background()
-            RegistrationBox()
-            TutorRegistrationFields(onClick = {
-                Log.d("Registration button",
-                    "Registration Button clicked.")})
-        }
-    }
+@Composable
+fun TutorRegistration(navController: NavController) {
+    Background()
+    RegistrationBox()
+    TutorRegistrationFields(navController = navController)
 }
+
 /*
     Function: Organizes all the fields into a column for the user to input all of their data into.
               then once the register button is clicked, the data is sent to the backend for
@@ -42,9 +36,9 @@ class TutorRegistration : ComponentActivity() {
     Return: None
  */
 @Composable
-fun TutorRegistrationFields(onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun TutorRegistrationFields(navController: NavController, modifier: Modifier = Modifier) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(15.dp, Alignment.Bottom),
+        verticalArrangement = Arrangement.spacedBy(7.dp, Alignment.Bottom),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .height(990.dp)
@@ -52,12 +46,12 @@ fun TutorRegistrationFields(onClick: () -> Unit, modifier: Modifier = Modifier) 
     ) {
         TextField("Name")
         TextField("Date of Birth")
-        TextField("School")
+        TextField("Expertise")
         TextField("Degree")
         TextField("Email")
         TextField("Password")
         Button(
-            onClick = { onClick() },
+            onClick = {navController.navigate(Screen.TutorSchedule.route)},
             colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
             modifier = Modifier
                 .padding(16.dp)
@@ -74,8 +68,6 @@ fun TutorRegistrationPreview() {
     TutorApp395ProjectTheme {
         Background()
         RegistrationBox()
-        TutorRegistrationFields(onClick = {
-            Log.d("Registration button",
-                "Registration Button clicked.")})
+        TutorRegistrationFields(navController = NavController(LocalContext.current))
     }
 }
