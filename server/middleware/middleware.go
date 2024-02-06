@@ -3,12 +3,16 @@ package middleware
 
 import (
 	"bytes"
+	"crypto/rand"
+	"crypto/rsa"
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/lib/pq"
 	_ "github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
@@ -39,9 +43,116 @@ type RegisterResponse struct {
 	Result bool `json:"result"`
 }
 
+type User struct {
+	ID             string         `json:"id"`
+	Email          string         `json:"email"`
+	Role           string         `json:"role"`
+	FirstName      string         `json:"first_name"`
+	LastName       string         `json:"last_name"`
+	DateOfBirth    time.Time      `json:"date_of_birth"`
+	Expertise      pq.StringArray `json:"expertise"`
+	VerifiedStatus bool           `json:"verified_status"`
+	Experience     string         `json:"experience"`
+	Description    string         `json:"description"`
+	Degrees        pq.StringArray `json:"degrees"`
+	Grade          int            `json:"grade"`
+	School         string         `json:"school"`
+}
+
 type LoginResponse struct {
-	Token string   `json:"token"`
-	User  []string `json:"user"`
+	Token string `json:"token"`
+	User  User   `json:"user"`
+}
+type LoginClaim struct {
+	jwt.RegisteredClaims
+	TokenType string
+}
+
+var (
+	verifyKey  *rsa.PublicKey
+	signKey    *rsa.PrivateKey
+	serverPort int
+)
+
+func init() {
+	// Generate RSA private key for signing the token
+	var err error
+	signKey, err = rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		fmt.Println("Error generating RSA key: ", err)
+	}
+}
+
+func GetTutorUser(db *sql.DB, email string) (User User, err error) {
+	// Prepare the SQL query
+	query := `
+		SELECT 
+		tutor_id, 
+		email, 
+		expertise, 
+		experience, 
+		verified_status, 
+		description, 
+		degree, 
+		date_of_birth, 
+		first_name, 
+		last_name
+		FROM tutor
+		WHERE email = $1
+	`
+	// Execute the SQL query
+	row := db.QueryRow(query, email)
+	// Scan the result into the User struct
+	err = row.Scan(
+		&User.ID,
+		&User.Email,
+		&User.Expertise,
+		&User.Experience,
+		&User.VerifiedStatus,
+		&User.Description,
+		&User.Degrees,
+		&User.DateOfBirth,
+		&User.FirstName,
+		&User.LastName,
+	)
+	if err != nil {
+		fmt.Println("Error scanning tutor: ", err)
+	}
+	User.Role = "tutor"
+	return User, err
+}
+
+func GetStudentUser(db *sql.DB, email string) (User User, err error) {
+	// Prepare the SQL query
+	query := `
+		SELECT 
+		student_id, 
+		email, 
+		grade,
+		school,   
+		date_of_birth, 
+		first_name, 
+		last_name
+		FROM student
+		WHERE email = $1
+	`
+	// Execute the SQL query
+	row := db.QueryRow(query, email)
+	// Scan the result into the User struct
+	err = row.Scan(
+		&User.ID,
+		&User.Email,
+		&User.Grade,
+		&User.School,
+		&User.DateOfBirth,
+		&User.FirstName,
+		&User.LastName,
+	)
+	if err != nil {
+		fmt.Println("Error scanning student: ", err)
+	}
+	User.Role = "student"
+	return User, err
 }
 
 func HashPassword(password *string) error {
@@ -63,7 +174,7 @@ func DecodeJSONRequestBody(r *http.Request, data interface{}) error {
 	}
 	defer r.Body.Close()
 
-	fmt.Println("Request Body:", string(body))
+	//fmt.Println("Request Body:", string(body))
 
 	// Use the read body to create a new reader for the json decoder
 	reader := bytes.NewReader(body)
@@ -148,7 +259,7 @@ func CheckLoginStudent(db *sql.DB, student Login) (bool, error) {
 	}
 
 	// Compare password from login attempt to password in database
-	fmt.Printf("Login password: %s\n Database password: %s\n", student.Password, databasePassword)
+	//fmt.Printf("Login password: %s\n Database password: %s\n", student.Password, databasePassword)
 	err = bcrypt.CompareHashAndPassword([]byte(databasePassword), []byte(student.Password))
 	if err == nil {
 		// Passwords match, authentication sucessful
@@ -172,7 +283,7 @@ func CheckLoginTutor(db *sql.DB, tutor Login) (bool, error) {
 	}
 
 	// Compare password from login attempt to password in database
-	fmt.Printf("Login password: %s\n Database password: %s\n", tutor.Password, databasePassword)
+	//fmt.Printf("Login password: %s\n Database password: %s\n", tutor.Password, databasePassword)
 	err = bcrypt.CompareHashAndPassword([]byte(databasePassword), []byte(tutor.Password))
 	if err == nil {
 		// Passwords match, authentication sucessful
@@ -182,6 +293,21 @@ func CheckLoginTutor(db *sql.DB, tutor Login) (bool, error) {
 		return false, err
 	}
 	return false, err
+}
+
+func CreateToken() (string, error) {
+	// Create a signer for rsa 256
+	t := jwt.New(jwt.GetSigningMethod("RS256"))
+
+	// Set our claims
+	t.Claims = &LoginClaim{
+		jwt.RegisteredClaims{
+			// Set expire time
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 60)),
+		}, "level1",
+	}
+	// Create token string
+	return t.SignedString(signKey)
 }
 
 func UpdateStudent() {

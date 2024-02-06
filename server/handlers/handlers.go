@@ -26,10 +26,11 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 			fmt.Println("Invalid JSON:", err)
 			return
 		}
+
 		// Check the role
 		if login.Role == "student" {
 			// Check if student password is match
-			fmt.Println("Student")
+			//fmt.Println("Student")
 			result, err := middleware.CheckLoginStudent(db, login)
 			if err != nil {
 				fmt.Println("Error validating login:", err)
@@ -39,11 +40,39 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 				w.Write([]byte("Bad Login - Invalid credentials"))
 			}
 			if result {
-				fmt.Println("Successful login!")
+				fmt.Println("Successful student login!")
+				// Store student content into JSON object
+				user, err := middleware.GetStudentUser(db, login.Email)
+				if err != nil {
+					fmt.Println("Error searching student table", err)
+				}
+				//fmt.Println(user)
+				// Create Token
+				var response middleware.LoginResponse
+				response.User = user
+				token, err := middleware.CreateToken()
+				if err != nil {
+					fmt.Println("Error creating token", err)
+				}
+				//fmt.Println("Token: ", token)
+				response.Token = token
+				// Convert response to JSON
+				Jsonresponse, err := json.Marshal(response)
+				if err != nil {
+					http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
+					return
+				}
+				// Set the HTTP status code to 201 (OK)
+				w.WriteHeader(http.StatusOK)
+				// Set the Content-Type header to application/json
+				w.Header().Set("Content-Type", "application/json")
+				// Send Json
+				w.Write(Jsonresponse)
+
 			}
 		} else if login.Role == "tutor" {
 			// Check if tutor password is match
-			fmt.Println("Tutor")
+			//fmt.Println("Tutor")
 			result, err := middleware.CheckLoginTutor(db, login)
 			if err != nil {
 				fmt.Println("Error validating login:", err)
@@ -53,13 +82,40 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 				w.Write([]byte("Bad Login - Invalid credentials"))
 			}
 			if result {
-				fmt.Println("Successful login!")
+				fmt.Println("Successful tutor login!")
+				// Store student content into JSON object
+				user, err := middleware.GetTutorUser(db, login.Email)
+				if err != nil {
+					fmt.Println("Error searching student table", err)
+				}
+				//fmt.Println(user)
+				// Create Token
+				var response middleware.LoginResponse
+				response.User = user
+				token, err := middleware.CreateToken()
+				if err != nil {
+					fmt.Println("Error creating token", err)
+				}
+				//fmt.Println("Token: ", token)
+				response.Token = token
+				// Convert response to JSON
+				Jsonresponse, err := json.Marshal(response)
+				if err != nil {
+					http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
+					return
+				}
+				// Set the HTTP status code to 201 (OK)
+				w.WriteHeader(http.StatusOK)
+				// Set the Content-Type header to application/json
+				w.Header().Set("Content-Type", "application/json")
+				// Send Json
+				w.Write(Jsonresponse)
 			}
 		} else if login.Role == "administrator" {
-			fmt.Println("Administrator")
+			//fmt.Println("Administrator")
 		}
 
-		fmt.Printf("%+v\n", login)
+		//fmt.Printf("%+v\n", login)
 	}
 }
 
