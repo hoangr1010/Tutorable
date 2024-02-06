@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/lib/pq"
 	_ "github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -20,18 +21,18 @@ type Login struct {
 }
 
 type Register struct {
-	Email       string   `json:"email"`
-	Password    string   `json:"password"`
-	Role        string   `json:"role"`
-	FirstName   string   `json:"first_name"`
-	LastName    string   `json:"last_name"`
-	DateOfBirth string   `json:"date_of_birth"`
-	Expertise   []string `json:"expertise"`
-	Experience  string   `json:"experience"`
-	Description string   `json:"description"`
-	Degrees     []string `json:"degrees"`
-	Grade       int      `json:"grade"`
-	School      string   `json:"school"`
+	Email       string         `json:"email"`
+	Password    string         `json:"password"`
+	Role        string         `json:"role"`
+	FirstName   string         `json:"first_name"`
+	LastName    string         `json:"last_name"`
+	DateOfBirth string         `json:"date_of_birth"`
+	Expertise   pq.StringArray `json:"expertise"`
+	Experience  string         `json:"experience"`
+	Description string         `json:"description"`
+	Degrees     pq.StringArray `json:"degrees"`
+	Grade       int            `json:"grade"`
+	School      string         `json:"school"`
 }
 
 type RegisterResponse struct {
@@ -99,11 +100,20 @@ func InsertStudent(db *sql.DB, student Register) error {
 	return nil
 }
 
-// Insert into student table
+// Insert into tutor table
 func InsertTutor(db *sql.DB, tutor Register) error {
 	query := `
-	INSERT INTO tutor (email, password, date_of_birth, experience, expertise, degree, first_name, last_name) 
-	VALUES($1, $2, $3, $4, $5, $6, $7, $8)
+	INSERT INTO tutor (
+		email, 
+		password, 
+		date_of_birth, 
+		experience, 
+		expertise, 
+		description, 
+		degree, 
+		first_name, 
+		last_name) 
+	VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)
 	`
 	_, err := db.Exec(query,
 		tutor.Email,

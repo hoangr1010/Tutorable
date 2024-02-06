@@ -33,6 +33,10 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 			result, err := middleware.CheckLoginStudent(db, login)
 			if err != nil {
 				fmt.Println("Error validating login:", err)
+				// Set the HTTP status code to 401 (Bad Request)
+				w.WriteHeader(http.StatusUnauthorized)
+				// Send a response message
+				w.Write([]byte("Bad Login - Invalid credentials"))
 			}
 			if result {
 				fmt.Println("Successful login!")
@@ -43,6 +47,10 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 			result, err := middleware.CheckLoginTutor(db, login)
 			if err != nil {
 				fmt.Println("Error validating login:", err)
+				// Set the HTTP status code to 401 (Bad Request)
+				w.WriteHeader(http.StatusUnauthorized)
+				// Send a response message
+				w.Write([]byte("Bad Login - Invalid credentials"))
 			}
 			if result {
 				fmt.Println("Successful login!")
@@ -93,6 +101,7 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 				} else {
 					// Handle other types of errors
 					http.Error(w, "Error inserting into database", http.StatusInternalServerError)
+
 				}
 			} else {
 				// Successful register
@@ -130,6 +139,7 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 					w.Write([]byte("Bad Request - Existing email"))
 				} else {
 					// Handle other types of errors
+					fmt.Printf("error: %s\n", err)
 					http.Error(w, "Error inserting into database", http.StatusInternalServerError)
 				}
 			} else {
