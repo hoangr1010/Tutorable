@@ -31,11 +31,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-<<<<<<< HEAD:TutorApp395Project/app/src/main/java/com/example/tutorapp395project/screens/StudentProfile.kt
+
 import com.example.tutorapp395project.R
-=======
+
 import androidx.navigation.NavController
->>>>>>> 33253c009102163d5de9ead1c37a24d35ae9c025:TutorApp395Project/app/src/main/java/com/example/tutorapp395project/StudentProfile.kt
+
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
 @Composable
