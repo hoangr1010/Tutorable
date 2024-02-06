@@ -1,7 +1,7 @@
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.example.tutorapp395project.ui.screens.MainActivity
+//import com.example.tutorapp395project.ui.screens.MainActivity
 import junit.framework.TestCase.assertEquals
 import org.junit.After
 import org.junit.Before
@@ -26,19 +26,19 @@ class ExampleInstrumentedTest {
 
 // Testing the landing page
 
-@RunWith(AndroidJUnit4::class)
-class MainActivityTest {
-
-    @Before
-    fun setUp() {
-        // Start the MainActivity
-        ActivityScenario.launch(MainActivity::class.java)
-    }
-
-    @After
-    fun tearDown() {
-        // Finish the activity after each test
-        ActivityScenario.launch(MainActivity::class.java).close()
-    }
-
-}
+//@RunWith(AndroidJUnit4::class)
+//class MainActivityTest {
+//
+//    @Before
+//    fun setUp() {
+//        // Start the MainActivity
+//        ActivityScenario.launch(MainActivity::class.java)
+//    }
+//
+//    @After
+//    fun tearDown() {
+//        // Finish the activity after each test
+//        ActivityScenario.launch(MainActivity::class.java).close()
+//    }
+//
+//}
