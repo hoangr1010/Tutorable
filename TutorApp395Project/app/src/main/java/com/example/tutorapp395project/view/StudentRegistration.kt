@@ -1,6 +1,5 @@
-package com.example.tutorapp395project
+package com.example.tutorapp395project.view
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

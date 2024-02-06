@@ -1,4 +1,4 @@
-package com.example.tutorapp395project
+package com.example.tutorapp395project.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
