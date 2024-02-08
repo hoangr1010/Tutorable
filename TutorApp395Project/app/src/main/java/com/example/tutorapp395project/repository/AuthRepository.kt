@@ -4,7 +4,22 @@ import com.example.tutorapp395project.network.AuthService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+/*
+    Purpose: interface to define the login request
+    Parameters: None
+    Returns: Response<LoginResponse>
+ */
 interface AuthRepository {
+    /*
+        Purpose: function to perform the login
+        Parameters:
+            - email: String
+            - password: String
+            - role: String
+            - onLoginSuccess: () -> Unit
+            - onLoginFailed: (String) -> Unit
+        Returns: Unit
+     */
     fun preformLogin(
         email: String, password: String, role: String,
         onLoginSuccess: () -> Unit, onLoginFailed: (String) -> Unit

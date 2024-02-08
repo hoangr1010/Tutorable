@@ -32,6 +32,11 @@ import androidx.navigation.NavController
 import com.example.tutorapp395project.R
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
+/*
+    Function: Creates the Student Profile page
+    Parameters: navController -> Navigation controller used to navigate between different composables
+    Return: None
+ */
 @Composable
 fun StudentProfile(navController: NavController) {
     BackgroundNoLogo()

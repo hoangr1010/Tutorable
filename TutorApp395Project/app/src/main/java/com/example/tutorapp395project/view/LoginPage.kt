@@ -45,6 +45,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
+/*
+    Function: Creates the login page with the background and user input fields
+    Parameters:
+        - navController: NavController
+    Return: None
+
+ */
 @Composable
 fun LoginPage(navController: NavController) {
     Background()
@@ -125,6 +132,16 @@ fun Fields(navController: NavController, modifier: Modifier = Modifier){
     }
 }
 
+/*
+    Function: Creates the Login button which when clicked logs the user into their own account.
+    Parameters: email -> user's email
+                password -> user's password
+                role -> user's role
+                navController -> navigation controller
+                target -> target page
+                modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
 fun AuthButton(email: String, password: String, role: String, navController: NavController,
                target: String, modifier: Modifier = Modifier) {
@@ -143,6 +160,12 @@ fun AuthButton(email: String, password: String, role: String, navController: Nav
         )
     }
 }
+/*
+    Function: Creates the Register button which when clicked takes the user to the register page.
+    Parameters: navController -> navigation controller
+                modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
 fun RegisterButton(navController: NavController, modifier: Modifier = Modifier) {
     TextButton(
@@ -162,6 +185,16 @@ fun RegisterButton(navController: NavController, modifier: Modifier = Modifier) 
     }
 }
 
+/*
+    Function: Creates the dropdown menu for the role
+    Parameters:
+        - items: List<String>
+        - selectedItem: String
+        - onItemSelected: (String) -> Unit
+        - modifier: Modifier
+        - arrowIcon: ImageVector
+    Return: None
+ */
 @Composable
 fun DropdownTextBox(
     items: List<String>,
@@ -178,7 +211,7 @@ fun DropdownTextBox(
             value = textValue,
             onValueChange = { textValue = it },
             modifier = Modifier
-                .fillMaxWidth(0.71f)
+                .fillMaxWidth(0.72f)
                 .clickable { expanded = true }
                 //.padding(end = 0.dp) // Adjust padding to make space for the arrow
         )
@@ -199,7 +232,7 @@ fun DropdownTextBox(
                 expanded = true,
                 onDismissRequest = { expanded = false },
                 modifier = Modifier
-                    .fillMaxWidth(0.71f)
+                    .fillMaxWidth(0.72f)
                     .padding(top = 48.dp) // Adjust the top padding to position the dropdown menu
             ) {
                 items.forEach { item ->

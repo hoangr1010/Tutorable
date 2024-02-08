@@ -13,6 +13,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
+/*
+    Function: Creates the Tutor Schedule page
+    Parameters: navController -> Navigation controller used to navigate between different composables
+    Return: None
+
+ */
 @Composable
 fun TutorSchedule(navController: NavController) {
     BackgroundNoLogo()

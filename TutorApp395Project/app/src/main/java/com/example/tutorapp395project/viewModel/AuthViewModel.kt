@@ -1,13 +1,29 @@
 package com.example.tutorapp395project.viewModel
 
-import androidx.navigation.NavController
-import com.example.tutorapp395project.model.LoginRequest
-import com.example.tutorapp395project.network.AuthService
 import com.example.tutorapp395project.network.RetrofitInstance
 
+/*
+    Purpose: This class is used to handle the login process
+    Functions:
+        - login: This function is used to login the user
+    Return: None
+ */
 class AuthViewModel {
-    private val apiService = RetrofitInstance.retrofit.create(AuthService::class.java)
+    private val apiService = RetrofitInstance.provideAuthService(
+        RetrofitInstance.provideRetrofit(RetrofitInstance.provideBaseUrl())
+    )
 
+    /*
+        Purpose: This function is used to login the user
+        Parameters:
+            - email: String
+            - password: String
+            - role: String
+            - navController: NavController
+            - target: String
+        Return: None
+     */
+    /*
     suspend fun login(email: String, password: String, role: String, navController: NavController,
                       target: String) {
         val request = LoginRequest(email, password, role)
@@ -22,4 +38,5 @@ class AuthViewModel {
             // Do something with errorMessage
         }
     }
+     */
 }
