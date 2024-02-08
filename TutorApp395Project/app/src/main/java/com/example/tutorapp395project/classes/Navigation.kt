@@ -58,7 +58,7 @@ fun Navigation (
             TutorProfile(navController = navController)
         }
         composable(route = Screen.Settings.route) {
-            SettingsPage(navController = navController)
+            SettingsPage(navController = navController, route = "student")
         }
     }
 }

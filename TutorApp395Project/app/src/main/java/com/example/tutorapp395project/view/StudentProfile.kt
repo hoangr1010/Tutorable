@@ -40,7 +40,7 @@ import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 @Composable
 fun StudentProfile(navController: NavController) {
     BackgroundNoLogo()
-    HomeBar(navController = navController)
+    HomeBar(navController = navController, route = "student")
     StudentProfileColumn(R.drawable.student_id_photo)
 }
 
@@ -177,7 +177,7 @@ fun ProfileField(title: String, value: String, modifier: Modifier = Modifier) {
 fun StudentProfilePreview() {
     TutorApp395ProjectTheme {
         BackgroundNoLogo()
-        HomeBar(navController = NavController(LocalContext.current))
+        HomeBar(navController = NavController(LocalContext.current), route = "student")
         StudentProfileColumn(R.drawable.student_id_photo)
     }
 }

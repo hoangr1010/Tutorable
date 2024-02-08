@@ -23,7 +23,7 @@ import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 @Composable
 fun TutorProfile(navController: NavController) {
     BackgroundNoLogo()
-    HomeBar(navController = navController)
+    HomeBar(navController = navController, route = "tutor")
     TutorProfileColumn(R.drawable.tutor_headshot)
 }
 
@@ -69,7 +69,7 @@ fun TutorProfileColumn(image: Int, modifier: Modifier = Modifier) {
 fun TutorProfilePreview() {
     TutorApp395ProjectTheme {
         BackgroundNoLogo()
-        HomeBar(navController = NavController(LocalContext.current))
+        HomeBar(navController = NavController(LocalContext.current), route = "tutor")
         TutorProfileColumn(R.drawable.tutor_headshot)
     }
 }

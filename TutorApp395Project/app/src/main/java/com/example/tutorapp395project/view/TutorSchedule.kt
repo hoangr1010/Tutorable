@@ -22,7 +22,7 @@ import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 @Composable
 fun TutorSchedule(navController: NavController) {
     BackgroundNoLogo()
-    HomeBar(navController = navController)
+    HomeBar(navController = navController, route = "tutor")
     TutorAppointmentLayout()
 }
 
@@ -60,7 +60,7 @@ fun TutorAppointmentLayout(modifier: Modifier = Modifier) {
 fun TutorSchedulePreview() {
     TutorApp395ProjectTheme {
         BackgroundNoLogo()
-        HomeBar(navController = NavController(LocalContext.current))
+        HomeBar(navController = NavController(LocalContext.current), route = "tutor")
         TutorAppointmentLayout()
     }
 }
