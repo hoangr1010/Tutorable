@@ -5,6 +5,9 @@
       <entry key="app">
         <State />
       </entry>
+      <entry key="button_click_navigates_to_next_screen()">
+        <State />
+      </entry>
     </value>
   </component>
 </project>

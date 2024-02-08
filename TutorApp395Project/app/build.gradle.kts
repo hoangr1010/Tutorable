@@ -58,6 +58,8 @@ android {
 dependencies {
 
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     val navVersion = "2.7.6"
     val composeVersion = "1.7.0-alpha01"
     val room = "2.6.0"
@@ -94,6 +96,10 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
+    androidTestImplementation("io.mockk:mockk-android:1.12.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2")
 
 
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
