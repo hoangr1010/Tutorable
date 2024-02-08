@@ -173,8 +173,7 @@ fun HomeBar(navController: NavController, modifier: Modifier = Modifier) {
                     shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
                 )
         ) {
-            Row(
-            ){
+            Row {
                 HomeBarOption(icon = painterResource(R.drawable.calendar), option = "Schedule",
                     navController = navController, target = Screen.StudentSchedule.route)
                 HomeBarOption(icon = painterResource(R.drawable.profile), option = "Profile",

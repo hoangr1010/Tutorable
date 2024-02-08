@@ -47,13 +47,14 @@ fun TutorRegistrationFields(navController: NavController, modifier: Modifier = M
         TextField("Date of Birth")
         TextField("Expertise")
         TextField("Degree")
+        TextField("Experience")
         TextField("Email")
         TextField("Password")
         Button(
             onClick = {navController.navigate(Screen.TutorSchedule.route)},
             colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
             modifier = Modifier
-                .padding(16.dp)
+                .padding(1.dp)
         ) {
             Text(
                 text = "Register")

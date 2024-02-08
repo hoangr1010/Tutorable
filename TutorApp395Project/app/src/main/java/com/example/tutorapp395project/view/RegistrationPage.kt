@@ -83,7 +83,7 @@ fun StudentButton(icon: Painter, text: String, navController: NavController, mod
         modifier = Modifier
             .fillMaxWidth(0.8f),
         content = {
-            Column() {
+            Column {
                 Image(painter = icon,
                     contentDescription = null,
                     modifier = Modifier
@@ -112,7 +112,7 @@ fun TutorButton(icon: Painter, text: String, navController: NavController, modif
         modifier = Modifier
             .fillMaxWidth(0.8f),
         content = {
-            Column() {
+            Column {
                 // Specify the icon using the icon parameter
                 Image(painter = icon, contentDescription = null, modifier = Modifier
                     .height(100.dp)

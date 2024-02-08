@@ -36,7 +36,7 @@ fun LandingPage(navController: NavController) {
  */
 @Composable
 fun Background(modifier: Modifier = Modifier) {
-    val image = painterResource(R.drawable.logo)
+    val image = painterResource(R.drawable.tutorapple)
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
