@@ -3,13 +3,16 @@ package middleware
 
 import (
 	"bytes"
-	"crypto/rand"
-	"crypto/rsa"
+	"crypto/hmac"
+	"crypto/sha256"
 	"database/sql"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -44,7 +47,7 @@ type RegisterResponse struct {
 }
 
 type User struct {
-	ID             string         `json:"id"`
+	ID             int            `json:"id"`
 	Email          string         `json:"email"`
 	Role           string         `json:"role"`
 	FirstName      string         `json:"first_name"`
@@ -63,24 +66,31 @@ type LoginResponse struct {
 	Token string `json:"token"`
 	User  User   `json:"user"`
 }
+
+type UserInfo struct {
+	Role  string
+	Email string
+	ID    int
+}
+
+/*
+In the token body we want
+role,
+email,
+tableID
+*/
 type LoginClaim struct {
 	jwt.RegisteredClaims
 	TokenType string
+	UserInfo
 }
 
-var (
-	verifyKey  *rsa.PublicKey
-	signKey    *rsa.PrivateKey
-	serverPort int
-)
-
-func init() {
-	// Generate RSA private key for signing the token
-	var err error
-	signKey, err = rsa.GenerateKey(rand.Reader, 2048)
-	if err != nil {
-		fmt.Println("Error generating RSA key: ", err)
-	}
+func gernerateHMAC(message []byte) string {
+	// Convert string to byte array
+	key := []byte(os.Getenv("KEY"))
+	h := hmac.New(sha256.New, key)
+	h.Write(message)
+	return hex.EncodeToString(h.Sum(nil))
 }
 
 func GetTutorUser(db *sql.DB, email string) (User User, err error) {
@@ -295,19 +305,14 @@ func CheckLoginTutor(db *sql.DB, tutor Login) (bool, error) {
 	return false, err
 }
 
-func CreateToken() (string, error) {
-	// Create a signer for rsa 256
-	t := jwt.New(jwt.GetSigningMethod("RS256"))
-
-	// Set our claims
-	t.Claims = &LoginClaim{
-		jwt.RegisteredClaims{
-			// Set expire time
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 60)),
-		}, "level1",
-	}
+func CreateToken(userInfo UserInfo) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user": userInfo,
+		"exp":  time.Now().Add(time.Hour * 24).Unix(), // Expiration time: 1 day
+	})
 	// Create token string
-	return t.SignedString(signKey)
+	signKey := []byte(os.Getenv("KEY"))
+	return token.SignedString(signKey)
 }
 
 func UpdateStudent() {

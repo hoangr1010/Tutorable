@@ -50,7 +50,12 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 				// Create Token
 				var response middleware.LoginResponse
 				response.User = user
-				token, err := middleware.CreateToken()
+
+				var userInfo middleware.UserInfo
+				userInfo.Role = "student"
+				userInfo.Email = user.Email
+				userInfo.ID = user.ID
+				token, err := middleware.CreateToken(userInfo)
 				if err != nil {
 					fmt.Println("Error creating token", err)
 				}
@@ -89,10 +94,17 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 					fmt.Println("Error searching student table", err)
 				}
 				//fmt.Println(user)
-				// Create Token
+				// Store user fields
 				var response middleware.LoginResponse
 				response.User = user
-				token, err := middleware.CreateToken()
+
+				// Create userinfo for token
+				var userInfo middleware.UserInfo
+				userInfo.Role = "role"
+				userInfo.Email = user.Email
+				userInfo.ID = user.ID
+				// Create token
+				token, err := middleware.CreateToken(userInfo)
 				if err != nil {
 					fmt.Println("Error creating token", err)
 				}
