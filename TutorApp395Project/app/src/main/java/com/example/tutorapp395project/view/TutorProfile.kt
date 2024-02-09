@@ -15,10 +15,15 @@ import androidx.navigation.NavController
 import com.example.tutorapp395project.R
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
+/*
+    Function: Creates the Tutor Profile page
+    Parameters: navController -> Navigation controller used to navigate between different composables
+    Return: None
+ */
 @Composable
 fun TutorProfile(navController: NavController) {
     BackgroundNoLogo()
-    HomeBar(navController = navController)
+    HomeBar(navController = navController, route = "tutor")
     TutorProfileColumn(R.drawable.tutor_headshot)
 }
 
@@ -64,7 +69,7 @@ fun TutorProfileColumn(image: Int, modifier: Modifier = Modifier) {
 fun TutorProfilePreview() {
     TutorApp395ProjectTheme {
         BackgroundNoLogo()
-        HomeBar(navController = NavController(LocalContext.current))
+        HomeBar(navController = NavController(LocalContext.current), route = "tutor")
         TutorProfileColumn(R.drawable.tutor_headshot)
     }
 }

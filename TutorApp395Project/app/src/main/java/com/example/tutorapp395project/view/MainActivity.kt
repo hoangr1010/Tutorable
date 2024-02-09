@@ -3,17 +3,15 @@ package com.example.tutorapp395project.view
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import com.example.tutorapp395project.view.Navigation
-import com.example.tutorapp395project.viewModel.AuthViewModel
-import com.example.tutorapp395project.viewModel.RegisterViewModel
+import com.example.tutorapp395project.classes.Navigation
+import com.example.tutorapp395project.network.AuthService
+
 
 class MainActivity : ComponentActivity() {
+    lateinit var authService: AuthService
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val authViewModel = viewModels<AuthViewModel>()
-            val registerViewModel = viewModels<RegisterViewModel>()
             Navigation()
         }
     }
