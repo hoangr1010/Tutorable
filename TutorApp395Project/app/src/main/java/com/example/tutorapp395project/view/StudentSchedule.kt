@@ -30,10 +30,15 @@ import androidx.navigation.NavController
 import com.example.tutorapp395project.R
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
+/*
+    Function: Creates the Student Schedule page
+    Parameters: navController -> Navigation controller used to navigate between different composables
+    Return: None
+ */
 @Composable
 fun StudentSchedule(navController: NavController) {
     BackgroundNoLogo()
-    HomeBar(navController = navController)
+    HomeBar(navController = navController, route = "student")
     StudentAppointmentLayout()
 }
 
@@ -157,7 +162,7 @@ fun HomeBarOption(icon: Painter, option: String, navController: NavController, t
     Return: None
  */
 @Composable
-fun HomeBar(navController: NavController, modifier: Modifier = Modifier) {
+fun HomeBar(navController: NavController, modifier: Modifier = Modifier, route: String) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom,
@@ -173,14 +178,31 @@ fun HomeBar(navController: NavController, modifier: Modifier = Modifier) {
                     shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
                 )
         ) {
-            Row(
-            ){
-                HomeBarOption(icon = painterResource(R.drawable.calendar), option = "Schedule",
-                    navController = navController, target = Screen.StudentSchedule.route)
-                HomeBarOption(icon = painterResource(R.drawable.profile), option = "Profile",
-                    navController = navController, target = Screen.StudentProfile.route)
-                HomeBarOption(icon = painterResource(R.drawable.settings), option = "Settings",
-                    navController = navController, target = Screen.Settings.route)
+            Row {
+                if (route == "student") {
+                    HomeBarOption(
+                        icon = painterResource(R.drawable.calendar), option = "Schedule",
+                        navController = navController, target = Screen.StudentSchedule.route
+                    )
+                    HomeBarOption(
+                        icon = painterResource(R.drawable.profile), option = "Profile",
+                        navController = navController, target = Screen.StudentProfile.route
+                    )
+                }
+                if (route == "tutor") {
+                    HomeBarOption(
+                        icon = painterResource(R.drawable.calendar), option = "Schedule",
+                        navController = navController, target = Screen.StudentSchedule.route
+                    )
+                    HomeBarOption(
+                        icon = painterResource(R.drawable.profile), option = "Profile",
+                        navController = navController, target = Screen.StudentProfile.route
+                    )
+                }
+                HomeBarOption(
+                    icon = painterResource(R.drawable.settings), option = "Settings",
+                    navController = navController, target = Screen.Settings.route
+                )
             }
         }
     }
@@ -192,7 +214,7 @@ fun HomeBar(navController: NavController, modifier: Modifier = Modifier) {
 fun StudentSchedulePreview() {
     TutorApp395ProjectTheme {
         BackgroundNoLogo()
-        HomeBar(navController = NavController(LocalContext.current))
+        HomeBar(navController = NavController(LocalContext.current), route = "student")
         StudentAppointmentLayout()
     }
 }

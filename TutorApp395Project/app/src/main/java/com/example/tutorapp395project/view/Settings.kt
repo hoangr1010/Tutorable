@@ -19,10 +19,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
+/*
+    Function: Creates the settings page
+    Parameters: navController -> Navigation controller used to navigate between different composables
+    Return: None
+
+ */
 @Composable
-fun SettingsPage(navController: NavController) {
+fun SettingsPage(navController: NavController, route: String) {
     BackgroundNoLogo()
-    HomeBar(navController = navController)
+    HomeBar(navController = navController, route = route )
     SettingsColumn(navController = navController)
 }
 
@@ -80,7 +86,7 @@ fun SettingButton(option: String, navController: NavController, target: String, 
 fun SettingsPreview() {
     TutorApp395ProjectTheme {
         BackgroundNoLogo()
-        HomeBar(navController = NavController(LocalContext.current))
+        HomeBar(navController = NavController(LocalContext.current), route = "student")
         SettingsColumn(navController = NavController(LocalContext.current))
     }
 }

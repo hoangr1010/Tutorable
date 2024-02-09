@@ -28,6 +28,12 @@ import androidx.navigation.NavController
 import com.example.tutorapp395project.R
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
+/*
+    Function: Creates the Registration page
+    Parameters: navController -> Navigation controller used to navigate between different composables
+    Return: None
+
+ */
 @Composable
 fun RegistrationPage(navController: NavController) {
     Background()
@@ -83,7 +89,7 @@ fun StudentButton(icon: Painter, text: String, navController: NavController, mod
         modifier = Modifier
             .fillMaxWidth(0.8f),
         content = {
-            Column() {
+            Column {
                 Image(painter = icon,
                     contentDescription = null,
                     modifier = Modifier
@@ -112,7 +118,7 @@ fun TutorButton(icon: Painter, text: String, navController: NavController, modif
         modifier = Modifier
             .fillMaxWidth(0.8f),
         content = {
-            Column() {
+            Column {
                 // Specify the icon using the icon parameter
                 Image(painter = icon, contentDescription = null, modifier = Modifier
                     .height(100.dp)

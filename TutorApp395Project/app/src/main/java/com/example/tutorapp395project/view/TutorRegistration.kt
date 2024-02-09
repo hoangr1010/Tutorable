@@ -18,6 +18,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
+/*
+    Function: Creates the Tutor Registration page
+    Parameters: navController -> Navigation controller used to navigate between different composables
+    Return: None
+
+ */
 @Composable
 fun TutorRegistration(navController: NavController) {
     Background()
@@ -47,13 +53,14 @@ fun TutorRegistrationFields(navController: NavController, modifier: Modifier = M
         TextField("Date of Birth")
         TextField("Expertise")
         TextField("Degree")
+        TextField("Experience")
         TextField("Email")
         TextField("Password")
         Button(
             onClick = {navController.navigate(Screen.TutorSchedule.route)},
             colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
             modifier = Modifier
-                .padding(16.dp)
+                .padding(1.dp)
         ) {
             Text(
                 text = "Register")

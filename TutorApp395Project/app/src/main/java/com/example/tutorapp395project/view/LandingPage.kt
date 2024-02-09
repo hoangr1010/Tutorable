@@ -23,6 +23,12 @@ import androidx.navigation.NavController
 import com.example.tutorapp395project.R
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
+/*
+    Function: Creates the landing page with the background and buttons
+    Parameters:
+        - navController: NavController
+    Return: None
+ */
 @Composable
 fun LandingPage(navController: NavController) {
     Background()
@@ -36,7 +42,7 @@ fun LandingPage(navController: NavController) {
  */
 @Composable
 fun Background(modifier: Modifier = Modifier) {
-    val image = painterResource(R.drawable.logo)
+    val image = painterResource(R.drawable.tutorapple)
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -75,6 +81,13 @@ fun LoginButton(navController: NavController, target: String, modifier: Modifier
     }
 }
 
+/*
+    Function: Creates the layout for the buttons
+    Parameters:
+        - navController: NavController -> takes the navigation controller
+        - modifier -> takes modifier parameters
+    Return: None
+ */
 @Composable
 fun ButtonLayout(navController: NavController, modifier: Modifier = Modifier) {
     Column(
