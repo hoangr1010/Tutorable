@@ -31,7 +31,7 @@ import com.example.tutorapp395project.classes.Screen
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
 @Composable
-fun LandingPage(navController: NavController, onClick: () -> Unit) {
+fun LandingPage(navController: NavController) {
     Background()
     ButtonLayout(navController = navController)
 }
@@ -65,11 +65,10 @@ fun Background(modifier: Modifier = Modifier) {
     Return: None
  */
 @Composable
-fun LoginButton(navController: NavController, onClick: () -> Unit,target: String, modifier: Modifier = Modifier) {
+fun LoginButton(navController: NavController,target: String, modifier: Modifier = Modifier) {
     Button(
         onClick = {
             navController.navigate(target)
-            onClick()
         },
         colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
         modifier = Modifier
@@ -94,7 +93,7 @@ fun ButtonLayout(navController: NavController, modifier: Modifier = Modifier) {
             .padding(bottom = 50.dp)
             .fillMaxSize()
     ) {
-        LoginButton(navController = navController, target = Screen.LoginPage.route, onClick = {})
+        LoginButton(navController = navController, target = Screen.LoginPage.route)
     }
 }
 @Preview
