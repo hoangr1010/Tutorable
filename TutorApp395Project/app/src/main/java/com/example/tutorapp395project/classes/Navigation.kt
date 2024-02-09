@@ -31,7 +31,7 @@ fun Navigation (
         startDestination = Screen.LandingPage.route
     ) {
         composable(route = Screen.LandingPage.route) {
-            LandingPage(navController = navController, onClick = {})
+            LandingPage(navController = navController)
         }
         composable(route = Screen.LoginPage.route) {
             LoginPage(navController = navController)

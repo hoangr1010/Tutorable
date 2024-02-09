@@ -106,7 +106,7 @@ fun Fields(navController: NavController, modifier: Modifier = Modifier){
             )
         )
         Spacer(modifier = Modifier.height(50.dp))
-        LoginButton(navController = navController, target = Screen.StudentSchedule.route, onClick = {})
+        LoginButton(navController = navController, target = Screen.StudentSchedule.route)
         RegisterButton(navController = navController)
     }
 }
