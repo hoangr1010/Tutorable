@@ -2,11 +2,9 @@ package com.example.tutorapp395project.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.tutorapp395project.data.TutorLevel
-import java.lang.invoke.TypeDescriptor
 
 @Entity(tableName = "tutor")
-data class tutorTable (
+data class databaseTable (
     @PrimaryKey(autoGenerate = true)
     val tutor_id: Int,
     val name: String,
