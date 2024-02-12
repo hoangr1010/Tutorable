@@ -2,20 +2,19 @@ package com.example.tutorapp395project.data
 
 
 enum class Grade (
-    val GRADE_1: String,
-    val GRADE_2: String,
-    val GRADE_3: String,
-    val GRADE_4: String,
-    val GRADE_5: String,
-    val GRADE_6: String,
-    val GRADE_7: String,
-    val GRADE_8: String,
-    val GRADE_9: String,
-    val GRADE_10: String,
-    val GRADE_11: String,
-    val GRADE_12: String
+    val GRADE_1: Int,
+    val GRADE_2: Int,
+    val GRADE_3: Int,
+    val GRADE_4: Int,
+    val GRADE_5: Int,
+    val GRADE_6: Int,
+    val GRADE_7: Int,
+    val GRADE_8: Int,
+    val GRADE_9: Int,
+    val GRADE_10: Int,
+    val GRADE_11: Int,
+    val GRADE_12: Int
 )
-
 enum class TutorLevel (
     val FRESHER: String,
     val JUNIOR: String,
