@@ -32,6 +32,7 @@ import java.util.Date
 //    val password: String
 //)
 
+// User: Database
 @Entity(tableName = "user")
 data class userTable (
     @PrimaryKey(autoGenerate = true)
