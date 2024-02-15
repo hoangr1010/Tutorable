@@ -12,7 +12,6 @@ enum class Grade (
     val GRADE_8: Int,
     val GRADE_9: Int,
     val GRADE_10: Int,
-    val GRADE_11: Int,
     val GRADE_12: Int
 )
 enum class TutorLevel (
