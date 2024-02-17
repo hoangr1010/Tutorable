@@ -55,12 +55,4 @@ data class LoginTutorResponse(
     val description: String,
     val degrees: Array<String>
     // val picturePate: String
-:wq
     >>>>>>> fddd448e1c9c85c4e4966bce1170441f9d0360ce
-qqq:wq
-;wq
-:wq:wq
-fd:wq
-:wq
-
-:wq
