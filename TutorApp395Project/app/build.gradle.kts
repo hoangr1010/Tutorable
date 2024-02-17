@@ -2,6 +2,11 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     kotlin("kapt")
+<<<<<<< HEAD
+=======
+    id("com.google.dagger.hilt.android") version "2.44" apply false
+
+>>>>>>> fddd448e1c9c85c4e4966bce1170441f9d0360ce
 }
 
 android {
@@ -113,6 +118,7 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     // coil
     implementation("io.coil-kt:coil-compose:1.4.0")
+<<<<<<< HEAD
     // Dagger
     implementation ("com.google.dagger:dagger:2.40") // Core dagger library
     annotationProcessor ("com.google.dagger:dagger-compiler:2.40") // Dagger annotation processor
@@ -129,3 +135,13 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
 }
 
+=======
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-compiler:2.44")
+}
+
+kapt {
+    correctErrorTypes = true
+}
+>>>>>>> fddd448e1c9c85c4e4966bce1170441f9d0360ce
