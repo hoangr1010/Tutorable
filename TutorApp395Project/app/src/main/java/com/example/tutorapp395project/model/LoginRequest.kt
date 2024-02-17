@@ -8,7 +8,7 @@ package com.example.tutorapp395project.model
         - role: String
     Returns: Unit
  */
-class LoginRequest(
+data class LoginRequest(
     val username: String,
     val password: String,
     val role: String
@@ -20,6 +20,31 @@ class LoginRequest(
         - token: String
     Returns: Unit
  */
-class LoginResponse(
-    val token: String
+data class LoginStudentResponse(
+    val token: String,
+    val id: String,
+    val first_name: String,
+    val last_name: String,
+    val role: String,
+    val email: String,
+    val password: String,
+    val date_of_birth: String,
+    val grade: Int,
+    val school: String
+)
+
+data class LoginTutorResponse(
+    val token: String,
+    val id: String,
+    val first_name: String,
+    val last_name: String,
+    val role: String,
+    val email: String,
+    val password: String,
+    val date_of_birth: String,
+    val expertise: Array<String>,
+    val experience: String,
+    val description: String,
+    val degrees: Array<String>
+    // val picturePate: String
 )

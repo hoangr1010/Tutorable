@@ -27,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,8 +41,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
+import com.example.tutorapp395project.viewModel.LoginViewModel
 
 /*
     Function: Creates the login page with the background and user input fields
@@ -54,6 +55,7 @@ import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
  */
 @Composable
 fun LoginPage(navController: NavController) {
+    val viewModel: LoginViewModel = viewModel()
     Background()
     LoginBox()
     Fields(navController = navController)
@@ -84,10 +86,8 @@ fun LoginBox(modifier: Modifier = Modifier) {
     Return: None
  */
 @Composable
-fun Fields(navController: NavController, modifier: Modifier = Modifier){
-    var email by remember { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
-    var role by rememberSaveable { mutableStateOf("Student") }
+fun Fields(navController: NavController, modifier: Modifier = Modifier,
+           viewModel: LoginViewModel = viewModel()) {
 
     Column(
         verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.CenterVertically),
@@ -97,19 +97,19 @@ fun Fields(navController: NavController, modifier: Modifier = Modifier){
             .padding(top = 400.dp)
     ){
         OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
+            value = viewModel.email.value,
+            onValueChange = viewModel::onEmailChanged,
             label = { Text("Email", fontWeight = FontWeight.Black) }
         )
         Spacer(modifier = Modifier.height(10.dp))
         DropdownTextBox(
             items = listOf("Student", "Tutor"),
-            selectedItem = role,
-            onItemSelected = { role = it }
+            selectedItem = viewModel.role.value,
+            onItemSelected = viewModel::onRoleChanged
         )
         OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
+            value = viewModel.password.value,
+            onValueChange = viewModel::onPasswordChanged,
             label = { Text("Password", fontWeight = FontWeight.Black)},
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
@@ -126,7 +126,8 @@ fun Fields(navController: NavController, modifier: Modifier = Modifier){
             )
         )
         Spacer(modifier = Modifier.height(50.dp))
-        AuthButton(email = email, password = password, role = role, navController = navController,
+        AuthButton(email = viewModel.email.value, password = viewModel.password.value,
+            role = viewModel.role.value, navController = navController,
             target = Screen.StudentSchedule.route)
         RegisterButton(navController = navController)
     }
@@ -144,9 +145,10 @@ fun Fields(navController: NavController, modifier: Modifier = Modifier){
  */
 @Composable
 fun AuthButton(email: String, password: String, role: String, navController: NavController,
-               target: String, modifier: Modifier = Modifier) {
+               target: String, viewModel: LoginViewModel = viewModel(),
+               modifier: Modifier = Modifier) {
     Button(
-        onClick = {navController.navigate(target)},
+        onClick = {viewModel.onLoginClick(navController, target)},
         colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
         modifier = Modifier
             .fillMaxWidth(0.7f)

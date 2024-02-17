@@ -1,6 +1,9 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    kotlin("kapt")
+    id("com.google.dagger.hilt.android") version "2.44" apply false
+
 }
 
 android {
@@ -115,10 +118,11 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     // coil
     implementation("io.coil-kt:coil-compose:1.4.0")
-    // Dagger
-    implementation ("com.google.dagger:dagger:2.40") // Core dagger library
-    annotationProcessor ("com.google.dagger:dagger-compiler:2.40") // Dagger annotation processor
-    implementation ("com.google.dagger:dagger-android:2.40") // Dagger Android support
-    implementation ("com.google.dagger:dagger-android-support:2.40") // Dagger Android support library
-    annotationProcessor ("com.google.dagger:dagger-android-processor:2.40") // Dagger Android annotation processor
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-compiler:2.44")
+}
+
+kapt {
+    correctErrorTypes = true
 }
