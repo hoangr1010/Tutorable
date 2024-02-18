@@ -57,6 +57,43 @@ fun Navigation (
         composable(route = Screen.TutorProfile.route) {
             TutorProfile(navController = navController)
         }
+        // Go to the landing page
+        composable(route = Screen.LandingPage.route) {
+            LandingPage(navController = navController)
+        }
+        // Go to the login page
+        composable(route = Screen.LoginPage.route) {
+            LoginPage(navController = navController)
+        }
+        // Go to the registration page
+        composable(route = Screen.RegistrationPage.route) {
+            RegistrationPage(navController = navController)
+        }
+        // Go to the student registration page
+        composable(route = Screen.StudentRegistration.route) {
+            StudentRegistration(navController = navController)
+        }
+        // Go to the tutor registration page
+        composable(route = Screen.TutorRegistration.route) {
+            TutorRegistration(navController = navController)
+        }
+        // Go to the student schedule page
+        composable(route = Screen.StudentSchedule.route) {
+            StudentSchedule(navController = navController)
+        }
+        // Go to the tutor schedule page
+        composable(route = Screen.TutorSchedule.route) {
+            TutorSchedule(navController = navController)
+        }
+        // Go to the student profile page
+        composable(route = Screen.StudentProfile.route) {
+            StudentProfile(navController = navController)
+        }
+        // Go to the tutor profile page
+        composable(route = Screen.TutorProfile.route) {
+            TutorProfile(navController = navController)
+        }
+        // Go to the settings page
         composable(route = Screen.Settings.route) {
             SettingsPage(navController = navController, route = "student")
         }
