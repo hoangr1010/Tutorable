@@ -1,54 +1,26 @@
 package com.example.tutorapp395project.repository
 
-<<<<<<< HEAD
-import com.example.tutorapp395project.network.AuthService
+import com.example.tutorapp395project.data.LoginData
+import com.example.tutorapp395project.data.LoginResponse
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-/*
-    Purpose: interface to define the login request
-    Parameters: None
-    Returns: Response<LoginResponse>
- */
-interface AuthRepository {
-    /*
-        Purpose: function to perform the login
-        Parameters:
-            - email: String
-            - password: String
-            - role: String
-            - onLoginSuccess: () -> Unit
-            - onLoginFailed: (String) -> Unit
-        Returns: Unit
-     */
-    fun preformLogin(
-        email: String, password: String, role: String,
-        onLoginSuccess: () -> Unit, onLoginFailed: (String) -> Unit
-    ) {
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://localhost:8080/auth/login")
+class AuthRepository {
+
+    private var authService: com.example.tutorapp395project.data.remote.AuthService
+
+    init {
+        val retrofit = Retrofit
+            .Builder()
+            .baseUrl("http://10.0.2.2:8080/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        val authService = retrofit.create(AuthService::class.java)
-        //val call = AuthService.login(email, password, role)
+        authService = retrofit.create(com.example.tutorapp395project.data.remote.AuthService::class.java)
+    }
+
+    suspend fun login(loginData: LoginData): Response<LoginResponse> {
+        return authService.login(loginData)
     }
 }
-
-=======
-import com.example.tutorapp395project.model.LoginRequest
-import com.example.tutorapp395project.model.LoginStudentResponse
-import com.example.tutorapp395project.network.RetrofitInstance
-import retrofit2.Response
-
-class AuthRepository {
-
-    suspend fun loginStudent(loginRequest: LoginRequest): Response<LoginStudentResponse> {
-        return RetrofitInstance.loginApi.loginStudent(loginRequest)
-    }
-
-    suspend fun loginTutor(loginRequest: LoginRequest): Response<LoginStudentResponse> {
-        return RetrofitInstance.loginApi.loginStudent(loginRequest)
-    }
-}
->>>>>>> cabralr2-main

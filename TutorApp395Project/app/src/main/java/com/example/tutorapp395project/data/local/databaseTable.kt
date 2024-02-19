@@ -1,4 +1,4 @@
-package com.example.tutorapp395project.data
+package com.example.tutorapp395project.data.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
