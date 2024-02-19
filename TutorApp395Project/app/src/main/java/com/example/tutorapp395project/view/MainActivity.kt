@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.example.tutorapp395project.classes.Navigation
-import com.example.tutorapp395project.network.AuthService
+import com.example.tutorapp395project.data.remote.AuthService
 
 
 class MainActivity : ComponentActivity() {

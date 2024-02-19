@@ -1,6 +1,5 @@
-package com.example.tutorapp395project.data
+package com.example.tutorapp395project.data.local
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert

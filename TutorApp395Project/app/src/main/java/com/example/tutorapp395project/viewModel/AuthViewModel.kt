@@ -1,42 +1,65 @@
 package com.example.tutorapp395project.viewModel
 
-import com.example.tutorapp395project.network.RetrofitInstance
+import android.util.Log
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.tutorapp395project.data.LoginData
+import com.example.tutorapp395project.data.LoginResponse
+import com.example.tutorapp395project.data.User
+import com.example.tutorapp395project.repository.AuthRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-/*
-    Purpose: This class is used to handle the login process
-    Functions:
-        - login: This function is used to login the user
-    Return: None
- */
-class AuthViewModel {
-    private val apiService = RetrofitInstance.provideAuthService(
-        RetrofitInstance.provideRetrofit(RetrofitInstance.provideBaseUrl())
-    )
+class AuthViewModel(
+    private val authRepository: AuthRepository = AuthRepository()
+): ViewModel() {
 
-    /*
-        Purpose: This function is used to login the user
-        Parameters:
-            - email: String
-            - password: String
-            - role: String
-            - navController: NavController
-            - target: String
-        Return: None
-     */
-    /*
-    suspend fun login(email: String, password: String, role: String, navController: NavController,
-                      target: String) {
-        val request = LoginRequest(email, password, role)
-        val response = apiService.login(request)
-        if (response.isSuccessful) {
-            val loginResponse = response.body()
-            navController.navigate(target)
-        }
-        else {
-            // Handle failed login
-            val errorMessage = response.message()
-            // Do something with errorMessage
+    val loginDataState = mutableStateOf(LoginData())
+    val UserState = mutableStateOf(User())
+    val token = mutableStateOf("")
+
+    fun onEmailChange(email: String) {
+        loginDataState.value = loginDataState.value.copy(email = email)
+    }
+
+    fun onPasswordChange(password: String) {
+        loginDataState.value = loginDataState.value.copy(password = password)
+    }
+
+    fun onRoleChange(role: String) {
+        loginDataState.value = loginDataState.value.copy(role = role)
+    }
+
+    fun onLogin() {
+        Log.d("AuthViewModel", "Email: ${loginDataState.value.email}, Password: ${loginDataState.value.password}, Role: ${loginDataState.value.role}")
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = authRepository.login(loginDataState.value)
+                Log.d("AuthViewModel", "Response: $response")
+                Log.d("AuthViewModel", "Response body: ${response.body()}")
+
+                if (response.isSuccessful) {
+                    // save token and user
+                    val loginResponse: LoginResponse? = response.body()
+
+                    if (loginResponse != null) {
+                        token.value = loginResponse.token
+                        UserState.value = loginResponse.user
+                    }
+
+                } else {
+                    Log.e("AuthViewModel", "Error logging in: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                Log.e("AuthViewModel", "Error logging in: ", e)
+            }
         }
     }
-     */
+
+    fun onLogout() {
+        token.value = ""
+        UserState.value = User()
+    }
+
 }

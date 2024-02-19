@@ -42,8 +42,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
+import com.example.tutorapp395project.viewModel.AuthViewModel
 
 /*
     Function: Creates the login page with the background and user input fields
@@ -53,10 +55,16 @@ import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
  */
 @Composable
-fun LoginPage(navController: NavController) {
+fun LoginPage(
+        navController: NavController,
+        authViewModel: AuthViewModel = viewModel()
+    ) {
     Background()
     LoginBox()
-    Fields(navController = navController)
+    Fields(
+         navController = navController,
+        authViewModel = authViewModel
+    )
 }
 
 /*
@@ -84,10 +92,13 @@ fun LoginBox(modifier: Modifier = Modifier) {
     Return: None
  */
 @Composable
-fun Fields(navController: NavController, modifier: Modifier = Modifier){
-    var email by remember { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
-    var role by rememberSaveable { mutableStateOf("Student") }
+fun Fields(
+        navController: NavController,
+        modifier: Modifier = Modifier,
+        authViewModel: AuthViewModel = viewModel()
+    ){
+
+    val loginData = authViewModel.loginDataState.value
 
     Column(
         verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.CenterVertically),
@@ -97,93 +108,60 @@ fun Fields(navController: NavController, modifier: Modifier = Modifier){
             .padding(top = 400.dp)
     ){
         OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
+            value = loginData.email,
+            onValueChange = { authViewModel.onEmailChange(it) },
             label = { Text("Email", fontWeight = FontWeight.Black) }
         )
         Spacer(modifier = Modifier.height(10.dp))
         DropdownTextBox(
-            items = listOf("Student", "Tutor"),
-            selectedItem = role,
-            onItemSelected = { role = it }
+            items = listOf("student", "tutor"),
+            selectedItem = loginData.role,
+            onItemSelected = { authViewModel.onRoleChange(it) }
         )
         OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
+            value = loginData.password,
+            onValueChange = { authViewModel.onPasswordChange(it) },
             label = { Text("Password", fontWeight = FontWeight.Black)},
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
         )
-        Text(
-            text = "Forgot Password?",
-            fontWeight = FontWeight.Black,
-            fontSize = 15.sp,
-            modifier = Modifier
-                .align(Alignment.End)
-                .padding(end = 50.dp, bottom = 20.dp),
-            style = TextStyle(
-                color = Color(0xFFEEA47F)
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // LOGIN BUTTON
+        Button(
+            onClick = {
+                authViewModel.onLogin()
+                authViewModel.loginDataState.value = authViewModel.loginDataState.value.copy(email = "", password = "")
+                navController.navigate(ScreenGraph.authGraph.route)
+            },
+            colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
+
+        ) {
+            Text(
+                "Login",
+                style = TextStyle(
+                    color = Color(0xFFB24444),
+                )
             )
-        )
-        Spacer(modifier = Modifier.height(50.dp))
-        AuthButton(email = email, password = password, role = role, navController = navController,
-            target = Screen.StudentSchedule.route)
-        RegisterButton(navController = navController)
+        }
+
+        // REGISTER BUTTON
+        TextButton(
+            onClick = {navController.navigate(Screen.RegistrationPage.route)}
+        ) {
+            Text(
+                text = "Don't have an Account? Register Here!",
+                style = TextStyle(
+                    color = Color(0xFFEEA47F),
+                    fontWeight = FontWeight.Black,
+                    textAlign = TextAlign.End
+                )
+            )
+        }
     }
 }
 
-/*
-    Function: Creates the Login button which when clicked logs the user into their own account.
-    Parameters: email -> user's email
-                password -> user's password
-                role -> user's role
-                navController -> navigation controller
-                target -> target page
-                modifier -> takes modifier parameters
-    Return: None
- */
-@Composable
-fun AuthButton(email: String, password: String, role: String, navController: NavController,
-               target: String, modifier: Modifier = Modifier) {
-    Button(
-        onClick = {navController.navigate(target)},
-        colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
-        modifier = Modifier
-            .fillMaxWidth(0.7f)
-        //.padding(bottom = 30.dp)
-    ){
-        Text(
-            text = "LOGIN",
-            style = TextStyle(
-                color = Color(0xFFB24444)
-            )
-        )
-    }
-}
-/*
-    Function: Creates the Register button which when clicked takes the user to the register page.
-    Parameters: navController -> navigation controller
-                modifier -> takes modifier parameters
-    Return: None
- */
-@Composable
-fun RegisterButton(navController: NavController, modifier: Modifier = Modifier) {
-    TextButton(
-        onClick = {navController.navigate(Screen.RegistrationPage.route)},
-        modifier = Modifier
-            .fillMaxWidth(0.75f)
-            .padding(bottom = 30.dp)
-    ) {
-        Text(
-            text = "Don't have an Account? Register Here!",
-            style = TextStyle(
-                color = Color(0xFFEEA47F),
-                fontWeight = FontWeight.Black,
-                textAlign = TextAlign.End
-            )
-        )
-    }
-}
 
 /*
     Function: Creates the dropdown menu for the role

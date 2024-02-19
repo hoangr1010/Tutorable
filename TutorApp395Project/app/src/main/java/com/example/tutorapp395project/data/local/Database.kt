@@ -1,4 +1,4 @@
-package com.example.tutorapp395project.data
+package com.example.tutorapp395project.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

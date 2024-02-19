@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
+import com.example.tutorapp395project.viewModel.AuthViewModel
 
 /*
     Function: Creates the settings page
@@ -26,10 +27,14 @@ import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 
  */
 @Composable
-fun SettingsPage(navController: NavController, route: String) {
+fun SettingsPage(
+        navController: NavController,
+        route: String,
+        authViewModel: AuthViewModel
+    ) {
     BackgroundNoLogo()
     HomeBar(navController = navController, route = route )
-    SettingsColumn(navController = navController)
+    SettingsColumn(navController = navController, authViewModel = authViewModel)
 }
 
 /*
@@ -38,48 +43,38 @@ fun SettingsPage(navController: NavController, route: String) {
     Return: None
  */
 @Composable
-fun SettingsColumn(navController: NavController, modifier: Modifier = Modifier) {
+fun SettingsColumn(
+        navController: NavController,
+        authViewModel: AuthViewModel
+) {
     Column(
         verticalArrangement = Arrangement.spacedBy(15.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
     ) {
-        SettingButton(option = "Edit Profile", navController = navController,
-            target = Screen.Settings.route, color = 0xFFEEA47F)
-        SettingButton(option = "About", navController = navController,
-            target = Screen.Settings.route, color = 0xFFEEA47F)
-        SettingButton(option = "Logout", navController = navController,
-            target = Screen.LandingPage.route, color = 0xFFEEA47F)
+
+        Button(
+            onClick = {
+                authViewModel.onLogout()
+                navController.navigate(ScreenGraph.authGraph.route)
+            },
+            colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "Logout",
+                style = TextStyle(
+                    color = Color(0xFFB24444)
+                )
+            )
+        }
+
     }
 }
 
-/*
-    Function: Creates a button for the settings options to be placed into
-    Parameters: option -> name of the option
-                onClick() -> Link to the activity the button will send the user to
-                color -> Hex code of the color used for the button
-                modifier -> takes modifier parameters
-    Return: None
- */
-@Composable
-fun SettingButton(option: String, navController: NavController, target: String, color: Long,
-                  modifier: Modifier = Modifier) {
-    Button(
-        onClick = {navController.navigate(target)},
-        colors = ButtonDefaults.buttonColors(Color(color)),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "$option",
-            style = TextStyle(
-                color = Color(0xFFB24444)
-            )
-        )
-    }
-}
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -87,6 +82,9 @@ fun SettingsPreview() {
     TutorApp395ProjectTheme {
         BackgroundNoLogo()
         HomeBar(navController = NavController(LocalContext.current), route = "student")
-        SettingsColumn(navController = NavController(LocalContext.current))
+        SettingsColumn(
+            navController = NavController(LocalContext.current),
+            authViewModel = AuthViewModel()
+        )
     }
 }
