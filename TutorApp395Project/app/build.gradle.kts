@@ -1,12 +1,6 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    kotlin("kapt")
-<<<<<<< HEAD
-=======
-    id("com.google.dagger.hilt.android") version "2.44" apply false
-
->>>>>>> fddd448e1c9c85c4e4966bce1170441f9d0360ce
 }
 
 android {
@@ -61,17 +55,14 @@ android {
     }
 }
 
-
-
 dependencies {
 
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
-    implementation("androidx.test.ext:junit-ktx:1.1.5")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     val navVersion = "2.7.6"
     val composeVersion = "1.7.0-alpha01"
-    val room_version = "2.6.0"
+    val room = "2.6.0"
 
     implementation("androidx.navigation:navigation-compose:$navVersion")
     implementation("androidx.compose.ui:ui:$composeVersion")
@@ -100,16 +91,23 @@ dependencies {
     implementation("androidx.preference:preference:1.2.1")
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
     implementation("androidx.test.espresso:espresso-intents:3.5.1")
+    testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
     androidTestImplementation("io.mockk:mockk-android:1.12.0")
-    androidTestImplementation("androidx.test:runner:1.4.2")
-    androidTestImplementation("androidx.test:rules:1.4.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2")
+
+
+    androidTestImplementation("androidx.test.ext:junit:1.1.3")
+
+    androidTestImplementation("androidx.test:runner:1.5.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
     // retrofit
@@ -118,30 +116,4 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     // coil
     implementation("io.coil-kt:coil-compose:1.4.0")
-<<<<<<< HEAD
-    // Dagger
-    implementation ("com.google.dagger:dagger:2.40") // Core dagger library
-    annotationProcessor ("com.google.dagger:dagger-compiler:2.40") // Dagger annotation processor
-    implementation ("com.google.dagger:dagger-android:2.40") // Dagger Android support
-    implementation ("com.google.dagger:dagger-android-support:2.40") // Dagger Android support library
-    annotationProcessor ("com.google.dagger:dagger-android-processor:2.40") // Dagger Android annotation processor
-
-    // Room
-    annotationProcessor("androidx.room:room-compiler:$room_version")
-    implementation("androidx.room:room-runtime:2.6.0")
-    kapt("androidx.room:room-compiler:$room_version")
-    androidTestImplementation("androidx.room:room-testing:2.6.0")
-    //ksp("androidx.room:room-compiler:$room_version")
-    implementation("androidx.room:room-ktx:2.6.1")
 }
-
-=======
-    // Hilt
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-compiler:2.44")
-}
-
-kapt {
-    correctErrorTypes = true
-}
->>>>>>> fddd448e1c9c85c4e4966bce1170441f9d0360ce

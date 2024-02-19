@@ -30,6 +30,33 @@ fun Navigation (
         navController = navController,
         startDestination = Screen.LandingPage.route
     ) {
+        composable(route = Screen.LandingPage.route) {
+            LandingPage(navController = navController)
+        }
+        composable(route = Screen.LoginPage.route) {
+            LoginPage(navController = navController)
+        }
+        composable(route = Screen.RegistrationPage.route) {
+            RegistrationPage(navController = navController)
+        }
+        composable(route = Screen.StudentRegistration.route) {
+            StudentRegistration(navController = navController)
+        }
+        composable(route = Screen.TutorRegistration.route) {
+            TutorRegistration(navController = navController)
+        }
+        composable(route = Screen.StudentSchedule.route) {
+            StudentSchedule(navController = navController)
+        }
+        composable(route = Screen.TutorSchedule.route) {
+            TutorSchedule(navController = navController)
+        }
+        composable(route = Screen.StudentProfile.route) {
+            StudentProfile(navController = navController)
+        }
+        composable(route = Screen.TutorProfile.route) {
+            TutorProfile(navController = navController)
+        }
         // Go to the landing page
         composable(route = Screen.LandingPage.route) {
             LandingPage(navController = navController)

@@ -51,4 +51,4 @@ class AuthRepository {
         return RetrofitInstance.loginApi.loginStudent(loginRequest)
     }
 }
->>>>>>> fddd448e1c9c85c4e4966bce1170441f9d0360ce
+>>>>>>> cabralr2-main

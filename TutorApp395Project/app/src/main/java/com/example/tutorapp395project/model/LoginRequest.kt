@@ -8,11 +8,10 @@ package com.example.tutorapp395project.model
         - role: String
     Returns: Unit
  */
-<<<<<<< HEAD
+
 class LoginRequest(
-=======
 data class LoginRequest(
->>>>>>> fddd448e1c9c85c4e4966bce1170441f9d0360ce
+>>>>>>> cabralr2-main
     val username: String,
     val password: String,
     val role: String
@@ -24,10 +23,9 @@ data class LoginRequest(
         - token: String
     Returns: Unit
  */
-<<<<<<< HEAD
+
 class LoginResponse(
     val token: String
-=======
 data class LoginStudentResponse(
     val token: String,
     val id: String,
@@ -55,4 +53,5 @@ data class LoginTutorResponse(
     val description: String,
     val degrees: Array<String>
     // val picturePate: String
-    >>>>>>> fddd448e1c9c85c4e4966bce1170441f9d0360ce
+
+)

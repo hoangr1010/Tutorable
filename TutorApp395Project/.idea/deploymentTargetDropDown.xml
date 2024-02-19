@@ -24,6 +24,9 @@
       <entry key="testDeleteUser()">
         <State />
       </entry>
+      <entry key="testInsertUser()">
+        <State />
+      </entry>
     </value>
   </component>
 </project>
