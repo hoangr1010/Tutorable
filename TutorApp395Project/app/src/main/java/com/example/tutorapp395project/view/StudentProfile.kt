@@ -1,5 +1,6 @@
 package com.example.tutorapp395project.view
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -30,7 +32,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.tutorapp395project.R
+import com.example.tutorapp395project.data.Student
+import com.example.tutorapp395project.data.toStudent
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
+import com.example.tutorapp395project.viewModel.AuthViewModel
 
 /*
     Function: Creates the Student Profile page
@@ -38,10 +43,16 @@ import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
     Return: None
  */
 @Composable
-fun StudentProfile(navController: NavController) {
+fun StudentProfile(
+    navController: NavController,
+    authViewModel: AuthViewModel
+) {
     BackgroundNoLogo()
     HomeBar(navController = navController, route = "student")
-    StudentProfileColumn(R.drawable.student_id_photo)
+    StudentProfileColumn(
+        image = R.drawable.user_image,
+        authViewModel = authViewModel
+    )
 }
 
 /*
@@ -51,7 +62,12 @@ fun StudentProfile(navController: NavController) {
     Return: None
  */
 @Composable
-fun StudentProfileColumn(image: Int, modifier: Modifier = Modifier) {
+fun StudentProfileColumn(
+    image: Int,
+    authViewModel: AuthViewModel,
+) {
+    val student: Student = toStudent(authViewModel.UserState.value)
+    Log.d("StudentProfile", "Student: $student")
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -64,24 +80,26 @@ fun StudentProfileColumn(image: Int, modifier: Modifier = Modifier) {
                 .align(Alignment.TopCenter)
         ) {
             ProfilePic(image)
-            ProfileName(name = "Tommy McStudent")
+            ProfileName(name = "${student.first_name} ${student.last_name}")
         }
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(start = 30.dp, top = 300.dp)
         ) {
-            ProfileField(title = "Email", value = "tommyMcstudent@gmail.com")
-            Spacer(modifier = Modifier.height(10.dp))
-            ProfileField(title = "Date of Birth", value = "September 4, 2010")
-            Spacer(modifier = Modifier.height(10.dp))
-            ProfileField(title = "School", value = "Macewan Elementary")
-            Spacer(modifier = Modifier.height(10.dp))
-            ProfileField(title = "Grade", value = "6")
-            Spacer(modifier = Modifier.height(10.dp))
-            ProfileField(title = "Contact Number", value = "(780) 555-1234")
-            Spacer(modifier = Modifier.height(10.dp))
-            ProfileField(title = "Address", value = "1234 87 Ave NW Edmonton AB, T5T 8C5")
+            val fields = listOf("date_of_birth", "school", "grade", "email")
+            fields.forEach {field ->
+                item {
+                    ProfileField(title = field, value = when (field) {
+                        "date_of_birth" -> student.date_of_birth.toString()
+                        "school" -> student.school
+                        "grade" -> student.grade.toString()
+                        "email" -> student.email
+                        else -> ""
+                    }.toString())
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+            }
         }
     }
 }
@@ -178,6 +196,9 @@ fun StudentProfilePreview() {
     TutorApp395ProjectTheme {
         BackgroundNoLogo()
         HomeBar(navController = NavController(LocalContext.current), route = "student")
-        StudentProfileColumn(R.drawable.student_id_photo)
+        StudentProfileColumn(
+            R.drawable.student_id_photo,
+            AuthViewModel()
+        )
     }
 }

@@ -12,19 +12,11 @@ sealed class Screen(val route: String) {
     object TutorProfile: Screen("TutorProfile")
     object Settings: Screen("Settings")
 
-    /*
-    Purpose: function to add arguments to the route when navigating
-    Parameters:
-        - args: vararg String
-    Returns: String
-     */
-    fun withArgs(vararg args: String): String {
-        return buildString {
-            append(route)
-            args.forEach { arg ->
-                append("/$arg")
-            }
-        }
-    }
+}
+
+sealed class ScreenGraph(val route: String) {
+    object authGraph: ScreenGraph("authGraph")
+    object studentGraph: ScreenGraph("studentGraph")
+    object tutorGraph: ScreenGraph("tutorGraph")
 }
 

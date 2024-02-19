@@ -2,11 +2,10 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.tutorapp395project.data.AppDatabase
-import com.example.tutorapp395project.data.databaseDao
-import com.example.tutorapp395project.data.userTable
+import com.example.tutorapp395project.data.local.AppDatabase
+import com.example.tutorapp395project.data.local.databaseDao
+import com.example.tutorapp395project.data.local.userTable
 import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before

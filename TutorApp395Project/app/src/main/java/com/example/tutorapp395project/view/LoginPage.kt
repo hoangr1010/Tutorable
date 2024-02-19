@@ -1,6 +1,7 @@
 package com.example.tutorapp395project.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -32,14 +37,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
+import com.example.tutorapp395project.viewModel.AuthViewModel
 
 @Composable
-fun LoginPage(navController: NavController) {
+fun LoginPage(
+        navController: NavController,
+        authViewModel: AuthViewModel = viewModel()
+    ) {
     Background()
     LoginBox()
-    Fields(navController = navController)
+    Fields(
+         navController = navController,
+        authViewModel = authViewModel
+    )
 }
 
 /*
@@ -67,9 +80,13 @@ fun LoginBox(modifier: Modifier = Modifier) {
     Return: None
  */
 @Composable
-fun Fields(navController: NavController, modifier: Modifier = Modifier){
-    var userText by remember { mutableStateOf("Username") }
-    var password by rememberSaveable { mutableStateOf("") }
+fun Fields(
+        navController: NavController,
+        modifier: Modifier = Modifier,
+        authViewModel: AuthViewModel = viewModel()
+    ){
+
+    val loginData = authViewModel.loginDataState.value
 
     Column(
         verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.CenterVertically),
@@ -79,50 +96,89 @@ fun Fields(navController: NavController, modifier: Modifier = Modifier){
             .padding(top = 400.dp)
     ){
         OutlinedTextField(
-            value = userText,
-            onValueChange = { userText = it },
-            label = { Text("Username", fontWeight = FontWeight.Black) }
+            value = loginData.email,
+            onValueChange = { authViewModel.onEmailChange(it) },
+            label = { Text("Email", fontWeight = FontWeight.Black) }
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        DropdownTextBox(
+            items = listOf("student", "tutor"),
+            selectedItem = loginData.role,
+            onItemSelected = { authViewModel.onRoleChange(it) }
         )
         OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
+            value = loginData.password,
+            onValueChange = { authViewModel.onPasswordChange(it) },
             label = { Text("Password", fontWeight = FontWeight.Black)},
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
         )
-        Text(
-            text = "Forgot Password?",
-            fontWeight = FontWeight.Black,
-            fontSize = 15.sp,
-            modifier = Modifier
-                .align(Alignment.End)
-                .padding(end = 50.dp, bottom = 20.dp),
-            style = TextStyle(
-                color = Color(0xFFEEA47F)
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // LOGIN BUTTON
+        Button(
+            onClick = {
+                authViewModel.onLogin()
+                authViewModel.loginDataState.value = authViewModel.loginDataState.value.copy(email = "", password = "")
+                navController.navigate(ScreenGraph.authGraph.route)
+            },
+            colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
+
+        ) {
+            Text(
+                "Login",
+                style = TextStyle(
+                    color = Color(0xFFB24444),
+                )
             )
-        )
-        Spacer(modifier = Modifier.height(50.dp))
-        LoginButton(navController = navController, target = Screen.StudentSchedule.route)
-        RegisterButton(navController = navController)
+        }
+
+        // REGISTER BUTTON
+        TextButton(
+            onClick = {navController.navigate(Screen.RegistrationPage.route)}
+        ) {
+            Text(
+                text = "Don't have an Account? Register Here!",
+                style = TextStyle(
+                    color = Color(0xFFEEA47F),
+                    fontWeight = FontWeight.Black,
+                    textAlign = TextAlign.End
+                )
+            )
+        }
     }
 }
 
 @Composable
-fun RegisterButton(navController: NavController, modifier: Modifier = Modifier) {
-    TextButton(
-        onClick = {navController.navigate(Screen.RegistrationPage.route)},
-        modifier = Modifier
-            .fillMaxWidth(0.8f)
-            .padding(bottom = 30.dp)
-    ) {
+fun DropdownTextBox(
+    items: List<String>,
+    selectedItem: String,
+    onItemSelected: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedValue by remember { mutableStateOf(selectedItem) }
+
+    Box(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = "Don't have an Account? Register Here!",
-            style = TextStyle(
-                color = Color(0xFFEEA47F),
-                fontWeight = FontWeight.Black,
-                textAlign = TextAlign.End
-            )
+            text = selectedValue,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { expanded = true }
         )
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            items.forEach { item ->
+                DropdownMenuItem(onClick = {
+                    selectedValue = item
+                    onItemSelected(item)
+                    expanded = false
+                },text = { Text(text = item) })
+            }
+        }
     }
 }
 

@@ -172,7 +172,6 @@ fun HomeBar(navController: NavController, modifier: Modifier = Modifier, route: 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(108.dp)
                 .background(
                     color = Color(0xFFD9D9D9),
                     shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
@@ -192,11 +191,11 @@ fun HomeBar(navController: NavController, modifier: Modifier = Modifier, route: 
                 if (route == "tutor") {
                     HomeBarOption(
                         icon = painterResource(R.drawable.calendar), option = "Schedule",
-                        navController = navController, target = Screen.StudentSchedule.route
+                        navController = navController, target = Screen.TutorSchedule.route
                     )
                     HomeBarOption(
                         icon = painterResource(R.drawable.profile), option = "Profile",
-                        navController = navController, target = Screen.StudentProfile.route
+                        navController = navController, target = Screen.TutorProfile.route
                     )
                 }
                 HomeBarOption(
