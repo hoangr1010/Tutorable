@@ -12,14 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -32,7 +28,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -47,13 +42,6 @@ import androidx.navigation.NavController
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 import com.example.tutorapp395project.viewModel.AuthViewModel
 
-/*
-    Function: Creates the login page with the background and user input fields
-    Parameters:
-        - navController: NavController
-    Return: None
-
- */
 @Composable
 fun LoginPage(
         navController: NavController,
@@ -162,68 +150,33 @@ fun Fields(
     }
 }
 
-
-/*
-    Function: Creates the dropdown menu for the role
-    Parameters:
-        - items: List<String>
-        - selectedItem: String
-        - onItemSelected: (String) -> Unit
-        - modifier: Modifier
-        - arrowIcon: ImageVector
-    Return: None
- */
 @Composable
 fun DropdownTextBox(
     items: List<String>,
     selectedItem: String,
-    onItemSelected: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    arrowIcon: ImageVector = Icons.Default.ArrowDropDown
+    onItemSelected: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var textValue by remember { mutableStateOf(selectedItem) }
+    var selectedValue by remember { mutableStateOf(selectedItem) }
 
-    Box(modifier = modifier) {
-        OutlinedTextField(
-            value = textValue,
-            onValueChange = { textValue = it },
+    Box(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = selectedValue,
             modifier = Modifier
-                .fillMaxWidth(0.72f)
+                .fillMaxWidth()
                 .clickable { expanded = true }
-                //.padding(end = 0.dp) // Adjust padding to make space for the arrow
         )
-        IconButton(
-            onClick = { expanded = true },
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(end = 2.dp)
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Icon(
-                imageVector = arrowIcon,
-                contentDescription = "Dropdown Arrow"
-            )
-        }
-
-        if (expanded) {
-            DropdownMenu(
-                expanded = true,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier
-                    .fillMaxWidth(0.72f)
-                    .padding(top = 48.dp) // Adjust the top padding to position the dropdown menu
-            ) {
-                items.forEach { item ->
-                    DropdownMenuItem(
-                        onClick = {
-                            onItemSelected(item)
-                            textValue = item
-                            expanded = false
-                        }
-                    ) {
-                        Text(text = item)
-                    }
-                }
+            items.forEach { item ->
+                DropdownMenuItem(onClick = {
+                    selectedValue = item
+                    onItemSelected(item)
+                    expanded = false
+                },text = { Text(text = item) })
             }
         }
     }

@@ -2,14 +2,13 @@ package com.example.tutorapp395project.repository
 
 import com.example.tutorapp395project.data.LoginData
 import com.example.tutorapp395project.data.LoginResponse
-import com.example.tutorapp395project.data.remote.AuthService
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class AuthRepository {
 
-    private var authService: AuthService
+    private var authService: com.example.tutorapp395project.data.remote.AuthService
 
     init {
         val retrofit = Retrofit

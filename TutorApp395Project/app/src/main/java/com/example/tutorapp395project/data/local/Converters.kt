@@ -1,8 +1,7 @@
 package com.example.tutorapp395project.data.local
 
-import androidx.room.TypeConverter
-//import androidx.room.solver.types.TypeConverter
 import java.util.Date
+import androidx.room.TypeConverter
 
 class Converters {
     @TypeConverter
