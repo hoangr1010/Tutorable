@@ -82,3 +82,19 @@ fun toTutor(user: User): Tutor {
         date_of_birth = stringToDate(user.date_of_birth)
     )
 }
+
+val dummyUser = User(
+    id = "20",
+    email = "huyhoangr1010@gmail.com",
+    role = "student",
+    first_name = "Hoang",
+    last_name = "Daddy",
+    date_of_birth = "2002-02-02T00:00:00Z",
+    expertise = null,
+    verified_status=false.toString(),
+    degrees=null,
+    grade = 11,
+    school = "High School XYZ"
+)
+
+val dummyToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"

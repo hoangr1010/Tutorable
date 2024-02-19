@@ -1,4 +1,4 @@
-package com.example.tutorapp395project.view
+package com.example.tutorapp395project.screen.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,23 +21,6 @@ import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 import com.example.tutorapp395project.viewModel.AuthViewModel
 
 /*
-    Function: Creates the settings page
-    Parameters: navController -> Navigation controller used to navigate between different composables
-    Return: None
-
- */
-@Composable
-fun SettingsPage(
-        navController: NavController,
-        route: String,
-        authViewModel: AuthViewModel
-    ) {
-    BackgroundNoLogo()
-    HomeBar(navController = navController, route = route )
-    SettingsColumn(navController = navController, authViewModel = authViewModel)
-}
-
-/*
     Function: Creates a column for all the settings buttons to be placed into
     Parameters: modifier -> takes modifier parameters
     Return: None
@@ -45,7 +28,8 @@ fun SettingsPage(
 @Composable
 fun SettingsColumn(
         navController: NavController,
-        authViewModel: AuthViewModel
+        authViewModel: AuthViewModel,
+        modifier: Modifier
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(15.dp, Alignment.CenterVertically),
@@ -75,16 +59,15 @@ fun SettingsColumn(
     }
 }
 
-
-@Preview(showBackground = true, showSystemUi = true)
+@Preview
 @Composable
 fun SettingsPreview() {
     TutorApp395ProjectTheme {
-        BackgroundNoLogo()
-        HomeBar(navController = NavController(LocalContext.current), route = "student")
         SettingsColumn(
             navController = NavController(LocalContext.current),
-            authViewModel = AuthViewModel()
+            authViewModel = AuthViewModel(),
+            modifier = Modifier
+                .fillMaxSize()
         )
     }
 }

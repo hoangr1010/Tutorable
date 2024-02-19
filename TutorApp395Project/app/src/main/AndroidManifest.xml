@@ -61,7 +61,7 @@
             android:label="@string/title_activity_login_page.kt"
             android:theme="@style/Theme.TutorApp395Project" />
         <activity
-            android:name=".view.MainActivity"
+            android:name=".screen.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.TutorApp395Project">
