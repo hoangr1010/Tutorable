@@ -1,6 +1,8 @@
 package com.example.tutorapp395project.screen.view
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -17,6 +21,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -28,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -37,6 +43,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.tutorapp395project.R
+import com.example.tutorapp395project.screen.component.LoginBox
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 import com.example.tutorapp395project.viewModel.AuthViewModel
 
@@ -45,32 +53,43 @@ fun LoginPage(
         navController: NavController,
         authViewModel: AuthViewModel = viewModel()
     ) {
-    Background()
-    LoginBox()
-    Fields(
-         navController = navController,
-        authViewModel = authViewModel
+
+    // Reset Register Page
+    authViewModel.onRegisterRoleChange("")
+
+    Scaffold(
+        containerColor = Color(0xFF00539C),
+        content = {
+            Column (
+                modifier = Modifier
+                    .padding(it)
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceAround
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.tutorapple), // image file
+                    contentDescription = "tutorapple-logo",
+                    modifier = Modifier.size(300.dp).wrapContentSize()
+                )
+                Fields(
+                    navController = navController,
+                    authViewModel = authViewModel
+                )
+
+            }
+        }
     )
+
+//    Background()
+//    Fields(
+//        navController = navController,
+//        authViewModel = authViewModel
+//    )
+
+
 }
 
-/*
-    Function: Creates the off white box that is used as the background for user input
-    Parameters: modifier -> takes modifier parameters
-    Return: None
- */
-@Composable
-fun LoginBox(modifier: Modifier = Modifier) {
-    Box (
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(900.dp)
-            .padding(top = 349.dp)
-            .background(
-                color = Color(0xFFD9D9D9),
-                shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
-            )
-    )
-}
 
 /*
     Function: Creates the Username and Password fields for the Login Box
@@ -79,9 +98,8 @@ fun LoginBox(modifier: Modifier = Modifier) {
  */
 @Composable
 fun Fields(
-        navController: NavController,
-        modifier: Modifier = Modifier,
-        authViewModel: AuthViewModel = viewModel()
+    navController: NavController,
+    authViewModel: AuthViewModel,
     ){
 
     val loginData = authViewModel.loginDataState.value
@@ -90,26 +108,32 @@ fun Fields(
         verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 400.dp)
+            .wrapContentSize()
+            .padding(20.dp)
+            .background(color = Color.White, shape = RoundedCornerShape(30.dp))
+            .padding(20.dp)
     ){
         OutlinedTextField(
             value = loginData.email,
             onValueChange = { authViewModel.onEmailChange(it) },
-            label = { Text("Email", fontWeight = FontWeight.Black) }
+            label = { Text("Email", fontWeight = FontWeight.Black) },
+            modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(10.dp))
         DropdownTextBox(
             items = listOf("student", "tutor"),
             selectedItem = loginData.role,
-            onItemSelected = { authViewModel.onRoleChange(it) }
+            onItemSelected = { authViewModel.onRoleChange(it) },
+
         )
         OutlinedTextField(
             value = loginData.password,
             onValueChange = { authViewModel.onPasswordChange(it) },
             label = { Text("Password", fontWeight = FontWeight.Black)},
             visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            modifier = Modifier.fillMaxWidth()
+
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -157,12 +181,20 @@ fun DropdownTextBox(
     var expanded by remember { mutableStateOf(false) }
     var selectedValue by remember { mutableStateOf(selectedItem) }
 
-    Box(modifier = Modifier.fillMaxWidth()) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(30.dp)
+            .border(1.dp, Color.Black, RoundedCornerShape(4.dp))
+        ,
+        contentAlignment = Alignment.CenterStart
+    ) {
         Text(
             text = selectedValue,
             modifier = Modifier
-                .fillMaxWidth()
                 .clickable { expanded = true }
+                .padding(start = 8.dp)
+            ,
         )
         DropdownMenu(
             expanded = expanded,
@@ -186,8 +218,6 @@ fun DropdownTextBox(
 @Composable
 fun LoginPagePreview() {
     TutorApp395ProjectTheme {
-        Background()
-        LoginBox()
-        Fields(navController = NavController(LocalContext.current))
+        LoginPage(navController = NavController(LocalContext.current))
     }
 }

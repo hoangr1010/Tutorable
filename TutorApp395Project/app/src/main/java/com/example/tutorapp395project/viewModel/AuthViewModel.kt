@@ -21,6 +21,8 @@ class AuthViewModel(
     val UserState = mutableStateOf(User())
     val token = mutableStateOf("")
 
+    val registerRoleState = mutableStateOf("")
+
     // DEVELOPMENT ONLY
 //    val UserState = mutableStateOf(dummyUser)
 //    val token = mutableStateOf(dummyToken)
@@ -35,6 +37,10 @@ class AuthViewModel(
 
     fun onRoleChange(role: String) {
         loginDataState.value = loginDataState.value.copy(role = role)
+    }
+
+    fun onRegisterRoleChange(role: String) {
+        registerRoleState.value = role
     }
 
     fun onLogin() {

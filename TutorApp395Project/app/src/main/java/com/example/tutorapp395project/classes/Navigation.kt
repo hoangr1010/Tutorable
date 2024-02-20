@@ -14,8 +14,6 @@ import com.example.tutorapp395project.screen.MainStudent
 import com.example.tutorapp395project.screen.MainTutor
 import com.example.tutorapp395project.screen.view.RegistrationPage
 import com.example.tutorapp395project.screen.view.ScreenGraph
-import com.example.tutorapp395project.screen.view.StudentRegistration
-import com.example.tutorapp395project.screen.view.TutorRegistration
 import com.example.tutorapp395project.viewModel.AuthViewModel
 
 /*
@@ -55,17 +53,10 @@ fun Navigation (
 
             composable(route = Screen.RegistrationPage.route) {
                 checkUserRoleAndNavigate(navController, authViewModel)
-                RegistrationPage(navController = navController)
-            }
-
-            composable(route = Screen.StudentRegistration.route) {
-                checkUserRoleAndNavigate(navController, authViewModel)
-                StudentRegistration(navController = navController)
-            }
-
-            composable(route = Screen.TutorRegistration.route) {
-                checkUserRoleAndNavigate(navController, authViewModel)
-                TutorRegistration(navController = navController)
+                RegistrationPage(
+                    navController = navController,
+                    authViewModel = authViewModel
+                )
             }
         }
 

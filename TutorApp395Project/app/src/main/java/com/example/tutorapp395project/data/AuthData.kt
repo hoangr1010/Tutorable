@@ -83,6 +83,48 @@ fun toTutor(user: User): Tutor {
     )
 }
 
+// FOR REGISTRATION
+
+data class RegisterData (
+    val first_name: String = "",
+    val last_name: String = "",
+    val role: String = "tutor",
+    val date_of_birth: String = "",
+    val email: String = "",
+    val password: String = "",
+    val expertise: List<String>? = emptyList(),
+    val experience: String = "junior",
+    val description: String? = null,
+    val degrees: List<String>? = emptyList(),
+    val grade: Int = 0,
+    val school: String = ""
+)
+
+data class RegisterDataTutor(
+    val first_name: String = "",
+    val last_name: String = "",
+    val role: String = "tutor",
+    val date_of_birth: String = "",
+    val email: String = "",
+    val password: String = "",
+    val expertise: List<String>? = emptyList(),
+    val experience: String = "junior",
+    val description: String? = null,
+    val degrees: List<String>? = emptyList()
+)
+
+data class RegisterDataStudent(
+    val first_name: String = "",
+    val last_name: String = "",
+    val role: String = "student",
+    val email: String = "",
+    val password: String = "",
+    val date_of_birth: String = "",
+    val grade: Int = 0,
+    val school: String = ""
+)
+
+// For development only
 val dummyUser = User(
     id = "20",
     email = "huyhoangr1010@gmail.com",
