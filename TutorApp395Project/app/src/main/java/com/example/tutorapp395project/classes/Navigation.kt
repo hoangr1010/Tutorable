@@ -1,6 +1,5 @@
 package com.example.tutorapp395project.classes
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -9,17 +8,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.example.tutorapp395project.view.LandingPage
-import com.example.tutorapp395project.view.LoginPage
-import com.example.tutorapp395project.view.RegistrationPage
-import com.example.tutorapp395project.view.ScreenGraph
-import com.example.tutorapp395project.view.SettingsPage
-import com.example.tutorapp395project.view.StudentProfile
-import com.example.tutorapp395project.view.StudentRegistration
-import com.example.tutorapp395project.view.StudentSchedule
-import com.example.tutorapp395project.view.TutorProfile
-import com.example.tutorapp395project.view.TutorRegistration
-import com.example.tutorapp395project.view.TutorSchedule
+import com.example.tutorapp395project.screen.view.LandingPage
+import com.example.tutorapp395project.screen.view.LoginPage
+import com.example.tutorapp395project.screen.MainStudent
+import com.example.tutorapp395project.screen.MainTutor
+import com.example.tutorapp395project.screen.view.RegistrationPage
+import com.example.tutorapp395project.screen.view.ScreenGraph
 import com.example.tutorapp395project.viewModel.AuthViewModel
 
 /*
@@ -59,60 +53,28 @@ fun Navigation (
 
             composable(route = Screen.RegistrationPage.route) {
                 checkUserRoleAndNavigate(navController, authViewModel)
-                RegistrationPage(navController = navController)
-            }
-
-            composable(route = Screen.StudentRegistration.route) {
-                checkUserRoleAndNavigate(navController, authViewModel)
-                StudentRegistration(navController = navController)
-            }
-
-            composable(route = Screen.TutorRegistration.route) {
-                checkUserRoleAndNavigate(navController, authViewModel)
-                TutorRegistration(navController = navController)
+                RegistrationPage(
+                    navController = navController,
+                    authViewModel = authViewModel
+                )
             }
         }
 
         // STUDENT GRAPH
-        navigation(startDestination = Screen.StudentSchedule.route, route = "student") {
+        navigation(startDestination = "mainStudent", route = "student") {
 
-                composable(route = Screen.StudentSchedule.route) {
-                    StudentSchedule(navController = navController)
-                }
-                composable(route = Screen.StudentProfile.route) {
-                    StudentProfile(
-                        navController = navController,
-                        authViewModel = authViewModel
-                    )
-                }
-                composable(route = Screen.Settings.route) {
-                    SettingsPage(
-                        navController = navController,
-                        route = "student",
-                        authViewModel = authViewModel
-                    )
+                composable(route = "mainStudent") {
+                    MainStudent(navController = navController, authViewModel = authViewModel)
                 }
         }
 
         // TUTOR GRAPH
-        navigation(startDestination = Screen.TutorProfile.route, route = "tutor") {
+        navigation(startDestination = "mainTutor", route = "tutor") {
 
-                composable(route = Screen.TutorSchedule.route) {
-                    TutorSchedule(navController = navController)
-                }
-                composable(route = Screen.TutorProfile.route) {
-                    TutorProfile(
-                        navController = navController,
-                        authViewModel = authViewModel
-                    )
-                }
-                composable(route = Screen.Settings.route) {
-                    SettingsPage(
-                        navController = navController,
-                        route = "tutor",
-                        authViewModel = authViewModel
-                    )
-                }
+            composable(route = "mainTutor") {
+                MainTutor(navController = navController, authViewModel = authViewModel)
+            }
+
         }
     }
 }

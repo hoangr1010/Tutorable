@@ -1,4 +1,4 @@
-package com.example.tutorapp395project.view
+package com.example.tutorapp395project.screen.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
