@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.tutorapp395project.data.LoginData
 import com.example.tutorapp395project.data.LoginResponse
 import com.example.tutorapp395project.data.User
+import com.example.tutorapp395project.data.dummyToken
+import com.example.tutorapp395project.data.dummyUser
 import com.example.tutorapp395project.repository.AuthRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,6 +21,12 @@ class AuthViewModel(
     val UserState = mutableStateOf(User())
     val token = mutableStateOf("")
 
+    val registerRoleState = mutableStateOf("")
+
+    // DEVELOPMENT ONLY
+//    val UserState = mutableStateOf(dummyUser)
+//    val token = mutableStateOf(dummyToken)
+
     fun onEmailChange(email: String) {
         loginDataState.value = loginDataState.value.copy(email = email)
     }
@@ -29,6 +37,10 @@ class AuthViewModel(
 
     fun onRoleChange(role: String) {
         loginDataState.value = loginDataState.value.copy(role = role)
+    }
+
+    fun onRegisterRoleChange(role: String) {
+        registerRoleState.value = role
     }
 
     fun onLogin() {

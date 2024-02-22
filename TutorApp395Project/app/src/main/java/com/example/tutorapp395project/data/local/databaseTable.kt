@@ -3,6 +3,7 @@ package com.example.tutorapp395project.data.local
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.sql.Timestamp
+import java.time.LocalTime
 import java.util.Date
 
 //@Entity(tableName = "tutor")
@@ -41,10 +42,14 @@ data class userTable (
     val last_name: String,
     val date_of_birth: Date,
     val grade_level: Int,
-    val school: String,
+    val education: String,
     val email: String,
     val password: String,
-    val role: String // To check if student or tutor
+    val role: String, // To check if student or tutor
+    val expertise: Array<String>,
+    val experience: Array<String>,
+    val description: String,
+    val school: String,
 )
 
 @Entity(tableName = "session")
@@ -57,8 +62,7 @@ data class tutor_session (
     val description: String,
     val subject: String,
     val grade: Int,
-    val start_time: Timestamp,
-    val stop_time: Timestamp,
+    val timeBlocks: Array<Int>,
     val status: String
 )
 
@@ -69,4 +73,12 @@ data class tutor_availability (
     val tutor_id: Int,
     val start_time: Timestamp,
     val stop_time: Timestamp
+)
+
+@Entity(tableName = "Timestamp")
+data class Timestamp (
+    @PrimaryKey(autoGenerate = true)
+    val timestamp_id: Int,
+    val startTime: LocalTime,
+    val stopTime: LocalTime,
 )

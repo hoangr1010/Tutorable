@@ -1,46 +1,24 @@
-package com.example.tutorapp395project.view
+package com.example.tutorapp395project.screen.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.example.tutorapp395project.R
-import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
-
-/*
-    Function: Creates the Student Schedule page
-    Parameters: navController -> Navigation controller used to navigate between different composables
-    Return: None
- */
-@Composable
-fun StudentSchedule(navController: NavController) {
-    BackgroundNoLogo()
-    HomeBar(navController = navController, route = "student")
-    StudentAppointmentLayout()
-}
 
 /*
     Function: This creates a column that lays out all the users scheduled appointments
@@ -49,7 +27,7 @@ fun StudentSchedule(navController: NavController) {
  */
 @Composable
 fun StudentAppointmentLayout(modifier: Modifier = Modifier) {
-    Column(
+    LazyColumn(
         verticalArrangement = Arrangement.spacedBy(15.dp, Alignment.Top),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -57,11 +35,12 @@ fun StudentAppointmentLayout(modifier: Modifier = Modifier) {
             .padding(top = 20.dp)
     )
         {
-        Appointment("3:00PM - 4:00PM", "January 24th, 2024", "Math",
+            items(19) {
+                Appointment("3:00PM - 4:00PM", "January 24th, 2024", "Math",
                     "Tutor","Karen McTutor")
-        Appointment("4:00PM - 5:00PM", "January 24th, 2024", "History",
-                    "Tutor","Karen McTutor")
-    }
+
+            }
+        }
 }
 
 /*
@@ -140,80 +119,75 @@ fun BackgroundNoLogo(modifier: Modifier = Modifier) {
                 modifier -> takes modifier parameters
     Return: None
  */
-@Composable
-fun HomeBarOption(icon: Painter, option: String, navController: NavController, target: String,
-                  modifier: Modifier = Modifier) {
-    Button(
-        onClick = {navController.navigate(target)},
-        colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
-        modifier = Modifier
-            .padding(16.dp)
-        ) {
-        Text(
-            text = "$option",
-            style = TextStyle(color = Color(0xFFB24444))
-        )
-    }
-}
+//@Composable
+//fun HomeBarOption(icon: Painter, option: String, navController: NavController, target: String,
+//                  modifier: Modifier = Modifier) {
+//    Button(
+//        onClick = {navController.navigate(target)},
+//        colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
+//        modifier = Modifier
+//            .padding(16.dp)
+//        ) {
+//        Text(
+//            text = "$option",
+//            style = TextStyle(color = Color(0xFFB24444))
+//        )
+//    }
+//}
 
 /*
     Function: Creates the homebar that the user will use to navigate between pages
     Parameters: modifier -> takes modifier parameters
     Return: None
  */
-@Composable
-fun HomeBar(navController: NavController, modifier: Modifier = Modifier, route: String) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Bottom,
-        modifier = Modifier
-            .fillMaxSize()
-    ){
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    color = Color(0xFFD9D9D9),
-                    shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
-                )
-        ) {
-            Row {
-                if (route == "student") {
-                    HomeBarOption(
-                        icon = painterResource(R.drawable.calendar), option = "Schedule",
-                        navController = navController, target = Screen.StudentSchedule.route
-                    )
-                    HomeBarOption(
-                        icon = painterResource(R.drawable.profile), option = "Profile",
-                        navController = navController, target = Screen.StudentProfile.route
-                    )
-                }
-                if (route == "tutor") {
-                    HomeBarOption(
-                        icon = painterResource(R.drawable.calendar), option = "Schedule",
-                        navController = navController, target = Screen.TutorSchedule.route
-                    )
-                    HomeBarOption(
-                        icon = painterResource(R.drawable.profile), option = "Profile",
-                        navController = navController, target = Screen.TutorProfile.route
-                    )
-                }
-                HomeBarOption(
-                    icon = painterResource(R.drawable.settings), option = "Settings",
-                    navController = navController, target = Screen.Settings.route
-                )
-            }
-        }
-    }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun StudentSchedulePreview() {
-    TutorApp395ProjectTheme {
-        BackgroundNoLogo()
-        HomeBar(navController = NavController(LocalContext.current), route = "student")
-        StudentAppointmentLayout()
-    }
-}
+//@Composable
+//fun HomeBar(navController: NavController, modifier: Modifier = Modifier, route: String) {
+//    Column(
+//        horizontalAlignment = Alignment.CenterHorizontally,
+//        verticalArrangement = Arrangement.Bottom,
+//        modifier = Modifier
+//            .fillMaxSize()
+//    ){
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .background(
+//                    color = Color(0xFFD9D9D9),
+//                    shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
+//                )
+//        ) {
+//            Row {
+//                if (route == "student") {
+//                    HomeBarOption(
+//                        icon = painterResource(R.drawable.calendar), option = "Schedule",
+//                        navController = navController, target = Screen.StudentSchedule.route
+//                    )
+//                    HomeBarOption(
+//                        icon = painterResource(R.drawable.profile), option = "Profile",
+//                        navController = navController, target = Screen.StudentProfile.route
+//                    )
+//                    HomeBarOption(
+//                        icon = painterResource(R.drawable.settings), option = "Settings",
+//                        navController = navController, target = Screen.Settings.route + "/$route"
+//                    )
+//                }
+//                if (route == "tutor") {
+//                    HomeBarOption(
+//                        icon = painterResource(R.drawable.calendar), option = "Schedule",
+//                        navController = navController, target = Screen.TutorSchedule.route
+//                    )
+//                    HomeBarOption(
+//                        icon = painterResource(R.drawable.profile), option = "Profile",
+//                        navController = navController, target = Screen.TutorProfile.route
+//                    )
+//                    HomeBarOption(
+//                        icon = painterResource(R.drawable.settings), option = "Settings",
+//                        navController = navController, target = Screen.Settings.route + "/$route"
+//                    )
+//
+//                }
+//            }
+//        }
+//    }
+//}
+//

@@ -1,4 +1,4 @@
-package com.example.tutorapp395project.view
+package com.example.tutorapp395project.screen.view
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -9,44 +9,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.example.tutorapp395project.R
 import com.example.tutorapp395project.data.toTutor
-import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 import com.example.tutorapp395project.viewModel.AuthViewModel
-
-/*
-    Function: Creates the Tutor Profile page
-    Parameters: navController -> Navigation controller used to navigate between different composables
-    Return: None
- */
-@Composable
-fun TutorProfile(
-        navController: NavController,
-        authViewModel: AuthViewModel
-) {
-    Scaffold(
-        containerColor = Color(0xFF00539C),
-        bottomBar = { HomeBar(navController = navController, route = "tutor", modifier = Modifier) },
-        content = {
-            TutorProfileColumn(
-                image = R.drawable.user_image,
-                authViewModel = authViewModel,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(it)
-            )
-        }
-    )
-}
 
 /*
     Function: Creates a column for all the tutors data will be displayed into
@@ -99,16 +67,5 @@ fun TutorProfileColumn(
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TutorProfilePreview() {
-    TutorApp395ProjectTheme {
-        TutorProfile(
-            navController = NavController(LocalContext.current),
-            authViewModel = AuthViewModel()
-        )
     }
 }
