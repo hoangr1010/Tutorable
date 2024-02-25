@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.tutorapp395project.data.toTutor
 import com.example.tutorapp395project.viewModel.AuthViewModel
@@ -69,3 +70,9 @@ fun TutorProfileColumn(
         }
     }
 }
+
+//@Preview
+//@Composable
+//fun PreviewTutorProfile(){
+//    TutorProfileColumn(12,AuthViewModel())
+//}
