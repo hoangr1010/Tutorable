@@ -6,12 +6,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tutorapp395project.data.LoginData
 import com.example.tutorapp395project.data.LoginResponse
+import com.example.tutorapp395project.data.RegisterData
+import com.example.tutorapp395project.data.RegisterDataStudent
+import com.example.tutorapp395project.data.RegisterResponse
 import com.example.tutorapp395project.data.User
 import com.example.tutorapp395project.data.dummyToken
 import com.example.tutorapp395project.data.dummyUser
+import com.example.tutorapp395project.data.toStudentRegisterData
+import com.example.tutorapp395project.data.toTutorRegisterData
 import com.example.tutorapp395project.repository.AuthRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.Response
 
 class AuthViewModel(
     private val authRepository: AuthRepository = AuthRepository()
@@ -21,27 +27,22 @@ class AuthViewModel(
     val UserState = mutableStateOf(User())
     val token = mutableStateOf("")
 
-    val registerRoleState = mutableStateOf("")
+    val registerDataState = mutableStateOf(RegisterData())
+    val registerState = mutableStateOf<String>("")
 
     // DEVELOPMENT ONLY
 //    val UserState = mutableStateOf(dummyUser)
 //    val token = mutableStateOf(dummyToken)
 
-    fun onEmailChange(email: String) {
-        loginDataState.value = loginDataState.value.copy(email = email)
+    fun onLoginChange(update: (LoginData) -> LoginData) {
+        loginDataState.value = update(loginDataState.value)
     }
 
-    fun onPasswordChange(password: String) {
-        loginDataState.value = loginDataState.value.copy(password = password)
+    fun onRegisterChange(update: (RegisterData) -> RegisterData) {
+        registerDataState.value = update(registerDataState.value)
     }
 
-    fun onRoleChange(role: String) {
-        loginDataState.value = loginDataState.value.copy(role = role)
-    }
 
-    fun onRegisterRoleChange(role: String) {
-        registerRoleState.value = role
-    }
 
     fun onLogin() {
         Log.d("AuthViewModel", "Email: ${loginDataState.value.email}, Password: ${loginDataState.value.password}, Role: ${loginDataState.value.role}")
@@ -72,6 +73,36 @@ class AuthViewModel(
     fun onLogout() {
         token.value = ""
         UserState.value = User()
+    }
+
+    fun onRegister() {
+        Log.d("AuthViewModel", "${registerDataState.value}")
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                lateinit var response: Response<RegisterResponse>
+                if (registerDataState.value.role == "student") {
+                    response = authRepository.registerAsStudent(toStudentRegisterData(registerDataState.value))
+                } else {
+                    response = authRepository.registerAsTutor(toTutorRegisterData(registerDataState.value))
+                }
+
+                if (response.isSuccessful) {
+                    val registerResponse: RegisterResponse? = response.body()
+                    if (registerResponse != null) {
+                        Log.d("AuthViewModel", "Register response: ${registerResponse.result}")
+                        registerState.value = if (registerResponse.result) "✅ You successfully create new account!" else "❌ Error creating account. Please try again."
+                    }
+                } else {
+                    Log.e("AuthViewModel", "Error registering: ${response.message()}")
+                    registerState.value = "❌ Error creating account: ${response.message()}. Please try again."
+                }
+
+            } catch (e: Exception) {
+                Log.e("AuthViewModel", "Error registering: ", e)
+                registerState.value = "❌ Error creating account: ${e}. Please try again."
+
+            }
+        }
     }
 
 }
