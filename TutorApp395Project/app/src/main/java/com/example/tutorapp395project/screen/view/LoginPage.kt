@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.tutorapp395project.R
-import com.example.tutorapp395project.screen.component.LoginBox
+import com.example.tutorapp395project.data.RegisterData
 import com.example.tutorapp395project.ui.theme.TutorApp395ProjectTheme
 import com.example.tutorapp395project.viewModel.AuthViewModel
 
@@ -55,7 +55,8 @@ fun LoginPage(
     ) {
 
     // Reset Register Page
-    authViewModel.onRegisterRoleChange("")
+    authViewModel.registerDataState.value = RegisterData()
+    authViewModel.registerState.value = ""
 
     Scaffold(
         containerColor = Color(0xFF00539C),
@@ -115,7 +116,11 @@ fun Fields(
     ){
         OutlinedTextField(
             value = loginData.email,
-            onValueChange = { authViewModel.onEmailChange(it) },
+            onValueChange = {
+                authViewModel.onLoginChange { currentLoginData ->
+                    currentLoginData.copy(email = it)
+                }
+            },
             label = { Text("Email", fontWeight = FontWeight.Black) },
             modifier = Modifier.fillMaxWidth()
         )
@@ -123,12 +128,20 @@ fun Fields(
         DropdownTextBox(
             items = listOf("student", "tutor"),
             selectedItem = loginData.role,
-            onItemSelected = { authViewModel.onRoleChange(it) },
+            onItemSelected = {
+                    authViewModel.onLoginChange { currentLoginData ->
+                    currentLoginData.copy(role = it)
+                }
+            },
 
         )
         OutlinedTextField(
             value = loginData.password,
-            onValueChange = { authViewModel.onPasswordChange(it) },
+            onValueChange = {
+                    authViewModel.onLoginChange { currentLoginData ->
+                    currentLoginData.copy(password = it)
+                }
+            },
             label = { Text("Password", fontWeight = FontWeight.Black)},
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
