@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val DarkColorScheme = darkColorScheme(
+/*private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
     tertiary = Pink80
@@ -25,6 +25,8 @@ private val LightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
     tertiary = Pink40
+
+
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -36,7 +38,67 @@ private val LightColorScheme = lightColorScheme(
     onSurface = Color(0xFF1C1B1F),
     */
 )
+*/
 
+private val DarkColorScheme = darkColorScheme(
+    primary = Blue50,
+    onPrimary = Blue27,
+    primaryContainer = Blue35,
+    onPrimaryContainer = Blue70,
+    inversePrimary = Blue60,
+
+    secondary = darkBlue55,
+    onSecondary = darkBlue30,
+    secondaryContainer = darkBlue40,
+    onSecondaryContainer = darkBlue85,
+
+    background = Grey10,
+    onBackground = Grey90,
+    surface = GreenGrey30,
+    onSurface = GreenGrey80,
+    inverseSurface = Grey90,
+    inverseOnSurface = Grey10,
+    surfaceVariant = GreenGrey30,
+    onSurfaceVariant = GreenGrey80,
+    outline = GreenGrey80,
+
+
+    error = Red80,
+    onError = Red20,
+    errorContainer = Red30,
+    onErrorContainer = Red90,
+
+
+)
+
+private val LightColorScheme = lightColorScheme(
+    primary = Blue50,
+    onPrimary = Blue27,
+    primaryContainer = Blue35,
+    onPrimaryContainer = Blue70,
+    inversePrimary = Blue60,
+
+    secondary = darkBlue55,
+    onSecondary = darkBlue30,
+    secondaryContainer = darkBlue40,
+    onSecondaryContainer = darkBlue85,
+
+    background = Grey10,
+    onBackground = Grey90,
+    surface = GreenGrey30,
+    onSurface = GreenGrey80,
+    inverseSurface = Grey90,
+    inverseOnSurface = Grey10,
+    surfaceVariant = GreenGrey30,
+    onSurfaceVariant = GreenGrey80,
+    outline = GreenGrey80,
+
+
+    error = Red80,
+    onError = Red20,
+    errorContainer = Red30,
+    onErrorContainer = Red90,
+)
 @Composable
 fun TutorApp395ProjectTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -62,9 +124,14 @@ fun TutorApp395ProjectTheme(
         }
     }
 
+
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
+        shapes = Shapes,
         content = content
     )
 }
+
+
+
