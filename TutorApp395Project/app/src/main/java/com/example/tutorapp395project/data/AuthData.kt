@@ -88,7 +88,7 @@ fun toTutor(user: User): Tutor {
 data class RegisterData (
     val first_name: String = "",
     val last_name: String = "",
-    val role: String = "tutor",
+    val role: String = "",
     val date_of_birth: String = "",
     val email: String = "",
     val password: String = "",
@@ -96,7 +96,7 @@ data class RegisterData (
     val experience: String = "junior",
     val description: String? = null,
     val degrees: List<String>? = emptyList(),
-    val grade: Int = 0,
+    val grade: Int = 1,
     val school: String = ""
 )
 
@@ -123,6 +123,39 @@ data class RegisterDataStudent(
     val grade: Int = 0,
     val school: String = ""
 )
+
+data class RegisterResponse(
+    val result: Boolean
+)
+
+fun toTutorRegisterData(registerData: RegisterData): RegisterDataTutor {
+    return RegisterDataTutor(
+        first_name = registerData.first_name,
+        last_name = registerData.last_name,
+        role = registerData.role,
+        date_of_birth = registerData.date_of_birth,
+        email = registerData.email,
+        password = registerData.password,
+        expertise = registerData.expertise,
+        experience = registerData.experience,
+        description = registerData.description,
+        degrees = registerData.degrees
+    )
+}
+
+fun toStudentRegisterData(registerData: RegisterData): RegisterDataStudent {
+    return RegisterDataStudent(
+        first_name = registerData.first_name,
+        last_name = registerData.last_name,
+        role = registerData.role,
+        email = registerData.email,
+        password = registerData.password,
+        date_of_birth = registerData.date_of_birth,
+        grade = registerData.grade,
+        school = registerData.school
+    )
+}
+
 
 // For development only
 val dummyUser = User(
