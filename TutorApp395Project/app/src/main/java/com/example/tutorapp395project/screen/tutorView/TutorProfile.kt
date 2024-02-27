@@ -1,4 +1,4 @@
-package com.example.tutorapp395project.screen.view
+package com.example.tutorapp395project.screen.tutorView
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -12,9 +12,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.tutorapp395project.data.toTutor
+import com.example.tutorapp395project.screen.studentView.ProfileField
+import com.example.tutorapp395project.screen.studentView.ProfileName
+import com.example.tutorapp395project.screen.studentView.ProfilePic
 import com.example.tutorapp395project.viewModel.AuthViewModel
 
 /*

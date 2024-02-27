@@ -11,8 +11,8 @@ import androidx.navigation.NavController
 import com.example.tutorapp395project.R
 import com.example.tutorapp395project.screen.view.HomeBar
 import com.example.tutorapp395project.screen.view.SettingsColumn
-import com.example.tutorapp395project.screen.view.StudentAppointmentLayout
-import com.example.tutorapp395project.screen.view.StudentProfileColumn
+import com.example.tutorapp395project.screen.studentView.StudentAppointmentLayout
+import com.example.tutorapp395project.screen.studentView.StudentProfileColumn
 import com.example.tutorapp395project.viewModel.AuthViewModel
 import com.example.tutorapp395project.viewModel.HomeViewModel
 

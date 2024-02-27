@@ -1,4 +1,4 @@
-package com.example.tutorapp395project.screen.view
+package com.example.tutorapp395project.screen.studentView
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,10 +29,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,6 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tutorapp395project.R
+import com.example.tutorapp395project.data.TutorRepo
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -118,7 +115,7 @@ fun TutorList(
 
 
         ){
-            items(8){
+            items(10){
 
                 val painter = painterResource(id = R.drawable.image2)
                 val name = "Roronoa Zoro"

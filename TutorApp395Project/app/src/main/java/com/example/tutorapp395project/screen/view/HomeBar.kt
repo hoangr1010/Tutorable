@@ -28,33 +28,26 @@ fun HomeBar(
     homeViewModel: HomeViewModel,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Bottom,
+    Box(
         modifier = Modifier
-            .fillMaxSize()
-    ){
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    color = Color(0xFFD9D9D9),
-                    shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
-                )
-        ) {
-            Row {
-                homeViewModel.fields.forEach {field ->
-                    Button(
-                        onClick = { homeViewModel.changeViewState(field) },
-                        colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
-                        modifier = Modifier
-                            .padding(16.dp)
-                    ) {
-                        Text(
-                            text = field,
-                            style = TextStyle(color = Color(0xFFB24444))
-                        )
-                    }
+            .fillMaxWidth()
+            .background(
+                color = Color(0xFFD9D9D9),
+                shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
+            )
+    ) {
+        Row {
+            homeViewModel.fields.forEach { field ->
+                Button(
+                    onClick = { homeViewModel.changeViewState(field) },
+                    colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
+                    modifier = Modifier
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = field,
+                        style = TextStyle(color = Color(0xFFB24444))
+                    )
                 }
             }
         }

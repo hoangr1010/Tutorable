@@ -7,11 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.tutorapp395project.data.LoginData
 import com.example.tutorapp395project.data.LoginResponse
 import com.example.tutorapp395project.data.RegisterData
-import com.example.tutorapp395project.data.RegisterDataStudent
 import com.example.tutorapp395project.data.RegisterResponse
 import com.example.tutorapp395project.data.User
 import com.example.tutorapp395project.data.dummyToken
-import com.example.tutorapp395project.data.dummyUser
+import com.example.tutorapp395project.data.dummyUserTutor
 import com.example.tutorapp395project.data.toStudentRegisterData
 import com.example.tutorapp395project.data.toTutorRegisterData
 import com.example.tutorapp395project.repository.AuthRepository
@@ -24,15 +23,15 @@ class AuthViewModel(
 ): ViewModel() {
 
     val loginDataState = mutableStateOf(LoginData())
-    val UserState = mutableStateOf(User())
-    val token = mutableStateOf("")
+//    val UserState = mutableStateOf(User())
+//    val token = mutableStateOf("")
 
     val registerDataState = mutableStateOf(RegisterData())
     val registerState = mutableStateOf<String>("")
 
     // DEVELOPMENT ONLY
-//    val UserState = mutableStateOf(dummyUser)
-//    val token = mutableStateOf(dummyToken)
+    val UserState = mutableStateOf(dummyUserTutor)
+    val token = mutableStateOf(dummyToken)
 
     fun onLoginChange(update: (LoginData) -> LoginData) {
         loginDataState.value = update(loginDataState.value)
@@ -41,8 +40,6 @@ class AuthViewModel(
     fun onRegisterChange(update: (RegisterData) -> RegisterData) {
         registerDataState.value = update(registerDataState.value)
     }
-
-
 
     fun onLogin() {
         Log.d("AuthViewModel", "Email: ${loginDataState.value.email}, Password: ${loginDataState.value.password}, Role: ${loginDataState.value.role}")

@@ -1,4 +1,4 @@
-package com.example.tutorapp395project.screen.view
+package com.example.tutorapp395project.screen.studentView
 
 import android.util.Log
 import androidx.compose.foundation.Image
