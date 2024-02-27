@@ -69,7 +69,7 @@ dependencies {
 
     implementation("androidx.navigation:navigation-compose:$navVersion")
     implementation("androidx.compose.ui:ui:$composeVersion")
-    //implementation("androidx.compose.material:material:$composeVersion")
+    implementation("androidx.compose.material:material:$composeVersion")
     implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:$composeVersion")
     debugImplementation("androidx.compose.ui:ui-test-manifest:$composeVersion")
@@ -119,6 +119,10 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     // coil
     implementation("io.coil-kt:coil-compose:2.4.0")
+
+    implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.3.0")
+    implementation("com.maxkeppeler.sheets-compose-dialogs:calendar:1.3.0")
+
 
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.1")
     implementation("androidx.compose.ui:ui-tooling-preview:1.6.1")

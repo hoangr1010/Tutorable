@@ -1,5 +1,7 @@
 package com.example.tutorapp395project.classes
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -22,6 +24,7 @@ import com.example.tutorapp395project.viewModel.AuthViewModel
         - navController: NavHostController
     Returns: Unit
  */
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Navigation (
     navController: NavHostController = rememberNavController(),

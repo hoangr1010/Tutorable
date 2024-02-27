@@ -1,9 +1,7 @@
 package com.example.tutorapp395project.data
 
 import com.example.tutorapp395project.utils.stringToDate
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 
 data class LoginData(
@@ -158,7 +156,7 @@ fun toStudentRegisterData(registerData: RegisterData): RegisterDataStudent {
 
 
 // For development only
-val dummyUser = User(
+val dummyUserStudent = User(
     id = "20",
     email = "huyhoangr1010@gmail.com",
     role = "student",
@@ -172,4 +170,23 @@ val dummyUser = User(
     school = "High School XYZ"
 )
 
+val dummyUserTutor = User(
+    id = "2",
+    email = "huyhoangr1010@gmail.com",
+    role = "tutor",
+    first_name = "Hoang",
+    last_name = "hehe",
+    date_of_birth = "1990-01-01T00:00:00Z",
+    expertise = listOf("mathematics", "physics"),
+    verified_status = "false",
+    experience = "senior",
+    description = "",
+    degrees = listOf("Master of Science in Golang"),
+    grade = 0,
+    school = ""
+)
+
+
 val dummyToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+
+
