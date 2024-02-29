@@ -50,7 +50,11 @@ class InsertionDaoTest {
             school = "Sample School",
             email = "john.doe@example.com",
             password = "password123",
-            role = "student"
+            role = "student",
+            expertise = arrayOf("Math", "Science"),
+            experience = arrayOf("Tutoring for 2 years"),
+            description = "I am a tutor",
+            education = "High School"
         )
 
         // Insert the user into the test database
@@ -99,7 +103,11 @@ class DeletionDaoTest {
             school = "Sample School",
             email = "john.doe@example.com",
             password = "password123",
-            role = "student"
+            role = "student",
+            expertise = arrayOf("Math", "Science"),
+            experience = arrayOf("Tutoring for 2 years"),
+            description = "I am a tutor",
+            education = "High School"
         )
 
         // Insert the user into the test database
@@ -125,7 +133,11 @@ class DeletionDaoTest {
             school = "Sample School",
             email = "john.doe@example.com",
             password = "password123",
-            role = "student"
+            role = "student",
+            expertise = arrayOf("Math", "Science"),
+            experience = arrayOf("Tutoring for 2 years"),
+            description = "I am a tutor",
+            education = "High School"
         )
 
         // Insert the user into the test database
