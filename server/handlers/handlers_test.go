@@ -1,37 +1,106 @@
 package handlers_test
 
 import (
+	"bytes"
+	"database/sql"
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/macewanCS/w24MacroHard/server/handlers"
+	"github.com/macewanCS/w24MacroHard/server/middleware"
 )
 
-// Testing the HelloHandler
-// This is a test to see if handlers.go test would work, but pretty much useless in our situation
-func TestHelloHandler(t *testing.T) {
-	req, err := http.NewRequest("GET", "/", nil)
+// Define constants for database connection
+const (
+	DBHost     = "macrohard-onlytutor.cj0646k6g181.us-east-2.rds.amazonaws.com"
+	DBPort     = 5432
+	DBUser     = "MacroHard"
+	DBPassword = "chopperiscute"
+	DBName     = "postgres"
+	Key        = "codingiscool"
+)
 
+// func TestLoginHandler(t *testing.T) {
+// 	// Construct connection string
+// 	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", DBHost, DBPort, DBUser, DBPassword, DBName)
+
+// 	// Open database connection
+// 	db, err := sql.Open("postgres", connStr)
+// 	if err != nil {
+// 		t.Fatalf("Failed to connect to database: %v", err)
+// 	}
+// 	defer db.Close()
+
+// 	// Create a sample login payload
+// 	login := middleware.Login{
+// 		Email:    "joefoote2@COOLCODE.com",
+// 		Password: "$2a$10$paIFcQINkMyERykJd7ENXOw/j04sJYjerhYWBub.nGvWqrmG8Xzji",
+// 		Role:     "student",
+// 	}
+// 	loginJSON, err := json.Marshal(login)
+// 	if err != nil {
+// 		t.Fatalf("Failed to marshal login JSON: %v", err)
+// 	}
+
+// 	// Create a new HTTP request with the login payload
+// 	req := httptest.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(loginJSON))
+// 	req.Header.Set("Content-Type", "application/json")
+
+// 	// Create a new recorder to record the response
+// 	rr := httptest.NewRecorder()
+
+// 	// Call the handler function with the recorder, request, and real DB
+// 	handlers.LoginHandler(db)(rr, req)
+
+// 	// Check the response status code
+// 	if rr.Code != http.StatusOK {
+// 		t.Errorf("Handler returned wrong status code: got %v want %v", rr.Code, http.StatusOK)
+// 	}
+
+// 	// You can add more assertions based on the expected behavior of LoginHandler
+// }
+
+func TestRegisterHandler(t *testing.T) {
+	// Construct connection string
+	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", DBHost, DBPort, DBUser, DBPassword, DBName)
+
+	// Open database connection
+	db, err := sql.Open("postgres", connStr)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer db.Close()
+
+	// Create a sample register payload
+	register := middleware.Register{
+		Email:    "test@example.com",
+		Password: "password123",
+		Role:     "student",
+	}
+	registerJSON, err := json.Marshal(register)
+	if err != nil {
+		t.Fatalf("Failed to marshal register JSON: %v", err)
 	}
 
+	// Create a new HTTP request with the register payload
+	req := httptest.NewRequest(http.MethodPost, "/register", bytes.NewBuffer(registerJSON))
+	req.Header.Set("Content-Type", "application/json")
+
+	// Create a new recorder to record the response
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(handlers.HelloHandler)
 
-	handler.ServeHTTP(rr, req)
+	// Call the handler function with the recorder, request, and real DB
+	handlers.RegisterHandler(db)(rr, req)
 
-	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusOK)
+	// Check the response status code
+	if rr.Code != http.StatusOK {
+		t.Errorf("Handler returned wrong status code: got %v want %v", rr.Code, http.StatusOK)
 	}
 
-	expected := "Hello, Chi!"
-	if rr.Body.String() != expected {
-		t.Errorf("handler returned unexpected body: got %v want %v",
-			rr.Body.String(), expected)
-	}
+	// Print the response body (results)
+	fmt.Println("Registration Results:")
+	fmt.Println(rr.Body.String())
 }
-
-
