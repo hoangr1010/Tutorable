@@ -270,6 +270,7 @@ func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringS
 		}
 		for rows.Next() {
 			var session TutoringSession
+			var int64Array pq.Int64Array
 			err := rows.Scan(
 				&session.TutoringSessionID,
 				&session.StudentID,
@@ -279,10 +280,15 @@ func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringS
 				&session.Grade,
 				&session.Status,
 				&session.Date,
-				pq.Array(&session.TimeBlockIDList))
+				(&int64Array))
 			if err != nil {
 				fmt.Println("Error scanning tutoring_session: ", err)
 			}
+			// Convert int64 array into int slices
+			for _, i := range int64Array {
+				session.TimeBlockIDList = append(session.TimeBlockIDList, int(i))
+			}
+
 			session.TutorID = user.ID
 			tutoringSessions = append(tutoringSessions, session)
 		}

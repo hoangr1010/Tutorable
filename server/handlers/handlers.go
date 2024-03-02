@@ -391,8 +391,8 @@ func GetTutorAvailability(db *sql.DB) http.HandlerFunc {
 func GetTutoringSessionList(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// This will store the information from token
-		_, claims, _ := jwtauth.FromContext(r.Context())
-		w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+		//_, claims, _ := jwtauth.FromContext(r.Context())
+		//w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
 
 		// Pull role and id from JSON body
 		var user util.User
@@ -510,8 +510,8 @@ func SearchTutorAvailability(db *sql.DB) http.HandlerFunc {
 // Add tutoring session
 func AddTutoringSession(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, claims, _ := jwtauth.FromContext(r.Context())
-		w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+		//_, claims, _ := jwtauth.FromContext(r.Context())
+		//w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
 		// Read JSON payload
 		var session util.TutoringSession
 		err := util.DecodeJSONRequestBody(r, &session)
@@ -544,6 +544,5 @@ func AddTutoringSession(db *sql.DB) http.HandlerFunc {
 		// Create session if they are available
 
 		// Delete all availability shown in time_block_id_list
-
 	}
 }
