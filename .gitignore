@@ -1,0 +1,13 @@
+# Ignore modified file
+TutorApp395Project/.idea/misc.xml
+
+# Ignore untracked directories
+TutorApp395Project/.tmp/
+TutorApp395Project/android/
+TutorApp395Project/caches/
+TutorApp395Project/daemon/
+TutorApp395Project/jdks/
+TutorApp395Project/kotlin-profile/
+TutorApp395Project/native/
+TutorApp395Project/wrapper/
+
