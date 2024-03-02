@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/macewanCS/w24MacroHard/server/handlers"
-	"github.com/macewanCS/w24MacroHard/server/middleware"
+	"github.com/macewanCS/w24MacroHard/server/util"
 )
 
 // Define constants for database connection
@@ -35,7 +35,7 @@ func TestLoginHandler(t *testing.T) {
 	defer db.Close()
 
 	// Create a sample login payload
-	login := middleware.Login{
+	login := util.Login{
 		Email:    "tutorjoe@COOLCODE.com",
 		Password: "passwd",
 		Role:     "tutor",
