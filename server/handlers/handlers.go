@@ -252,8 +252,8 @@ Request Body (JSON):
 // Add tutor availability
 func AddTutorAvailability(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, claims, _ := jwtauth.FromContext(r.Context())
-		w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+		//_, claims, _ := jwtauth.FromContext(r.Context())
+		//w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
 
 		// Set response headers
 		w.Header().Set("Content-Type", "application/json")
@@ -289,7 +289,7 @@ func AddTutorAvailability(db *sql.DB) http.HandlerFunc {
 		}
 		// Add timeslot to database
 		//fmt.Println("Json body: ", TutorAvailability) // line for debug
-		for _, id := range tutorAvailability.TimeBlockId {
+		for _, id := range tutorAvailability.TimeBlockIdList {
 			err := util.InsertTutorAvailability(db, tutorAvailability, id)
 			if err != nil {
 				fmt.Println("Insert failed: ", err)
@@ -303,7 +303,7 @@ func AddTutorAvailability(db *sql.DB) http.HandlerFunc {
 			TimeBlockIdList []int     `json:"time_block_id_list"`
 		}{
 			Date:            date,
-			TimeBlockIdList: tutorAvailability.TimeBlockId,
+			TimeBlockIdList: tutorAvailability.TimeBlockIdList,
 		}
 
 		// Marshal response to JSON
@@ -453,7 +453,7 @@ func SearchTutorAvailability(db *sql.DB) http.HandlerFunc {
 		}
 
 		// Validate request data
-		if tutorAvailability.Date == "" || len(tutorAvailability.TimeBlockId) == 0 {
+		if tutorAvailability.Date == "" || len(tutorAvailability.TimeBlockIdList) == 0 {
 			http.Error(w, "Date and time_block_id_list are required", http.StatusBadRequest)
 			return
 		}
@@ -474,7 +474,7 @@ func SearchTutorAvailability(db *sql.DB) http.HandlerFunc {
 		}
 
 		// Add new tutor availability for the specified time blocks
-		for _, id := range tutorAvailability.TimeBlockId {
+		for _, id := range tutorAvailability.TimeBlockIdList {
 			err := util.InsertTutorAvailability(db, tutorAvailability, id)
 			if err != nil {
 				fmt.Printf("Error adding tutor availability: %v\n", err)
@@ -489,7 +489,7 @@ func SearchTutorAvailability(db *sql.DB) http.HandlerFunc {
 			TimeBlockIDList []int  `json:"time_block_id_list"`
 		}{
 			Date:            tutorAvailability.Date,
-			TimeBlockIDList: tutorAvailability.TimeBlockId,
+			TimeBlockIDList: tutorAvailability.TimeBlockIdList,
 		}
 
 		// Marshal response to JSON

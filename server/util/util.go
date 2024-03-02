@@ -70,9 +70,9 @@ type UserInfo struct {
 }
 
 type TutorAvailability struct {
-	ID          int    `json:"id"`
-	Date        string `json:"date"`
-	TimeBlockId []int  `json:"time_block_id_list"`
+	ID              int    `json:"id"`
+	Date            string `json:"date"`
+	TimeBlockIdList []int  `json:"time_block_id_list"`
 }
 
 type TutoringSession struct {
@@ -104,11 +104,18 @@ type LoginClaim struct {
 // INCLUDE DATE LATER AT THE MOMENT WILL IS ONLY CHECKING THE TIMESLOT
 func PeekAvailability(db *sql.DB, tutor TutorAvailability) (bool, error) {
 	var exists bool
-	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM tutor_availability WHERE tutor_id = $1)", tutor.ID).Scan(&exists)
-	if err != nil {
-		fmt.Println("Error checking tutor_availability: ", err)
-		return false, err
+	for _, id := range tutor.TimeBlockIdList {
+		err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM tutor_availability WHERE tutor_id = $1 AND date = $2 AND time_block_id = $3)", tutor.ID, tutor.Date, id).Scan(&exists)
+		if err != nil {
+			fmt.Println("Error checking tutor_availability: ", err)
+			return false, err
+		}
+		// If there is an existing timeslot on that date then return true
+		if exists {
+			return exists, err
+		}
 	}
+	// Default returns false
 	return exists, nil
 }
 
