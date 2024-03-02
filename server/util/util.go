@@ -100,21 +100,16 @@ type LoginClaim struct {
 	UserInfo
 }
 
-// Peeks into tutor availability table and returns true if tutor has timeslots in table
-// INCLUDE DATE LATER AT THE MOMENT WILL IS ONLY CHECKING THE TIMESLOT
-func PeekAvailability(db *sql.DB, tutor TutorAvailability) (bool, error) {
+// Peeks into tutor availability table and returns true if tutor has timeslots on that date
+func PeekAvailabilityDate(db *sql.DB, tutor TutorAvailability) (bool, error) {
 	var exists bool
-	for _, id := range tutor.TimeBlockIdList {
-		err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM tutor_availability WHERE tutor_id = $1 AND date = $2 AND time_block_id = $3)", tutor.ID, tutor.Date, id).Scan(&exists)
-		if err != nil {
-			fmt.Println("Error checking tutor_availability: ", err)
-			return false, err
-		}
-		// If there is an existing timeslot on that date then return true
-		if exists {
-			return exists, err
-		}
+
+	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM tutor_availability WHERE tutor_id = $1 AND date = $2)", tutor.ID, tutor.Date).Scan(&exists)
+	if err != nil {
+		fmt.Println("Error checking tutor_availability: ", err)
+		return false, err
 	}
+
 	// Default returns false
 	return exists, nil
 }
@@ -136,7 +131,6 @@ func GetAvailability(db *sql.DB, tutorID int, date string) ([]int, error) {
         SELECT time_block_id
         FROM tutor_availability
         WHERE tutor_id = $1 AND date = $2
-        LIMIT 1
     `
 
 	rows, err := db.Query(query, tutorID, date)

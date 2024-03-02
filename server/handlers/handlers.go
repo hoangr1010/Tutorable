@@ -279,11 +279,11 @@ func AddTutorAvailability(db *sql.DB) http.HandlerFunc {
 		//dateStr := date.Format("2006-01-02")
 
 		// Check if timeslots exist for that date, delete if exist
-		exists, err := util.PeekAvailability(db, tutorAvailability)
+		exists, err := util.PeekAvailabilityDate(db, tutorAvailability)
 		if err != nil {
 			http.Error(w, "WHOOPS!", http.StatusInternalServerError)
 		}
-		// Delete existing entries with data and tutor id
+		// Delete existing entries of tutor on that date
 		if exists {
 			util.DeleteTutorAvailability(db, tutorAvailability.ID, date)
 		}
@@ -323,7 +323,7 @@ func AddTutorAvailability(db *sql.DB) http.HandlerFunc {
 func GetTutorAvailability(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// This will store the information from token
-		_, claims, _ := jwtauth.FromContext(r.Context())
+		//_, claims, _ := jwtauth.FromContext(r.Context())
 
 		// Set response headers
 		w.Header().Set("Content-Type", "application/json")
@@ -332,7 +332,7 @@ func GetTutorAvailability(db *sql.DB) http.HandlerFunc {
 		w.WriteHeader(http.StatusOK)
 
 		// Write initial response content
-		w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+		//w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
 
 		var tutorAvailability util.TutorAvailability
 		err := util.DecodeJSONRequestBody(r, &tutorAvailability)
@@ -367,11 +367,11 @@ func GetTutorAvailability(db *sql.DB) http.HandlerFunc {
 
 		// Prepare response
 		response := struct {
-			TimeBlockIDList []int  `json:"time_block_id_list"`
-			TimeBlockDate   string `json:"date"`
+			TimeBlockIDList []int `json:"time_block_id_list"`
+			//TimeBlockDate   string `json:"date"`
 		}{
 			TimeBlockIDList: timeBlockIDs,
-			TimeBlockDate:   dateStr,
+			//TimeBlockDate:   dateStr,
 		}
 
 		// Marshal response to JSON
