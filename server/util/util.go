@@ -81,6 +81,58 @@ type LoginClaim struct {
 	UserInfo
 }
 
+type TutorAvailability struct {
+	ID         int    `json:"availability_id"`
+	TutorID    int    `json:"tutor_id"`
+	Date       string `json:"date"`
+	TimeBlocks int    `json:"time_block_id"`
+}
+
+func GetAvailability(db *sql.DB, tutorID int, date string) ([]int, error) {
+	query := `
+	SELECT time_block_id
+	FROM tutor_availability
+	WHERE tutor_id = $1 and date = $2
+	LIMIT 1
+	`
+
+	rows, err := db.Query(query, tutorID, date)
+	if err != nil {
+		fmt.Println("Error querying tutor availability: ", err)
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	// Slice to store time block IDs
+	var timeBlockIDs []int
+
+	// Iterate over the rows
+	for rows.Next() {
+
+		var timeBlockID int
+
+		// Scan each row's time block ID into the variable
+		err := rows.Scan(&timeBlockID)
+		if err != nil {
+			fmt.Println("Error scanning time block ID: ", err)
+			return nil, err
+		}
+
+		// Append the time block ID to the slice
+		timeBlockIDs = append(timeBlockIDs, timeBlockID)
+	}
+
+	// Check for errors in the rows
+	if err := rows.Err(); err != nil {
+		fmt.Println("Error iterating over rows:", err)
+		return nil, err
+	}
+
+	// Return the slice of time block IDs
+	return timeBlockIDs, nil
+}
+
 /*
 func gernerateHMAC(message []byte) string {
 	// Convert string to byte array
