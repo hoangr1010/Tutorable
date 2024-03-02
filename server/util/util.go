@@ -69,6 +69,12 @@ type UserInfo struct {
 	ID    int
 }
 
+type TutorAvailability struct {
+	ID          int    `json:"id"`
+	Date        string `json:"date"`
+	TimeBlockId []int  `json:"time_block_id_list"`
+}
+
 /*
 In the token body we want
 role,
@@ -302,9 +308,22 @@ func InsertTutor(db *sql.DB, tutor Register) error {
 	return nil
 }
 
-// Check if email exists in a database. I think we dont need
-func CheckForEmail(db *sql.DB, register Register, table string) {
+func InsertTutorAvailability(db *sql.DB, tutorAvailability TutorAvailability, timeBlockId int) error {
 
+	// Prepare SQL query to insert tutor availability
+	query := `
+	INSERT INTO tutor_availability (tutor_id, date, time_block_id) 
+	VALUES($1, $2, $3)
+	`
+	_, err := db.Exec(query,
+		tutorAvailability.ID,
+		tutorAvailability.Date,
+		timeBlockId)
+
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // Verifies password for login attempt and database
