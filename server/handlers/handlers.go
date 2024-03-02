@@ -7,8 +7,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/go-chi/jwtauth/v5"
 	"github.com/lib/pq"
-	"github.com/macewanCS/w24MacroHard/server/middleware"
+	"github.com/macewanCS/w24MacroHard/server/util"
 )
 
 // HelloHandler is a sample HTTP handler
@@ -20,8 +21,8 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 func LoginHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Read JSON payload
-		var login middleware.Login
-		err := middleware.DecodeJSONRequestBody(r, &login)
+		var login util.Login
+		err := util.DecodeJSONRequestBody(r, &login)
 		if err != nil {
 			fmt.Println("Invalid JSON:", err)
 			return
@@ -31,7 +32,7 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 		if login.Role == "student" {
 			// Check if student password is match
 			//fmt.Println("Student")
-			result, err := middleware.CheckLoginStudent(db, login)
+			result, err := util.CheckLoginStudent(db, login)
 			if err != nil {
 				fmt.Println("Error validating login:", err)
 				// Set the HTTP status code to 401 (Bad Request)
@@ -42,20 +43,20 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 			if result {
 				fmt.Println("Successful student login!")
 				// Store student content into JSON object
-				user, err := middleware.GetStudentUser(db, login.Email)
+				user, err := util.GetStudentUser(db, login.Email)
 				if err != nil {
 					fmt.Println("Error searching student table", err)
 				}
 				//fmt.Println(user)
 				// Create Token
-				var response middleware.LoginResponse
+				var response util.LoginResponse
 				response.User = user
 
-				var userInfo middleware.UserInfo
+				var userInfo util.UserInfo
 				userInfo.Role = "student"
 				userInfo.Email = user.Email
 				userInfo.ID = user.ID
-				token, err := middleware.CreateToken(userInfo)
+				token, err := util.CreateToken(userInfo)
 				if err != nil {
 					fmt.Println("Error creating token", err)
 				}
@@ -78,7 +79,7 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 		} else if login.Role == "tutor" {
 			// Check if tutor password is match
 			//fmt.Println("Tutor")
-			result, err := middleware.CheckLoginTutor(db, login)
+			result, err := util.CheckLoginTutor(db, login)
 			if err != nil {
 				fmt.Println("Error validating login:", err)
 				// Set the HTTP status code to 401 (Bad Request)
@@ -89,22 +90,22 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 			if result {
 				fmt.Println("Successful tutor login!")
 				// Store student content into JSON object
-				user, err := middleware.GetTutorUser(db, login.Email)
+				user, err := util.GetTutorUser(db, login.Email)
 				if err != nil {
 					fmt.Println("Error searching student table", err)
 				}
 				//fmt.Println(user)
 				// Store user fields
-				var response middleware.LoginResponse
+				var response util.LoginResponse
 				response.User = user
 
 				// Create userinfo for token
-				var userInfo middleware.UserInfo
-				userInfo.Role = "role"
+				var userInfo util.UserInfo
+				userInfo.Role = "tutor"
 				userInfo.Email = user.Email
 				userInfo.ID = user.ID
 				// Create token
-				token, err := middleware.CreateToken(userInfo)
+				token, err := util.CreateToken(userInfo)
 				if err != nil {
 					fmt.Println("Error creating token", err)
 				}
@@ -124,7 +125,7 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 				w.Write(Jsonresponse)
 			}
 		} else if login.Role == "administrator" {
-			//fmt.Println("Administrator")
+			fmt.Println("Administrator")
 		}
 
 		//fmt.Printf("%+v\n", login)
@@ -134,15 +135,15 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 func RegisterHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Read JSON payload
-		var register middleware.Register
-		err := middleware.DecodeJSONRequestBody(r, &register)
+		var register util.Register
+		err := util.DecodeJSONRequestBody(r, &register)
 		if err != nil {
 			fmt.Println("Invalid JSON:", err)
 			return
 		}
 
 		// Hash the password
-		err = middleware.HashPassword(&register.Password)
+		err = util.HashPassword(&register.Password)
 		if err != nil {
 			fmt.Println("Error hashing password:", err)
 			return
@@ -154,7 +155,7 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 		if register.Role == "student" {
 			// Fetch student insert query
 			fmt.Println("Student")
-			err := middleware.InsertStudent(db, register)
+			err := util.InsertStudent(db, register)
 			// Error in register
 			if err != nil {
 				// Check if the error is due to a unique constraint violation
@@ -175,7 +176,7 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 				}
 			} else {
 				// Successful register
-				response := middleware.RegisterResponse{
+				response := util.RegisterResponse{
 					Result: true,
 				}
 
@@ -195,7 +196,7 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 		} else if register.Role == "tutor" {
 			// Insert into student rable
 			fmt.Println("Tutor")
-			err := middleware.InsertTutor(db, register)
+			err := util.InsertTutor(db, register)
 			// Error in register
 			if err != nil {
 				// Check if the error is due to a unique constraint violation
@@ -214,7 +215,7 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 				}
 			} else {
 				// Successful register
-				response := middleware.RegisterResponse{
+				response := util.RegisterResponse{
 					Result: true,
 				}
 
@@ -236,5 +237,48 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 		}
 
 		fmt.Printf("%+v\n", register)
+	}
+}
+
+// Add tutor availability
+func AddTutorAvailability(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		_, claims, _ := jwtauth.FromContext(r.Context())
+		w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+	}
+}
+
+// Get tutor availability
+
+func GetTutorAvailability(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// This will store the information from token
+		_, claims, _ := jwtauth.FromContext(r.Context())
+		w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+		// Put code here :))
+	}
+}
+
+// Get tutoring session list
+func GetTutoringSessionList(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		_, claims, _ := jwtauth.FromContext(r.Context())
+		w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+	}
+}
+
+// Search all tutor availability for particular time slots
+func SearchTutorAvailability(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		_, claims, _ := jwtauth.FromContext(r.Context())
+		w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+	}
+}
+
+// Add tutoring session
+func AddTutoringSession(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		_, claims, _ := jwtauth.FromContext(r.Context())
+		w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
 	}
 }
