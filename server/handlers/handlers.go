@@ -512,26 +512,38 @@ func AddTutoringSession(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, claims, _ := jwtauth.FromContext(r.Context())
 		w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+		// Read JSON payload
+		var session util.TutoringSession
+		err := util.DecodeJSONRequestBody(r, &session)
+		if err != nil {
+			fmt.Println("Invalid JSON:", err)
+			return
+		}
 
-		/*
-			// Put code here
-			// Read JSON payload
-			var TutorAvailability util.TutorAvailability
-			err := util.DecodeJSONRequestBody(r, &TutorAvailability)
+		// Parse the date
+		date, err := time.Parse("2006-01-02", session.Date)
+		if err != nil {
+			http.Error(w, "Invalid date format", http.StatusBadRequest)
+			return
+		}
+		fmt.Println(date)
+		var tutor util.TutorAvailability
+		tutor.ID = session.TutorID
+		// Check if tutor has availability in timeslot
+		for _, id := range session.TimeBlockIDList {
+			exists, err := util.PeekTimeSlot(db, session, id)
 			if err != nil {
-				fmt.Println("Invalid JSON:", err)
+				fmt.Println("Error checking tutor_availability: ", err)
+				http.Error(w, "Inavlid JSON", http.StatusBadRequest)
+			}
+			if exists {
+				http.Error(w, "Tutor is not available", http.StatusBadRequest)
 				return
 			}
-			// Add timeslot to database
-			fmt.Println("Json body: ", TutorAvailability)
-			var tutorAvailabilityIdList []int = TutorAvailability.TimeBlockId
-			for _, id := range tutorAvailabilityIdList {
-				err := util.InsertTutorAvailability(db, TutorAvailability, id)
-				if err != nil {
-					fmt.Println("Insert failed: ", err)
-				}
-			}
-			fmt.Println("Insert complete.")
-		*/
+		}
+		// Create session if they are available
+
+		// Delete all availability shown in time_block_id_list
+
 	}
 }
