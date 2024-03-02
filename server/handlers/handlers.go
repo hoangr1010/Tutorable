@@ -304,5 +304,23 @@ func AddTutoringSession(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, claims, _ := jwtauth.FromContext(r.Context())
 		w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+
+		// Read JSON payload
+		var TutorAvailability util.TutorAvailability
+		err := util.DecodeJSONRequestBody(r, &TutorAvailability)
+		if err != nil {
+			fmt.Println("Invalid JSON:", err)
+			return
+		}
+		// Add timeslot to database
+		fmt.Println("Json body: ", TutorAvailability)
+		var tutorAvailabilityIdList []int = TutorAvailability.TimeBlockId
+		for _, id := range tutorAvailabilityIdList {
+			err := util.InsertTutorAvailability(db, TutorAvailability, id)
+			if err != nil {
+				fmt.Println("Insert failed: ", err)
+			}
+		}
+		fmt.Println("Insert complete.")
 	}
 }
