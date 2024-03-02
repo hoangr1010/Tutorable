@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/macewanCS/w24MacroHard/server/handlers"
+
 	"github.com/macewanCS/w24MacroHard/server/util"
 )
 
@@ -29,6 +30,7 @@ func TestLoginHandler(t *testing.T) {
 
 	// Open database connection
 	db, err := sql.Open("postgres", connStr)
+
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
