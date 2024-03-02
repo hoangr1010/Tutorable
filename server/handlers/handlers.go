@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/lib/pq"
@@ -280,6 +281,55 @@ func GetTutorAvailability(db *sql.DB) http.HandlerFunc {
 		_, claims, _ := jwtauth.FromContext(r.Context())
 		w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
 		// Put code here :))
+
+		var tutorAvailability util.TutorAvailability
+		err := util.DecodeJSONRequestBody(r, &tutorAvailability)
+		if err != nil {
+			fmt.Println("Invalid JSON:", err)
+			return
+		}
+
+		if tutorAvailability.TutorID == 0 ||
+			tutorAvailability.Date == "" {
+			http.Error(w, "Required field/s are missing", http.StatusBadRequest)
+			return
+		}
+
+		// Parse date string
+		date, err := time.Parse("2006-01-02", tutorAvailability.Date)
+		if err != nil {
+			http.Error(w, "Invalid date format", http.StatusBadRequest)
+			return
+		}
+
+		dateStr := date.Format("2006-01-02")
+
+		// Fetch tutor availability from database
+		timeBlockIds, err := util.GetAvailability(db, tutorAvailability.TutorID, dateStr)
+		if err != nil {
+			fmt.Printf("Error fetching tutor availability: %v\n", err)
+			http.Error(w, "Error fetching tutor availability", http.StatusInternalServerError)
+			return
+		}
+
+		// Prepare response
+		response := struct {
+			TimeBlockIDList []int `json:"time_block_id_list"`
+		}{TimeBlockIDList: timeBlockIds}
+
+		// Marshal response to JSON
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			fmt.Printf("Error encoding JSON response: %v\n", err)
+			http.Error(w, "Error encoding JSON response", http.StatusInternalServerError)
+			return
+		}
+
+		// Write response
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
+
 	}
 }
 
