@@ -254,23 +254,68 @@ func AddTutorAvailability(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, claims, _ := jwtauth.FromContext(r.Context())
 		w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+
+		// Set response headers
+		w.Header().Set("Content-Type", "application/json")
+
+		// Write the response status code
+		w.WriteHeader(http.StatusOK)
+
 		// Read JSON payload
-		var TutorAvailability util.TutorAvailability
-		err := util.DecodeJSONRequestBody(r, &TutorAvailability)
+		var tutorAvailability util.TutorAvailability
+		err := util.DecodeJSONRequestBody(r, &tutorAvailability)
 		if err != nil {
 			fmt.Println("Invalid JSON:", err)
+			http.Error(w, "Inavlid JSON", http.StatusBadRequest)
 			return
 		}
+		// Parse the date
+		date, err := time.Parse("2006-01-02", tutorAvailability.Date)
+		if err != nil {
+			http.Error(w, "Invalid date format", http.StatusBadRequest)
+			return
+		}
+
+		//dateStr := date.Format("2006-01-02")
+
+		// Check if timeslots exist for that date, delete if exist
+		exists, err := util.PeekAvailability(db, tutorAvailability)
+		if err != nil {
+			http.Error(w, "WHOOPS!", http.StatusInternalServerError)
+		}
+		// Delete existing entries with data and tutor id
+		if exists {
+			util.DeleteTutorAvailability(db, tutorAvailability.ID, date)
+		}
 		// Add timeslot to database
-		fmt.Println("Json body: ", TutorAvailability)
-		var tutorAvailabilityIdList []int = TutorAvailability.TimeBlockId
-		for _, id := range tutorAvailabilityIdList {
-			err := util.InsertTutorAvailability(db, TutorAvailability, id)
+		//fmt.Println("Json body: ", TutorAvailability) // line for debug
+		for _, id := range tutorAvailability.TimeBlockId {
+			err := util.InsertTutorAvailability(db, tutorAvailability, id)
 			if err != nil {
 				fmt.Println("Insert failed: ", err)
+				http.Error(w, "Inavlid JSON", http.StatusInternalServerError)
 			}
 		}
 		fmt.Println("Insert complete.")
+		// Insert complete -> Send response
+		response := struct {
+			Date            time.Time `json:"date"`
+			TimeBlockIdList []int     `json:"time_block_id_list"`
+		}{
+			Date:            date,
+			TimeBlockIdList: tutorAvailability.TimeBlockId,
+		}
+
+		// Marshal response to JSON
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			fmt.Printf("Error encoding JSON response: %v\n", err)
+			http.Error(w, "Error encoding JSON response", http.StatusInternalServerError)
+			return
+		}
+
+		// Write response
+		w.Write(jsonResponse)
 	}
 }
 
@@ -348,7 +393,45 @@ func GetTutoringSessionList(db *sql.DB) http.HandlerFunc {
 		// This will store the information from token
 		_, claims, _ := jwtauth.FromContext(r.Context())
 		w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
-		// Put code here :))
+
+		// Pull role and id from JSON body
+		var user util.User
+		err := util.DecodeJSONRequestBody(r, &user)
+		if err != nil {
+			fmt.Println("Invalid JSON:", err)
+			http.Error(w, "Invalid JSON", http.StatusBadRequest)
+			return
+		}
+
+		tutoringSessions, err := util.GetTutoringSessionList(db, user)
+
+		if err != nil {
+			http.Error(w, "Invalid JSON", http.StatusInternalServerError)
+			return
+		}
+		// Prepare response
+		response := struct {
+			ID               int                    `json:"id"`
+			Role             string                 `json:"role"`
+			TutoringSessions []util.TutoringSession `json:"tutoring_session_list"`
+		}{
+			ID:               user.ID,
+			Role:             user.Role,
+			TutoringSessions: tutoringSessions,
+		}
+
+		// Marshal response to JSON
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			fmt.Printf("Error encoding JSON response: %v\n", err)
+			http.Error(w, "Error encoding JSON response", http.StatusInternalServerError)
+			return
+		}
+
+		// Write response
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
 
 	}
 }
@@ -429,5 +512,26 @@ func AddTutoringSession(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, claims, _ := jwtauth.FromContext(r.Context())
 		w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+
+		/*
+			// Put code here
+			// Read JSON payload
+			var TutorAvailability util.TutorAvailability
+			err := util.DecodeJSONRequestBody(r, &TutorAvailability)
+			if err != nil {
+				fmt.Println("Invalid JSON:", err)
+				return
+			}
+			// Add timeslot to database
+			fmt.Println("Json body: ", TutorAvailability)
+			var tutorAvailabilityIdList []int = TutorAvailability.TimeBlockId
+			for _, id := range tutorAvailabilityIdList {
+				err := util.InsertTutorAvailability(db, TutorAvailability, id)
+				if err != nil {
+					fmt.Println("Insert failed: ", err)
+				}
+			}
+			fmt.Println("Insert complete.")
+		*/
 	}
 }
