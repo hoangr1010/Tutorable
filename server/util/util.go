@@ -100,10 +100,22 @@ type LoginClaim struct {
 	UserInfo
 }
 
-// Peeks into tutor availability table and returns bool if tutor exists
+// Peeks into tutor availability table and returns true if tutor has timeslots in table
+// INCLUDE DATE LATER AT THE MOMENT WILL IS ONLY CHECKING THE TIMESLOT
 func PeekAvailability(db *sql.DB, tutor TutorAvailability) (bool, error) {
 	var exists bool
-	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM tutor_availability WHERE id = $1)", tutor.ID).Scan(&exists)
+	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM tutor_availability WHERE tutor_id = $1)", tutor.ID).Scan(&exists)
+	if err != nil {
+		fmt.Println("Error checking tutor_availability: ", err)
+		return false, err
+	}
+	return exists, nil
+}
+
+// Peeks into tutor availability table and checks if tutor's timeslot is taken
+func PeekTimeSlot(db *sql.DB, session TutoringSession, timeBlockId int) (bool, error) {
+	var exists bool
+	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM tutor_availability WHERE tutor_idtime_block_id = $1)", timeBlockId).Scan(&exists)
 	if err != nil {
 		fmt.Println("Error checking tutor_availability: ", err)
 		return false, err
@@ -177,6 +189,12 @@ func gernerateHMAC(message []byte) string {
 }
 */
 
+// Add tutoring session
+func AddTutoringSession(db *sql.DB, session TutoringSession) error {
+
+	return nil
+}
+
 func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringSession, err error) {
 	//var query string
 
@@ -204,6 +222,7 @@ func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringS
 		}
 		for rows.Next() {
 			var session TutoringSession
+			var int64Array pq.Int64Array
 			err := rows.Scan(
 				&session.TutoringSessionID,
 				&session.TutorID,
@@ -213,10 +232,14 @@ func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringS
 				&session.Grade,
 				&session.Status,
 				&session.Date,
-				&session.TimeBlockIDList,
-			)
+				(&int64Array))
 			if err != nil {
 				fmt.Println("Error scanning tutoring_session: ", err)
+			}
+
+			// Convert int64 array into int slices
+			for _, i := range int64Array {
+				session.TimeBlockIDList = append(session.TimeBlockIDList, int(i))
 			}
 			session.StudentID = user.ID
 			tutoringSessions = append(tutoringSessions, session)
@@ -256,8 +279,7 @@ func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringS
 				&session.Grade,
 				&session.Status,
 				&session.Date,
-				&session.TimeBlockIDList,
-			)
+				pq.Array(&session.TimeBlockIDList))
 			if err != nil {
 				fmt.Println("Error scanning tutoring_session: ", err)
 			}
