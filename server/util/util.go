@@ -75,6 +75,19 @@ type TutorAvailability struct {
 	TimeBlockId []int  `json:"time_block_id_list"`
 }
 
+type TutoringSession struct {
+	TutoringSessionID int    `json:"tutor_session_id"`
+	TutorID           int    `json:"tutor_id"`
+	StudentID         int    `json:"student_id"`
+	Name              string `json:"name"`
+	Description       string `json:"description"`
+	Subject           string `json:"subject"`
+	Grade             int    `json:"grade"`
+	Status            string `json:"tutoring_session_status"`
+	Date              string `json:"date"`
+	TimeBlockIDList   []int  `json:"time_block_id_list"`
+}
+
 /*
 In the token body we want
 role,
@@ -152,6 +165,98 @@ func gernerateHMAC(message []byte) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 */
+
+func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringSession, err error) {
+	//var query string
+
+	if user.Role == "student" {
+		// Make query for student
+		query := `
+		SELECT
+		tutor_session_id,
+		tutor_id,
+		name,
+		description,
+		subject,
+		grade,
+		status,
+		date,
+		time_block_id_list
+		FROM tutoring_session
+		WHERE student_id = $1
+		`
+		// Execute the SQL query
+		rows, err := db.Query(query, user.ID)
+		// Scan the results into a struct
+		if err != nil {
+			fmt.Println("Error scanning tutoring_session: ", err)
+		}
+		for rows.Next() {
+			var session TutoringSession
+			err := rows.Scan(
+				&session.TutoringSessionID,
+				&session.TutorID,
+				&session.Name,
+				&session.Description,
+				&session.Subject,
+				&session.Grade,
+				&session.Status,
+				&session.Date,
+				&session.TimeBlockIDList,
+			)
+			if err != nil {
+				fmt.Println("Error scanning tutoring_session: ", err)
+			}
+			session.StudentID = user.ID
+			tutoringSessions = append(tutoringSessions, session)
+		}
+
+		return tutoringSessions, err
+	} else if user.Role == "tutor" {
+		// Make query for tutor
+		query := `
+		SELECT
+		tutor_session_id,
+		student_id,
+		name,
+		description,
+		subject,
+		grade,
+		status,
+		date,
+		time_block_id_list
+		FROM tutoring_session
+		WHERE tutor_id = $1
+		`
+		// Execute the SQL query
+		rows, err := db.Query(query, user.ID)
+		// Scan the results into a struct
+		if err != nil {
+			fmt.Println("Error scanning tutoring_session: ", err)
+		}
+		for rows.Next() {
+			var session TutoringSession
+			err := rows.Scan(
+				&session.TutoringSessionID,
+				&session.StudentID,
+				&session.Name,
+				&session.Description,
+				&session.Subject,
+				&session.Grade,
+				&session.Status,
+				&session.Date,
+				&session.TimeBlockIDList,
+			)
+			if err != nil {
+				fmt.Println("Error scanning tutoring_session: ", err)
+			}
+			session.TutorID = user.ID
+			tutoringSessions = append(tutoringSessions, session)
+		}
+		return tutoringSessions, err
+	}
+	return tutoringSessions, nil
+}
 
 func GetTutorUser(db *sql.DB, email string) (User User, err error) {
 	// Prepare the SQL query
