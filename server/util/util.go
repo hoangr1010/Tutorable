@@ -100,6 +100,17 @@ type LoginClaim struct {
 	UserInfo
 }
 
+// Peeks into tutor availability table and returns bool if tutor exists
+func PeekAvailability(db *sql.DB, tutor TutorAvailability) (bool, error) {
+	var exists bool
+	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM tutor_availability WHERE id = $1)", tutor.ID).Scan(&exists)
+	if err != nil {
+		fmt.Println("Error checking tutor_availability: ", err)
+		return false, err
+	}
+	return exists, nil
+}
+
 // GetAvailability retrieves tutor availability from the database for a given tutor ID and date.
 func GetAvailability(db *sql.DB, tutorID int, date string) ([]int, error) {
 	query := `

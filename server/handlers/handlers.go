@@ -262,18 +262,35 @@ func AddTutorAvailability(db *sql.DB) http.HandlerFunc {
 		w.WriteHeader(http.StatusOK)
 
 		// Read JSON payload
-		var TutorAvailability util.TutorAvailability
-		err := util.DecodeJSONRequestBody(r, &TutorAvailability)
+		var tutorAvailability util.TutorAvailability
+		err := util.DecodeJSONRequestBody(r, &tutorAvailability)
 		if err != nil {
 			fmt.Println("Invalid JSON:", err)
 			http.Error(w, "Inavlid JSON", http.StatusBadRequest)
 			return
 		}
+		// Parse the date
+		date, err := time.Parse("2006-01-02", tutorAvailability.Date)
+		if err != nil {
+			http.Error(w, "Invalid date format", http.StatusBadRequest)
+			return
+		}
+
+		//dateStr := date.Format("2006-01-02")
+
+		// Check if timeslots exist for that date, delete if exist
+		exists, err := util.PeekAvailability(db, tutorAvailability)
+		if err != nil {
+			http.Error(w, "WHOOPS!", http.StatusInternalServerError)
+		}
+		// Delete existing entries with data and tutor id
+		if exists {
+			util.DeleteTutorAvailability(db, tutorAvailability.ID, date)
+		}
 		// Add timeslot to database
-		fmt.Println("Json body: ", TutorAvailability)
-		var tutorAvailabilityIdList []int = TutorAvailability.TimeBlockId
-		for _, id := range tutorAvailabilityIdList {
-			err := util.InsertTutorAvailability(db, TutorAvailability, id)
+		//fmt.Println("Json body: ", TutorAvailability) // line for debug
+		for _, id := range tutorAvailability.TimeBlockId {
+			err := util.InsertTutorAvailability(db, tutorAvailability, id)
 			if err != nil {
 				fmt.Println("Insert failed: ", err)
 				http.Error(w, "Inavlid JSON", http.StatusInternalServerError)
@@ -282,11 +299,11 @@ func AddTutorAvailability(db *sql.DB) http.HandlerFunc {
 		fmt.Println("Insert complete.")
 		// Insert complete -> Send response
 		response := struct {
-			Date            string `json:"date"`
-			TimeBlockIdList []int  `json:"time_block_id_list"`
+			Date            time.Time `json:"date"`
+			TimeBlockIdList []int     `json:"time_block_id_list"`
 		}{
-			Date:            TutorAvailability.Date,
-			TimeBlockIdList: TutorAvailability.TimeBlockId,
+			Date:            date,
+			TimeBlockIdList: tutorAvailability.TimeBlockId,
 		}
 
 		// Marshal response to JSON
