@@ -1,4 +1,4 @@
-package com.example.tutorapp395project.classes
+package com.example.tutorapp395project.screen.view
 
 sealed class Screen(val route: String) {
     object LandingPage: Screen("LandingPage")
@@ -15,8 +15,8 @@ sealed class Screen(val route: String) {
 }
 
 sealed class ScreenGraph(val route: String) {
-    object authGraph: ScreenGraph("authGraph")
-    object studentGraph: ScreenGraph("studentGraph")
-    object tutorGraph: ScreenGraph("tutorGraph")
+    object authGraph: ScreenGraph("auth")
+    object studentGraph: ScreenGraph("student")
+    object tutorGraph: ScreenGraph("tutor")
 }
 

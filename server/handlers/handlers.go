@@ -169,8 +169,10 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 					w.Write([]byte("Bad Request - Existing email"))
 				} else {
 					// Handle other types of errors
-					http.Error(w, "Error inserting into database", http.StatusInternalServerError)
-
+					// http.Error(w, "Error inserting into database", http.StatusInternalServerError)
+					// Handle other types of errors
+					errorMessage := fmt.Sprintf("Error inserting into database: %v", err) // This is more specific because it shows postgres errors, you can remove it if you want.
+					http.Error(w, errorMessage, http.StatusInternalServerError)
 				}
 			} else {
 				// Successful register
