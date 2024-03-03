@@ -1,5 +1,9 @@
 package com.example.tutorapp395project.repository
 
+import com.example.tutorapp395project.data.AddAvailabilityRequest
+import com.example.tutorapp395project.data.AddAvailabilityResponse
+import com.example.tutorapp395project.data.GetAvailabilityRequest
+import com.example.tutorapp395project.data.GetAvailabilityResponse
 import com.example.tutorapp395project.data.SessionRequest
 import com.example.tutorapp395project.data.SessionResponse
 import com.example.tutorapp395project.data.remote.AuthService
@@ -24,6 +28,14 @@ class UserRepository {
 
     suspend fun getSessionList(sessionRequest: SessionRequest): Response<SessionResponse> {
         return userService.getSessionList(sessionRequest)
+    }
+
+    suspend fun getAvailability(getAvailabilityRequest: GetAvailabilityRequest): Response<GetAvailabilityResponse> {
+        return userService.getAvailability(getAvailabilityRequest)
+    }
+
+    suspend fun addAvailability(addAvailabilityRequest: AddAvailabilityRequest): Response<AddAvailabilityResponse> {
+        return userService.addAvailability(addAvailabilityRequest)
     }
 
 }

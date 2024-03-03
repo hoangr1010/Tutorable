@@ -14,11 +14,32 @@ data class TimeSlot (
     val time: String
 )
 
-data class AvailabilityRequest(
-    val id: String,
+data class AvailabilityState(
+    var isLoading: Boolean = true,
+    var time_block_id_list: List<Int> ?= emptyList()
+)
+
+data class GetAvailabilityRequest(
+    val id: Int,
+    val date: String
+)
+
+data class GetAvailabilityResponse(
+    val time_block_id_list: List<Int>
+)
+
+data class AddAvailabilityRequest(
+    val id: Int,
+    val date: String,
+    val time_block_id_list: List<Int>? = emptyList()
+)
+
+data class AddAvailabilityResponse(
     val date: String,
     val time_block_id_list: List<Int>
 )
+
+
 
 
 object TimeSlots {

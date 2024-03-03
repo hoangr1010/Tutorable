@@ -22,10 +22,10 @@ class StudentViewModel(
 ): ViewModel() {
 
     init {
-        getSessionsForStudent(
-            role = authViewModel.UserState.value.role,
-            id = authViewModel.UserState.value.id.toInt()
-        )
+//        getSessionsForStudent(
+//            role = authViewModel.UserState.value.role,
+//            id = authViewModel.UserState.value.id.toInt()
+//        )
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

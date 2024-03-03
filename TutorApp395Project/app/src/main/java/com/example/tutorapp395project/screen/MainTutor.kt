@@ -17,12 +17,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -30,8 +33,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,7 +52,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.tutorapp395project.R
+import com.example.tutorapp395project.classes.Screen
 import com.example.tutorapp395project.data.TimeSlots
+import com.example.tutorapp395project.repository.UserRepository
 import com.example.tutorapp395project.screen.view.HomeBar
 import com.example.tutorapp395project.screen.view.SettingsColumn
 import com.example.tutorapp395project.screen.tutorView.TutorAppointmentLayout
@@ -60,6 +68,7 @@ import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import com.maxkeppeler.sheets.calendar.models.CalendarStyle
+import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,7 +85,24 @@ fun MainTutor(
         onFinishedRequest = { dialogState.value = true }
     )
 
+    var snackBarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(key1 = tutorViewModel.addAvailabilityState) {
+        snapshotFlow { tutorViewModel.addAvailabilityState.value }
+            .collect { state ->
+                if (state.isNotEmpty()) {
+                    scope.launch {
+                        snackBarHostState.showSnackbar(
+                            message = state,
+                        )
+                    }
+                }
+            }
+    }
+
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         containerColor = Color(0xFF00539C),
         bottomBar = { HomeBar(navController = navController, homeViewModel = homeViewModel) },
         floatingActionButton = {
@@ -142,7 +168,7 @@ fun MainTutor(
                                 )
                             }
 
-                            TimeSlotAvailabilityView(tutorViewModel = tutorViewModel, modifier = Modifier.weight(1f))
+                            TimeSlotAvailabilityView(tutorViewModel = tutorViewModel, authViewModel = authViewModel, modifier = Modifier.weight(1f))
 
                             Row(
                                 modifier = Modifier
@@ -212,48 +238,77 @@ fun MainTutor(
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TimeSlotAvailabilityView(
+    modifier: Modifier = Modifier,
     tutorViewModel: TutorViewModel,
-    modifier: Modifier = Modifier
+    authViewModel: AuthViewModel
 ) {
+
+    val isDataLoaded = remember { mutableStateOf(false) }
+
+    if (!isDataLoaded.value) {
+        tutorViewModel.getAvailability(
+            authViewModel.UserState.value.id.toInt(),
+            tutorViewModel.selectedDate.value.toString()
+        )
+        isDataLoaded.value = true
+    }
+
+
     LazyColumn(
         modifier = modifier
             .padding(start = 10.dp, end = 10.dp)
     ) {
-        items (TimeSlots.slots) {timeSlot ->
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .shadow(5.dp, MaterialTheme.shapes.medium, true)
-                    .clip(MaterialTheme.shapes.medium)
-                    .background(
-                        color = if (timeSlot.id in tutorViewModel.selectedTimeSlotIdsSet.value) Color(
-                            0xFFEEA47F
-                        ) else Color.White,
-                    )
-                    .border(
-                        width = 0.dp,
-                        color = Color(0xFFEEA47F),
-                        shape = MaterialTheme.shapes.medium
-                    )
-                    .padding(10.dp)
-                    .clickable {
-                        tutorViewModel.toggleTimeSlotId(timeSlot.id)
-                    },
-                contentAlignment = Alignment.Center,
-
+        if (tutorViewModel.availabilityState.value.isLoading) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
-                Text(
-                    text = timeSlot.time,
-                    fontSize = 24.sp,
-                    color = if (timeSlot.id in tutorViewModel.selectedTimeSlotIdsSet.value) Color.White else Color(0xFFEEA47F),
-                )
+                    CircularProgressIndicator(color = Color(0xFFEEA47F))
+                }
             }
-            Spacer(modifier = Modifier.height(10.dp))
+        } else {
+            items (TimeSlots.slots) {timeSlot ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .shadow(5.dp, MaterialTheme.shapes.medium, true)
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(
+                            color = if (tutorViewModel.availabilityState.value.time_block_id_list?.contains(
+                                    timeSlot.id
+                                ) == true) Color(
+                                0xFFEEA47F
+                            ) else Color.White,
+                        )
+                        .border(
+                            width = 0.dp,
+                            color = Color(0xFFEEA47F),
+                            shape = MaterialTheme.shapes.medium
+                        )
+                        .padding(10.dp)
+                        .clickable {
+                            tutorViewModel.toggleTimeSlotId(timeSlot.id)
+                        },
+                    contentAlignment = Alignment.Center,
+
+                    ) {
+                    Text(
+                        text = timeSlot.time,
+                        fontSize = 24.sp,
+                        color = if (tutorViewModel.availabilityState.value.time_block_id_list?.contains(
+                                timeSlot.id
+                            ) == true) Color.White else Color(0xFFEEA47F),
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+            }
         }
     }
-
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
