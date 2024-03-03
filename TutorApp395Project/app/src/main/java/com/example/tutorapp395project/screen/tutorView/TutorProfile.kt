@@ -35,7 +35,7 @@ fun TutorProfileColumn(
     Log.d("TutorProfile", "Tutor: $tutor")
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
     ) {
         Column(

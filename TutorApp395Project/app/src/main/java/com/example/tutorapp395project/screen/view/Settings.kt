@@ -34,7 +34,7 @@ fun SettingsColumn(
     Column(
         verticalArrangement = Arrangement.spacedBy(15.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
     ) {
 

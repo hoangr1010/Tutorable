@@ -46,43 +46,34 @@ import com.example.tutorapp395project.screen.studentView.BackgroundNoLogo
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TutorAppointmentLayout(modifier: Modifier = Modifier) {
-    var presses by remember { mutableIntStateOf(0) }
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
-    ) { innerPadding ->
-        LazyColumn(
-//            verticalArrangement = Arrangement.spacedBy(15.dp, Alignment.Top),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .background(color = Color(0xFF00539C))
-        ) {
-            items(19) {
-                Appointment(
-                    "3:00PM - 4:00PM", "January 24th, 2024", "Math",
-                    "Student", "Nami"
-                )
-                Appointment(
-                    "4:00PM - 5:00PM", "January 24th, 2024", "Chemistry",
-                    "Student", "Vinsmoke Sanji"
-                )
-                Appointment(
-                    "3:00PM - 4:00PM", "January 31th, 2024", "Biology",
-                    "Student", "Tony Tony Chopper"
-                )
-                Appointment(
-                    "4:00PM - 5:00PM", "January 31th, 2024", "History",
-                    "Student", "Nico Robin"
-                )
-                Appointment(
-                    "6:00PM - 7:00PM", "January 31th, 2024", "Physics",
-                    "Student", "Franky"
-                )
-            }
+    LazyColumn(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .fillMaxSize()
+            .background(color = Color(0xFF00539C))
+    ) {
+        items(19) {
+            Appointment(
+                "3:00PM - 4:00PM", "January 24th, 2024", "Math",
+                "Student", "Nami"
+            )
+            Appointment(
+                "4:00PM - 5:00PM", "January 24th, 2024", "Chemistry",
+                "Student", "Vinsmoke Sanji"
+            )
+            Appointment(
+                "3:00PM - 4:00PM", "January 31th, 2024", "Biology",
+                "Student", "Tony Tony Chopper"
+            )
+            Appointment(
+                "4:00PM - 5:00PM", "January 31th, 2024", "History",
+                "Student", "Nico Robin"
+            )
+            Appointment(
+                "6:00PM - 7:00PM", "January 31th, 2024", "Physics",
+                "Student", "Franky"
+            )
         }
     }
 }

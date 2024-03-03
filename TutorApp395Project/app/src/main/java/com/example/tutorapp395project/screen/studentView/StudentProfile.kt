@@ -47,7 +47,7 @@ fun StudentProfileColumn(
     val student: Student = toStudent(authViewModel.UserState.value)
     Log.d("StudentProfile", "Student: $student")
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
     ) {
         Column(

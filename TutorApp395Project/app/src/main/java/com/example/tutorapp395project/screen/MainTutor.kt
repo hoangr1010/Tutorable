@@ -1,7 +1,6 @@
 package com.example.tutorapp395project.screen
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -61,7 +60,6 @@ import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import com.maxkeppeler.sheets.calendar.models.CalendarStyle
-import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -142,7 +140,7 @@ fun MainTutor(
                                 )
                             }
 
-                            TimeSlotView(tutorViewModel = tutorViewModel, modifier = Modifier.weight(1f))
+                            TimeSlotAvailabilityView(tutorViewModel = tutorViewModel, modifier = Modifier.weight(1f))
 
                             Row(
                                 modifier = Modifier
@@ -212,7 +210,7 @@ fun MainTutor(
 }
 
 @Composable
-fun TimeSlotView(
+fun TimeSlotAvailabilityView(
     tutorViewModel: TutorViewModel,
     modifier: Modifier = Modifier
 ) {

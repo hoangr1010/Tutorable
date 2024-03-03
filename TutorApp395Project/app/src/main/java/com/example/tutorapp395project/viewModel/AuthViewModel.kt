@@ -10,6 +10,7 @@ import com.example.tutorapp395project.data.RegisterData
 import com.example.tutorapp395project.data.RegisterResponse
 import com.example.tutorapp395project.data.User
 import com.example.tutorapp395project.data.dummyToken
+import com.example.tutorapp395project.data.dummyUserStudent
 import com.example.tutorapp395project.data.dummyUserTutor
 import com.example.tutorapp395project.data.toStudentRegisterData
 import com.example.tutorapp395project.data.toTutorRegisterData
@@ -30,7 +31,7 @@ class AuthViewModel(
     val registerState = mutableStateOf<String>("")
 
     // DEVELOPMENT ONLY
-    val UserState = mutableStateOf(dummyUserTutor)
+    val UserState = mutableStateOf(dummyUserStudent)
     val token = mutableStateOf(dummyToken)
 
     fun onLoginChange(update: (LoginData) -> LoginData) {
