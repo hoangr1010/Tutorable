@@ -68,8 +68,8 @@ import com.maxkeppeler.sheets.calendar.models.CalendarStyle
 fun MainStudent(
     navController: NavController,
     authViewModel: AuthViewModel,
-    homeViewModel: HomeViewModel = viewModel(),
-    studentViewModel: StudentViewModel = viewModel(),
+    homeViewModel: HomeViewModel = HomeViewModel(),
+    studentViewModel: StudentViewModel = StudentViewModel(authViewModel = authViewModel),
 ) {
 
 
@@ -190,7 +190,8 @@ fun MainStudent(
                     StudentAppointmentLayout(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(it)
+                            .padding(it),
+                        studentViewModel = studentViewModel
                     )
                 }
                 homeViewModel.viewState.value == "setting" -> {

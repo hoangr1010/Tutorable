@@ -44,7 +44,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tutorapp395project.R
-import com.example.tutorapp395project.data.TutorRepo
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -205,6 +204,5 @@ fun TutorCard( modifier:Modifier,
 @Preview
 @Composable
 fun previewTutorList(){
-    BackgroundNoLogo()
     TutorList()
 }

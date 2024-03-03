@@ -1,6 +1,7 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
 package com.example.tutorapp395project.screen.studentView
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -23,9 +25,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tutorapp395project.screen.view.SessionView
+import com.example.tutorapp395project.utils.getTimeInterval
+import com.example.tutorapp395project.utils.stringToDate
+import com.example.tutorapp395project.utils.stringToReadableDate
+import com.example.tutorapp395project.viewModel.AuthViewModel
+import com.example.tutorapp395project.viewModel.StudentViewModel
 
 @Composable
-fun StudentAppointmentLayout(modifier: Modifier = Modifier) {
+fun StudentAppointmentLayout(
+    studentViewModel: StudentViewModel,
+    modifier: Modifier = Modifier
+) {
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(15.dp, Alignment.Top),
@@ -35,13 +46,37 @@ fun StudentAppointmentLayout(modifier: Modifier = Modifier) {
                 .background(color = Color(0xFF00539C))
 
         ) {
-            items(10) {
-                Appointment(
-                    "3:00PM - 4:00PM", "January 24th, 2024", "Math",
-                    "Tutor", "Karen McTutor"
-                )
 
+            if (studentViewModel.sessionState.value.isLoading) {
+                item {
+                    CircularProgressIndicator(color = Color.White)
+                }
+            } else {
+                if (studentViewModel.sessionState.value.session_list.isNullOrEmpty()) {
+                    item {
+                        Text(
+                            text = "No appointments scheduled",
+                            color = Color.White
+                        )
+                    }
+                } else {
+                    studentViewModel.sessionState.value.session_list?.forEach { session ->
+                        Log.d("StudentAppointmentLayout", "date: ${stringToDate(session.date).toString()}")
+                        item {
+                            SessionView(
+                                time = getTimeInterval(session.time_block_id_list),
+                                date = stringToReadableDate(session.date),
+                                subject = session.subject,
+                                with = "Tutor",
+                                person = session.tutor_id.toString(),
+                                modifier = Modifier.padding(10.dp)
+                            )
+                        }
+                    }
+                }
             }
+
+
         }
 
 }
@@ -56,50 +91,6 @@ fun StudentAppointmentLayout(modifier: Modifier = Modifier) {
                 modifier -> takes modifier parameters
     Return: None
  */
-@Composable
-fun Appointment(time: String, date: String, subject: String, with: String, person: String,
-                modifier: Modifier = Modifier) {
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-
-    ) {
-        Box(
-            modifier = Modifier
-                .width(300.dp)
-                .height(120.dp)
-                .padding(2.dp)
-                .background(
-                    color = Color(0xFFD9D9D9),
-                    shape = RoundedCornerShape(size = 15.dp)
-
-                )
-        ) {
-            Text(
-                text = "$time\n$date\n$subject\n\n",
-                modifier = Modifier
-                    .padding(start = 10.dp, top = 10.dp),
-                style = TextStyle(
-                    fontSize = 12.sp,
-                    //fontFamily = FontFamily(Font(R.font.roboto)),
-                    fontWeight = FontWeight(900),
-                    color = Color(0xFF000000),
-                    )
-            )
-            Text(
-                text = "$with: $person\n",
-                modifier = Modifier
-                    .padding(start = 10.dp, top = 90.dp),
-                style = TextStyle(
-                    fontSize = 12.sp,
-                    //fontFamily = FontFamily(Font(R.font.roboto)),
-                    fontWeight = FontWeight(400),
-                    color = Color(0xFF000000),
-                    )
-            )
-        }
-    }
-}
 
 /*
     Function: Creates just a simple blue background without a logo
@@ -121,7 +112,9 @@ fun BackgroundNoLogo(modifier: Modifier = Modifier) {
 @Composable
 fun PreviewStudentSChedule(){
     BackgroundNoLogo()
-    StudentAppointmentLayout()
+    StudentAppointmentLayout(
+        studentViewModel = StudentViewModel(authViewModel = AuthViewModel())
+    )
 //    Appointment("3:00PM", "024/02/21","math","Karen McTutor", "Nami" )
 
 }

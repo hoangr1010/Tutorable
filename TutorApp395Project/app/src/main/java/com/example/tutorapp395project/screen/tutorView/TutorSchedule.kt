@@ -1,5 +1,6 @@
 package com.example.tutorapp395project.screen.tutorView
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -35,8 +37,14 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.tutorapp395project.screen.studentView.Appointment
-import com.example.tutorapp395project.screen.studentView.BackgroundNoLogo
+import androidx.compose.ui.unit.dp
+import androidx.test.espresso.intent.Intents.init
+import com.example.tutorapp395project.screen.view.SessionView
+import com.example.tutorapp395project.utils.getTimeInterval
+import com.example.tutorapp395project.utils.stringToDate
+import com.example.tutorapp395project.utils.stringToReadableDate
+import com.example.tutorapp395project.viewModel.AuthViewModel
+import com.example.tutorapp395project.viewModel.TutorViewModel
 
 /*
     Function: This creates a column that lays out all the users scheduled appointments
@@ -45,36 +53,48 @@ import com.example.tutorapp395project.screen.studentView.BackgroundNoLogo
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TutorAppointmentLayout(modifier: Modifier = Modifier) {
+fun TutorAppointmentLayout(
+    modifier: Modifier = Modifier,
+    tutorViewModel: TutorViewModel,
+) {
+
     LazyColumn(
-        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxSize()
+            .padding(top = 10.dp)
             .background(color = Color(0xFF00539C))
     ) {
-        items(19) {
-            Appointment(
-                "3:00PM - 4:00PM", "January 24th, 2024", "Math",
-                "Student", "Nami"
-            )
-            Appointment(
-                "4:00PM - 5:00PM", "January 24th, 2024", "Chemistry",
-                "Student", "Vinsmoke Sanji"
-            )
-            Appointment(
-                "3:00PM - 4:00PM", "January 31th, 2024", "Biology",
-                "Student", "Tony Tony Chopper"
-            )
-            Appointment(
-                "4:00PM - 5:00PM", "January 31th, 2024", "History",
-                "Student", "Nico Robin"
-            )
-            Appointment(
-                "6:00PM - 7:00PM", "January 31th, 2024", "Physics",
-                "Student", "Franky"
-            )
+        Log.d("TutorAppointmentLayout", "sessionState: ${tutorViewModel.sessionState.value}")
+        if (tutorViewModel.sessionState.value.isLoading) {
+            item {
+                CircularProgressIndicator(color = Color.White)
+            }
+        } else {
+            if (tutorViewModel.sessionState.value.session_list.isNullOrEmpty()) {
+                item {
+                    Text(
+                        text = "No appointments scheduled",
+                        color = Color.White
+                    )
+                }
+            } else {
+                tutorViewModel.sessionState.value.session_list?.forEach { session ->
+                    Log.d("TutorAppointmentLayout", "date: ${stringToDate(session.date).toString()}")
+                    item {
+                        SessionView(
+                            time = getTimeInterval(session.time_block_id_list),
+                            date = stringToReadableDate(session.date),
+                            subject = session.subject,
+                            with = "With",
+                            person = session.student_id.toString(),
+                            modifier = Modifier.padding(10.dp)
+                        )
+                    }
+                }
+            }
         }
+
     }
 }
 
@@ -83,6 +103,9 @@ fun TutorAppointmentLayout(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun previewTutorSchedule(){
-    BackgroundNoLogo()
-    TutorAppointmentLayout()
+    TutorAppointmentLayout(
+        tutorViewModel = TutorViewModel(
+            authViewModel = AuthViewModel()
+        )
+    )
 }

@@ -67,8 +67,8 @@ import com.maxkeppeler.sheets.calendar.models.CalendarStyle
 fun MainTutor(
     navController: NavController,
     authViewModel: AuthViewModel,
-    homeViewModel: HomeViewModel = viewModel(),
-    tutorViewModel: TutorViewModel = TutorViewModel()
+    homeViewModel: HomeViewModel = HomeViewModel(),
+    tutorViewModel: TutorViewModel = TutorViewModel(authViewModel = authViewModel)
 ) {
     val dialogState = remember { mutableStateOf(false) }
 
@@ -100,6 +100,7 @@ fun MainTutor(
         },
         content = {
 
+            // Show Dialog calendar
             CalendarDialog(
                 state = calendarState,
                 header = Header.Default(title = "Select a Date"),
@@ -113,6 +114,7 @@ fun MainTutor(
                 }
             )
 
+            // Show Dialog time slot availability
             if (dialogState.value) {
                 Dialog(onDismissRequest = { dialogState.value = false }) {
                     Card (
@@ -192,7 +194,8 @@ fun MainTutor(
                     TutorAppointmentLayout(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(it)
+                            .padding(it),
+                        tutorViewModel = tutorViewModel
                     )
                 }
                 homeViewModel.viewState.value == "setting" -> {

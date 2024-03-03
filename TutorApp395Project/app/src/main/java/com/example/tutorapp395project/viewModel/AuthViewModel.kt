@@ -98,7 +98,6 @@ class AuthViewModel(
             } catch (e: Exception) {
                 Log.e("AuthViewModel", "Error registering: ", e)
                 registerState.value = "❌ Error creating account: ${e}. Please try again."
-
             }
         }
     }
