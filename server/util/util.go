@@ -127,6 +127,7 @@ func PeekTimeSlot(db *sql.DB, session TutoringSession, timeBlockId int) (bool, e
 	return exists, nil
 }
 
+// Legacy
 func SearchTutorAvailability(db *sql.DB, date string, timeBlockIDList []int) (tutors []User, err error) {
 	var tempTutorArray []User
 	//var tutorTag = make(map[int]int)
