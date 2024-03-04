@@ -119,46 +119,12 @@ func PeekAvailabilityDate(db *sql.DB, tutor TutorAvailability) (bool, error) {
 // Peeks into tutor availability table and checks if tutor's timeslot is taken
 func PeekTimeSlot(db *sql.DB, session TutoringSession, timeBlockId int) (bool, error) {
 	var exists bool
-	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM tutor_availability WHERE tutor_idtime_block_id = $1)", timeBlockId).Scan(&exists)
+	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM tutor_availability WHERE tutor_id =$1 AND date = $2 AND time_block_id = $3)", session.TutorID, session.Date, timeBlockId).Scan(&exists)
 	if err != nil {
 		fmt.Println("Error checking tutor_availability: ", err)
 		return false, err
 	}
 	return exists, nil
-}
-
-func SearchTutorAvailability(db *sql.DB, date string, timeBlockIDList []int) (tutors []User, err error) {
-	var tempTutorArray []User
-	//var tutorTag = make(map[int]int)
-	// Make a query for each timeblock id
-	for _, id := range timeBlockIDList {
-		// Make a query
-		query := `
-			SELECT tutor_id 
-			FROM tutor_availability
-			WHERE date = $1 AND time_block_id = $2
-		`
-		rows, err := db.Query(query, date, id)
-		if err != nil {
-			fmt.Println("Error querying tutor availability: ", err)
-			return nil, err
-		}
-		defer rows.Close()
-		// Iterate over the rows
-		for rows.Next() {
-			var tutor User
-			// Scan each row's time block ID into the variable
-			if err := rows.Scan(&tutor); err != nil {
-				fmt.Println("Error scanning time block ID: ", err)
-				return nil, err
-			}
-			// Append the time block ID to the slice
-			tempTutorArray = append(tempTutorArray, tutor)
-			//tut
-		}
-		// Clean up tutors so that only tutors will all timeblocks are present
-	}
-	return tempTutorArray, nil
 }
 
 // GetAvailability retrieves tutor availability from the database for a given tutor ID and date.
@@ -201,6 +167,19 @@ func GetAvailability(db *sql.DB, tutorID int, date string) ([]int, error) {
 	return timeBlockIDs, nil
 }
 
+// Delete only specified time slots from tutor availabilty
+func DeleteSomeTutorAvailability(db *sql.DB, session TutoringSession, timeBlockID int) error {
+	query := `
+	DELETE FROM tutor_availability WHERE tutor_id = $1 AND date = $2 AND time_block_id = $3
+	`
+	_, err := db.Exec(query, session.TutorID, session.Date, timeBlockID)
+	if err != nil {
+		fmt.Printf("Error deleting tutor availability: %v\n", err)
+		return err
+	}
+	return nil
+}
+
 // DeleteTutorAvailability deletes all available time blocks for a tutor on a specific date.
 func DeleteTutorAvailability(db *sql.DB, tutorID int, date time.Time) error {
 	query := `
@@ -225,12 +204,6 @@ func gernerateHMAC(message []byte) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 */
-
-// Add tutoring session
-func AddTutoringSession(db *sql.DB, session TutoringSession) error {
-
-	return nil
-}
 
 // Returns all of the sessions that student or tutor is in
 func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringSession, err error) {
@@ -684,6 +657,33 @@ func InsertTutorAvailability(db *sql.DB, tutorAvailability TutorAvailability, ti
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+// Insert tutoring session
+func InsertTutoringSession(db *sql.DB, session TutoringSession) error {
+	query := `
+	INSERT INTO 
+	tutoring_session 
+	(tutor_id, student_id, name, description, subject, grade, date, time_block_id_list) 
+	VALUES
+	($1, $2, $3, $4, $5, $6, $7, $8)
+	`
+	_, err := db.Exec(query,
+		session.TutorID,
+		session.StudentID,
+		session.Name,
+		session.Description,
+		session.Subject,
+		session.Grade,
+		session.Date,
+		pq.Array(session.TimeBlockIDList))
+
+	if err != nil {
+		fmt.Println("Error inserting into tutoring session: ", err)
+		return err
+	}
+
 	return nil
 }
 
