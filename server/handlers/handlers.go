@@ -441,7 +441,8 @@ func SearchTutorAvailability(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// This will store the information from token
 		_, claims, _ := jwtauth.FromContext(r.Context())
-		w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+		_ = claims // get rid of stupid declared and not used error
+		//w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
 		// Put code here :))
 
 		var tutorAvailability util.TutorAvailability
@@ -458,38 +459,19 @@ func SearchTutorAvailability(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		// Parse date string
-		date, err := time.Parse("2006-01-02", tutorAvailability.Date)
-		if err != nil {
-			http.Error(w, "Invalid date format", http.StatusBadRequest)
-			return
-		}
+		// Search for tutors with timeblocks on specified date
+		tutors, err := util.SearchTutorAvailability(db, tutorAvailability.Date, tutorAvailability.TimeBlockIdList)
 
-		// Delete existing tutor availability for the specified date
-		err = util.DeleteTutorAvailability(db, tutorAvailability.ID, date)
 		if err != nil {
-			fmt.Printf("Error deleting tutor availability: %v\n", err)
-			http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError)
-			return
-		}
-
-		// Add new tutor availability for the specified time blocks
-		for _, id := range tutorAvailability.TimeBlockIdList {
-			err := util.InsertTutorAvailability(db, tutorAvailability, id)
-			if err != nil {
-				fmt.Printf("Error adding tutor availability: %v\n", err)
-				http.Error(w, "Error adding tutor availability", http.StatusInternalServerError)
-				return
-			}
+			fmt.Println("Error searching tutor availability: ", err)
+			http.Error(w, "Error searching table", http.StatusInternalServerError)
 		}
 
 		// Prepare response
 		response := struct {
-			Date            string `json:"date"`
-			TimeBlockIDList []int  `json:"time_block_id_list"`
+			TutorList []util.User `json:"tutor_list"`
 		}{
-			Date:            tutorAvailability.Date,
-			TimeBlockIDList: tutorAvailability.TimeBlockIdList,
+			TutorList: tutors,
 		}
 
 		// Marshal response to JSON
