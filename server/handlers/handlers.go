@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/go-chi/jwtauth/v5"
+	//"github.com/go-chi/jwtauth/v5"
 	"github.com/lib/pq"
 	"github.com/macewanCS/w24MacroHard/server/util"
 )
@@ -439,12 +439,7 @@ func GetTutoringSessionList(db *sql.DB) http.HandlerFunc {
 // SearchTutorAvailability searches all tutor availability for particular time slots.
 func SearchTutorAvailability(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// This will store the information from token
-		_, claims, _ := jwtauth.FromContext(r.Context())
-		_ = claims // get rid of stupid declared and not used error
-		//w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
-		// Put code here :))
-
+		// Decode request body into TutorAvailability struct
 		var tutorAvailability util.TutorAvailability
 		err := util.DecodeJSONRequestBody(r, &tutorAvailability)
 		if err != nil {
@@ -459,12 +454,33 @@ func SearchTutorAvailability(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		// Search for tutors with timeblocks on specified date
-		tutors, err := util.SearchTutorAvailability(db, tutorAvailability.Date, tutorAvailability.TimeBlockIdList)
-
+		// Search for tutor availability based on date and time block IDs
+		tutorIDs, err := util.SearchAvailability(db, tutorAvailability.Date, tutorAvailability.TimeBlockIdList)
 		if err != nil {
 			fmt.Println("Error searching tutor availability: ", err)
 			http.Error(w, "Error searching table", http.StatusInternalServerError)
+			return
+		}
+
+		// Fetch tutor details based on tutor IDs
+		var tutors []util.User
+		for _, tutorID := range tutorIDs {
+			// Get the tutor's email
+			tutorEmail, err := util.GetTutorEmailByID(db, tutorID)
+			if err != nil {
+				fmt.Println("Error fetching tutor email: ", err)
+				http.Error(w, "Error fetching tutor email", http.StatusInternalServerError)
+				return
+			}
+
+			// Fetch tutor details based on email
+			tutor, err := util.GetTutorUser(db, tutorEmail)
+			if err != nil {
+				fmt.Println("Error fetching tutor details: ", err)
+				http.Error(w, "Error fetching tutor details", http.StatusInternalServerError)
+				return
+			}
+			tutors = append(tutors, tutor)
 		}
 
 		// Prepare response
