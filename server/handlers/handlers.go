@@ -8,7 +8,9 @@ import (
 	"net/http"
 	"time"
 
+	//"github.com/go-chi/jwtauth"
 	//"github.com/go-chi/jwtauth/v5"
+
 	"github.com/lib/pq"
 	"github.com/macewanCS/w24MacroHard/server/util"
 )
@@ -518,13 +520,6 @@ func AddTutoringSession(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		// Parse the date
-		date, err := time.Parse("2006-01-02", session.Date)
-		if err != nil {
-			http.Error(w, "Invalid date format", http.StatusBadRequest)
-			return
-		}
-		fmt.Println(date)
 		var tutor util.TutorAvailability
 		tutor.ID = session.TutorID
 		// Check if tutor has availability in timeslot
@@ -534,13 +529,44 @@ func AddTutoringSession(db *sql.DB) http.HandlerFunc {
 				fmt.Println("Error checking tutor_availability: ", err)
 				http.Error(w, "Inavlid JSON", http.StatusBadRequest)
 			}
-			if exists {
-				http.Error(w, "Tutor is not available", http.StatusBadRequest)
+			if !exists {
+				http.Error(w, "Tutor is not available", http.StatusUnauthorized) // status code 401
 				return
 			}
 		}
 		// Create session if they are available
-
+		err = util.InsertTutoringSession(db, session)
+		if err != nil {
+			http.Error(w, "Error inserting into tutoring session", http.StatusInternalServerError) // status code 500
+			return
+		}
 		// Delete all availability shown in time_block_id_list
+		for _, id := range session.TimeBlockIDList {
+			err = util.DeleteSomeTutorAvailability(db, session, id)
+			if err != nil {
+				http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+				return
+			}
+		}
+
+		// Prepare response
+		response := struct {
+			TimeBlockIDList []int `json:"time_block_id_list"`
+		}{
+			TimeBlockIDList: session.TimeBlockIDList,
+		}
+
+		// Marshal response to JSON
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			fmt.Printf("Error encoding JSON response: %v\n", err)
+			http.Error(w, "Error encoding JSON response", http.StatusInternalServerError)
+			return
+		}
+
+		// Write response
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
 	}
 }
