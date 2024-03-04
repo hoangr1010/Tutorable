@@ -446,6 +446,71 @@ func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringS
 	return tutoringSessions, nil
 }
 
+// SearchTutorsAvailability fetches tutors' availability based on the provided date and time block IDs.
+func SearchAvailability(db *sql.DB, date string, timeBlockIDs []int) ([]int, error) {
+	// Construct placeholders for the time block IDs
+	var placeholders string
+	for i := range timeBlockIDs {
+		if i > 0 {
+			placeholders += ", "
+		}
+		placeholders += fmt.Sprintf("$%d", i+2)
+	}
+
+	// Your SQL query to fetch tutor IDs based on date and time block IDs
+	query := fmt.Sprintf(`
+		SELECT DISTINCT tutor_id FROM tutor_availability
+		WHERE date = $1 AND time_block_id IN (%s)
+	`, placeholders)
+
+	// Construct arguments for the query
+	args := make([]interface{}, len(timeBlockIDs)+1)
+	args[0] = date
+	for i, id := range timeBlockIDs {
+		args[i+1] = id
+	}
+
+	// Execute the query
+	rows, err := db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var tutorIDs []int
+	for rows.Next() {
+		var tutorID int
+		err := rows.Scan(&tutorID)
+		if err != nil {
+			return nil, err
+		}
+		tutorIDs = append(tutorIDs, tutorID)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return tutorIDs, nil
+}
+
+// GetTutorEmailByID fetches the email of the tutor with the given ID.
+func GetTutorEmailByID(db *sql.DB, tutorID int) (string, error) {
+	// Prepare the SQL query
+	query := `
+		SELECT email FROM tutor WHERE tutor_id = $1
+	`
+	// Execute the SQL query
+	row := db.QueryRow(query, tutorID)
+	// Scan the result into a string
+	var email string
+	err := row.Scan(&email)
+	if err != nil {
+		fmt.Println("Error scanning tutor email: ", err)
+		return "", err
+	}
+	return email, nil
+}
+
 func GetTutorUser(db *sql.DB, email string) (User User, err error) {
 	// Prepare the SQL query
 	query := `
