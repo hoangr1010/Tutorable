@@ -78,7 +78,9 @@ type TutorAvailability struct {
 type TutoringSession struct {
 	TutoringSessionID int    `json:"tutor_session_id"`
 	TutorID           int    `json:"tutor_id"`
+	TutorName         string `json:"tutor_name"`
 	StudentID         int    `json:"student_id"`
+	StudentName       string `json:"student_name"`
 	Name              string `json:"name"`
 	Description       string `json:"description"`
 	Subject           string `json:"subject"`
@@ -123,6 +125,40 @@ func PeekTimeSlot(db *sql.DB, session TutoringSession, timeBlockId int) (bool, e
 		return false, err
 	}
 	return exists, nil
+}
+
+func SearchTutorAvailability(db *sql.DB, date string, timeBlockIDList []int) (tutors []User, err error) {
+	var tempTutorArray []User
+	//var tutorTag = make(map[int]int)
+	// Make a query for each timeblock id
+	for _, id := range timeBlockIDList {
+		// Make a query
+		query := `
+			SELECT tutor_id 
+			FROM tutor_availability
+			WHERE date = $1 AND time_block_id = $2
+		`
+		rows, err := db.Query(query, date, id)
+		if err != nil {
+			fmt.Println("Error querying tutor availability: ", err)
+			return nil, err
+		}
+		defer rows.Close()
+		// Iterate over the rows
+		for rows.Next() {
+			var tutor User
+			// Scan each row's time block ID into the variable
+			if err := rows.Scan(&tutor); err != nil {
+				fmt.Println("Error scanning time block ID: ", err)
+				return nil, err
+			}
+			// Append the time block ID to the slice
+			tempTutorArray = append(tempTutorArray, tutor)
+			//tut
+		}
+		// Clean up tutors so that only tutors will all timeblocks are present
+	}
+	return tempTutorArray, nil
 }
 
 // GetAvailability retrieves tutor availability from the database for a given tutor ID and date.
@@ -196,6 +232,7 @@ func AddTutoringSession(db *sql.DB, session TutoringSession) error {
 	return nil
 }
 
+// Returns all of the sessions that student or tutor is in
 func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringSession, err error) {
 	//var query string
 
@@ -242,7 +279,62 @@ func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringS
 			for _, i := range int64Array {
 				session.TimeBlockIDList = append(session.TimeBlockIDList, int(i))
 			}
+			var student User
+			// Make query for student name
+			studentQuery := `
+				SELECT
+				first_name,
+				last_name
+				FROM student
+				WHERE student_id = $1
+			`
+			// Execute the SQL query for student
+			studentRow := db.QueryRow(studentQuery, user.ID)
+
+			// Scan student first name and student last name
+			err = studentRow.Scan(
+				&student.FirstName,
+				&student.LastName)
+
+			if err != nil {
+				fmt.Println("Error scanning student: ", err)
+			}
+			// Concatenate first name and last name into one string
+			studentName := student.FirstName + " " + student.LastName
+
+			// Add studentName into session
+			session.StudentName = studentName
+
+			var tutor User
+			// Make query for tutor name
+			tutorQuery := `
+				SELECT
+				first_name,
+				last_name
+				FROM tutor
+				WHERE tutor_id = $1
+			`
+			// Execute the SQL query for tutor
+			tutorRow := db.QueryRow(tutorQuery, session.TutorID)
+
+			// Scan tutor first name and tutor last name
+			err = tutorRow.Scan(
+				&tutor.FirstName,
+				&tutor.LastName)
+
+			if err != nil {
+				fmt.Println("Error scanning tutor: ", err)
+			}
+			// Concatenate first name and last name into one string
+			tutorName := tutor.FirstName + " " + tutor.LastName
+
+			// Add tutor name to session
+			session.TutorName = tutorName
+
+			// Add student ID to session
 			session.StudentID = user.ID
+
+			// Append session to list
 			tutoringSessions = append(tutoringSessions, session)
 		}
 
@@ -290,7 +382,62 @@ func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringS
 				session.TimeBlockIDList = append(session.TimeBlockIDList, int(i))
 			}
 
+			var student User
+			// Make query for student name
+			studentQuery := `
+				SELECT
+				first_name,
+				last_name
+				FROM student
+				WHERE student_id = $1
+			`
+			// Execute the SQL query for student
+			studentRow := db.QueryRow(studentQuery, session.StudentID)
+
+			// Scan student first name and student last name
+			err = studentRow.Scan(
+				&student.FirstName,
+				&student.LastName)
+
+			if err != nil {
+				fmt.Println("Error scanning student: ", err)
+			}
+			// Concatenate first name and last name into one string
+			studentName := student.FirstName + " " + student.LastName
+
+			// Add studentName into session
+			session.StudentName = studentName
+
+			var tutor User
+			// Make query for tutor name
+			tutorQuery := `
+				SELECT
+				first_name,
+				last_name
+				FROM tutor
+				WHERE tutor_id = $1
+			`
+			// Execute the SQL query for student
+			tutorRow := db.QueryRow(tutorQuery, user.ID)
+
+			// Scan tutor first name and tutor last name
+			err = tutorRow.Scan(
+				&tutor.FirstName,
+				&tutor.LastName)
+
+			if err != nil {
+				fmt.Println("Error scanning tutor: ", err)
+			}
+			// Concatenate first name and last name into one string
+			tutorName := tutor.FirstName + " " + tutor.LastName
+
+			// Add tutor name to session
+			session.TutorName = tutorName
+
+			// Add tutor id to session
 			session.TutorID = user.ID
+
+			// Append session to list
 			tutoringSessions = append(tutoringSessions, session)
 		}
 		return tutoringSessions, err
