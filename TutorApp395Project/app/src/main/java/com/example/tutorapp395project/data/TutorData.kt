@@ -3,6 +3,22 @@ package com.example.tutorapp395project.data
 import androidx.annotation.DrawableRes
 import com.example.tutorapp395project.R
 
+data class Tutor(
+    val id: Int,
+    val email: String,
+    val role: String,
+    val first_name: String,
+    val last_name: String,
+    val date_of_birth: String,
+    val expertise: List<String>,
+    val verified_status: Boolean,
+    val experience: String,
+    val description: String,
+    val degrees: List<String>,
+    val grade: Int,
+    val school: String
+)
+
 data class TutorData(
     val name:String,
     val subject:String,
@@ -14,11 +30,32 @@ data class TimeSlot (
     val time: String
 )
 
-data class AvailabilityRequest(
-    val id: String,
+data class AvailabilityState(
+    var isLoading: Boolean = true,
+    var time_block_id_list: List<Int> ?= emptyList()
+)
+
+data class GetAvailabilityRequest(
+    val id: Int,
+    val date: String
+)
+
+data class GetAvailabilityResponse(
+    val time_block_id_list: List<Int>
+)
+
+data class AddAvailabilityRequest(
+    val id: Int,
+    val date: String,
+    val time_block_id_list: List<Int>? = emptyList()
+)
+
+data class AddAvailabilityResponse(
     val date: String,
     val time_block_id_list: List<Int>
 )
+
+
 
 
 object TimeSlots {
@@ -50,44 +87,3 @@ object TimeSlots {
     )
 }
 
-object TutorRepo {
-    fun getData():List<TutorData>{
-        return listOf(
-            TutorData(
-                "Monkey D. Luffy",
-                "Computer Science",
-                R.drawable.image1
-            ),
-            TutorData(
-                "Roronoa Zoro",
-                "Geography",
-                R.drawable.image2
-            ),
-            TutorData(
-                "Nami",
-                "Math",
-                R.drawable.image3
-            ),
-            TutorData(
-                "Vinsmoke Sanji",
-                "Chemistry",
-                R.drawable.image4
-            ),
-            TutorData(
-                "Tony Tony Chopper",
-                "Biology",
-                R.drawable.image5
-            ),
-            TutorData(
-                "Nico Robin",
-                "History",
-                R.drawable.image6
-            ),
-            TutorData(
-                "Franky",
-                "Physics",
-                R.drawable.image7
-            ),
-            )
-    }
-}

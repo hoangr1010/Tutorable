@@ -28,7 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.tutorapp395project.data.Student
+import com.example.tutorapp395project.data.DisplayStudent
 import com.example.tutorapp395project.data.toStudent
 import com.example.tutorapp395project.viewModel.AuthViewModel
 
@@ -44,10 +44,10 @@ fun StudentProfileColumn(
     authViewModel: AuthViewModel,
     modifier: Modifier
 ) {
-    val student: Student = toStudent(authViewModel.UserState.value)
+    val student: DisplayStudent = toStudent(authViewModel.UserState.value)
     Log.d("StudentProfile", "Student: $student")
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
     ) {
         Column(
