@@ -439,12 +439,22 @@ func SearchAvailability(db *sql.DB, date string, timeBlockIDs []int) ([]int, err
 		placeholders += fmt.Sprintf("$%d", i+2)
 	}
 
+	fmt.Println(placeholders)
 	// Your SQL query to fetch tutor IDs based on date and time block IDs
 	query := fmt.Sprintf(`
 		SELECT DISTINCT tutor_id FROM tutor_availability
 		WHERE date = $1 AND time_block_id IN (%s)
 	`, placeholders)
 
+	// Makes a new query for in there are more placeholders
+	if len(timeBlockIDs) > 1 {
+		query = fmt.Sprintf(`
+		SELECT DISTINCT tutor_id FROM tutor_availability
+		WHERE date = $1 AND time_block_id IN (%s)
+		GROUP BY tutor_id
+		HAVING COUNT(DISTINCT time_block_id) = %d;
+		`, placeholders, len(timeBlockIDs))
+	}
 	// Construct arguments for the query
 	args := make([]interface{}, len(timeBlockIDs)+1)
 	args[0] = date

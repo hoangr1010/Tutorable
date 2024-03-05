@@ -444,8 +444,7 @@ func GetTutoringSessionList(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-// BUG!!! CURRENTLY GIVING TUTOR IF THEY HAVE ATLEAST ONE OF THE TIME BLOCK ID'S
-// NEEDS TO RETURN [] INSTEAD OF NULL IF THERE ARE NO TUTORS
+// fixed
 // SearchTutorAvailability searches all tutor availability for particular time slots.
 func SearchTutorAvailability(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -493,6 +492,10 @@ func SearchTutorAvailability(db *sql.DB) http.HandlerFunc {
 			tutors = append(tutors, tutor)
 		}
 
+		// If tutors is empty redeclare it
+		if len(tutors) == 0 {
+			tutors = []util.User{}
+		}
 		// Prepare response
 		response := struct {
 			TutorList []util.User `json:"tutor_list"`
