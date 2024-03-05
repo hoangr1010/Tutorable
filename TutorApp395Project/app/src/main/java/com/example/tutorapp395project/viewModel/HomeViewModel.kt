@@ -9,7 +9,7 @@ import java.time.LocalDate
 
 class HomeViewModel: ViewModel() {
 
-    val viewState = mutableStateOf("schedule")
+    val viewState = mutableStateOf("profile")
     val fields = listOf("schedule", "profile", "setting")
 
     fun changeViewState(newState: String) {

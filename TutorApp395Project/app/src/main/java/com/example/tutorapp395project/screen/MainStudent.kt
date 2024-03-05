@@ -1,6 +1,7 @@
 package com.example.tutorapp395project.screen
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,8 +16,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -27,9 +30,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -51,6 +56,7 @@ import com.example.tutorapp395project.screen.view.HomeBar
 import com.example.tutorapp395project.screen.view.SettingsColumn
 import com.example.tutorapp395project.screen.studentView.StudentAppointmentLayout
 import com.example.tutorapp395project.screen.studentView.StudentProfileColumn
+import com.example.tutorapp395project.screen.studentView.TutorList
 import com.example.tutorapp395project.viewModel.AuthViewModel
 import com.example.tutorapp395project.viewModel.HomeViewModel
 import com.example.tutorapp395project.viewModel.StudentViewModel
@@ -72,11 +78,18 @@ fun MainStudent(
     studentViewModel: StudentViewModel = StudentViewModel(authViewModel = authViewModel),
 ) {
 
+    val timeSlotDialogOpen = remember { mutableStateOf(false) }
 
-    val dialogState = remember { mutableStateOf(false) }
+    val createSessionButtonState = remember { mutableStateOf(studentViewModel.createSessionButtonState.value) }
+    LaunchedEffect(studentViewModel.createSessionButtonState) {
+        createSessionButtonState.value = studentViewModel.createSessionButtonState.value
+        Log.d("MainStudent", "createSessionButtonState: ${createSessionButtonState.value}")
+    }
 
     val calendarState = rememberUseCaseState(
-        onFinishedRequest = { dialogState.value = true }
+        onFinishedRequest = {
+            timeSlotDialogOpen.value = true
+        }
     )
 
     Scaffold(
@@ -116,8 +129,8 @@ fun MainStudent(
                 }
             )
 
-            if (dialogState.value) {
-                Dialog(onDismissRequest = { dialogState.value = false }) {
+            if (timeSlotDialogOpen.value) {
+                Dialog(onDismissRequest = { timeSlotDialogOpen.value = false }) {
                     Card (
                         modifier = Modifier
                             .fillMaxWidth(0.9f)
@@ -153,7 +166,7 @@ fun MainStudent(
                             ) {
                                 Button(
                                     onClick = {
-                                        dialogState.value = false
+                                        timeSlotDialogOpen.value = false
                                     },
                                     colors = ButtonDefaults.buttonColors(Color.Gray)
                                 ) {
@@ -161,11 +174,13 @@ fun MainStudent(
                                 }
 
                                 Button(
-                                    onClick = { },
+                                    onClick = {
+                                        studentViewModel.tutorFilter()
+                                    },
                                     colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F))
 
                                 ) {
-                                    Text("Save")
+                                    Text("Continue")
                                 }
                             }
                         }
@@ -174,6 +189,121 @@ fun MainStudent(
 
             }
 
+            if (studentViewModel.tutorFilterDialogState.value.isOpen) {
+                Dialog(onDismissRequest = { studentViewModel.tutorFilterDialogState.value = studentViewModel.tutorFilterDialogState.value.copy(isOpen = false) }) {
+                    Card (
+                        modifier = Modifier
+                            .fillMaxWidth(0.9f)
+                            .fillMaxHeight(0.8f),
+                        colors = CardColors(
+                            containerColor = Color(0xFFCCE7FF),
+                            contentColor = Color(0xFFEEA47F),
+                            disabledContainerColor = Color(0xFFD3D3D3),
+                            disabledContentColor = Color(0xFFA9A9A9),
+                        )
+                    ) {
+                        Column() {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "Select a Tutor",
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(10.dp)
+                                )
+                            }
+
+                            TutorList(
+                                modifier = Modifier.weight(1f),
+                                studentViewModel = studentViewModel,
+                            )
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 10.dp, start = 10.dp, end = 10.dp),
+                                horizontalArrangement = Arrangement.SpaceAround
+                            ) {
+                                Button(
+                                    onClick = {
+                                        studentViewModel.tutorFilterDialogState.value = studentViewModel.tutorFilterDialogState.value.copy(isOpen = false)
+                                    },
+                                    colors = ButtonDefaults.buttonColors(Color.Gray)
+                                ) {
+                                    Text("Cancel")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (studentViewModel.sessionFormOpen.value) {
+                Dialog(onDismissRequest = { studentViewModel.sessionFormOpen.value = false }) {
+                    Card (
+                        modifier = Modifier.wrapContentSize(),
+                        colors = CardColors(
+                            containerColor = Color(0xFFCCE7FF),
+                            contentColor = Color(0xFFEEA47F),
+                            disabledContainerColor = Color(0xFFD3D3D3),
+                            disabledContentColor = Color(0xFFA9A9A9),
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier.wrapContentSize(),
+                            verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.CenterVertically),
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "Session Form",
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(10.dp)
+                                )
+                            }
+
+                            SessionForm(studentViewModel = studentViewModel)
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 10.dp, bottom = 10.dp),
+                                horizontalArrangement = Arrangement.SpaceAround
+                            ) {
+                                Button(
+                                    onClick = {
+                                        studentViewModel.createNewSession()
+                                    },
+                                    colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F))
+                                ) {
+                                    Log.d("MainStudent", "createSessionButtonState: ${createSessionButtonState.value}")
+                                    when (studentViewModel.createSessionButtonState.value) {
+                                        "loading" -> {
+                                            Text("Loading")
+                                        }
+                                        "success" -> {
+                                            Text("✅Success")
+                                        }
+                                        "error" -> {
+                                            Text("❌Error, try again")
+                                        }
+                                        else -> {
+                                            Text("Create New Session")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             when {
                 homeViewModel.viewState.value == "profile" -> {
@@ -191,7 +321,9 @@ fun MainStudent(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(it),
-                        studentViewModel = studentViewModel
+                        studentViewModel = studentViewModel,
+                        authViewModel = authViewModel,
+                        homeViewModel = homeViewModel
                     )
                 }
                 homeViewModel.viewState.value == "setting" -> {
@@ -252,7 +384,42 @@ fun TimeSlotSessionView(
 
 }
 
+@Composable
+fun SessionForm(
+    studentViewModel: StudentViewModel
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .wrapContentSize()
+            .padding(start = 20.dp, end = 20.dp)
+            .background(color = Color.White, shape = RoundedCornerShape(30.dp))
+            .padding(20.dp)
+    ){
+        OutlinedTextField(
+            value = studentViewModel.sessionName.value,
+            onValueChange = {
+                studentViewModel.sessionName.value = it
+            },
+            label = { Text("Session Name", fontWeight = FontWeight.Black) },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        OutlinedTextField(
+            value = studentViewModel.sessionDescription.value,
+            onValueChange = {
+                studentViewModel.sessionDescription.value = it
+            },
+            label = { Text("Session Description", fontWeight = FontWeight.Black) },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(10.dp))
 
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun MainStudentPreview() {

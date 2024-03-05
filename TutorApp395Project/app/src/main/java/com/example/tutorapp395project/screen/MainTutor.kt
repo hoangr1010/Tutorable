@@ -98,6 +98,7 @@ fun MainTutor(
                         )
                     }
                 }
+                tutorViewModel.addAvailabilityState.value = ""
             }
     }
 
@@ -221,7 +222,9 @@ fun MainTutor(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(it),
-                        tutorViewModel = tutorViewModel
+                        tutorViewModel = tutorViewModel,
+                        authViewModel = authViewModel,
+                        homeViewModel = homeViewModel
                     )
                 }
                 homeViewModel.viewState.value == "setting" -> {

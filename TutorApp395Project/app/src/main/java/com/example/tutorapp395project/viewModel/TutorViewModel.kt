@@ -23,13 +23,6 @@ class TutorViewModel(
     authViewModel: AuthViewModel
 ): ViewModel() {
 
-    init {
-//        getSessionsForTutor(
-//            role = authViewModel.UserState.value.role,
-//            id = authViewModel.UserState.value.id.toInt()
-//        )
-    }
-
     @RequiresApi(Build.VERSION_CODES.O)
     val selectedDate =  mutableStateOf<LocalDate>(LocalDate.now())
 
@@ -94,7 +87,7 @@ class TutorViewModel(
         }
     }
 
-    private fun getSessionsForTutor(
+    fun getSessionsForTutor(
         role: String,
         id: Int
     ){

@@ -26,8 +26,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -44,6 +46,7 @@ import com.example.tutorapp395project.utils.getTimeInterval
 import com.example.tutorapp395project.utils.stringToDate
 import com.example.tutorapp395project.utils.stringToReadableDate
 import com.example.tutorapp395project.viewModel.AuthViewModel
+import com.example.tutorapp395project.viewModel.HomeViewModel
 import com.example.tutorapp395project.viewModel.TutorViewModel
 
 /*
@@ -56,7 +59,16 @@ import com.example.tutorapp395project.viewModel.TutorViewModel
 fun TutorAppointmentLayout(
     modifier: Modifier = Modifier,
     tutorViewModel: TutorViewModel,
+    authViewModel: AuthViewModel,
+    homeViewModel: HomeViewModel
 ) {
+
+    if (homeViewModel.viewState.value == "schedule") {
+        tutorViewModel.getSessionsForTutor(
+            role = authViewModel.UserState.value.role,
+            id = authViewModel.UserState.value.id.toInt()
+        )
+    }
 
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -86,15 +98,14 @@ fun TutorAppointmentLayout(
                             time = getTimeInterval(session.time_block_id_list),
                             date = stringToReadableDate(session.date),
                             subject = session.subject,
-                            with = "With",
-                            person = session.student_id.toString(),
+                            with = "Student",
+                            person = session.student_name,
                             modifier = Modifier.padding(10.dp)
                         )
                     }
                 }
             }
         }
-
     }
 }
 
@@ -106,6 +117,8 @@ fun previewTutorSchedule(){
     TutorAppointmentLayout(
         tutorViewModel = TutorViewModel(
             authViewModel = AuthViewModel()
-        )
+        ),
+        authViewModel = AuthViewModel(),
+        homeViewModel = HomeViewModel()
     )
 }

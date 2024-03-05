@@ -40,8 +40,8 @@ fun SettingsColumn(
 
         Button(
             onClick = {
-                authViewModel.onLogout()
                 navController.navigate(ScreenGraph.authGraph.route)
+                authViewModel.onLogout()
             },
             colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
             modifier = Modifier

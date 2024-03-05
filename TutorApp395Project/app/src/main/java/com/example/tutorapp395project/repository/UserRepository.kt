@@ -2,10 +2,14 @@ package com.example.tutorapp395project.repository
 
 import com.example.tutorapp395project.data.AddAvailabilityRequest
 import com.example.tutorapp395project.data.AddAvailabilityResponse
+import com.example.tutorapp395project.data.CreateSessionRequest
+import com.example.tutorapp395project.data.CreateSessionResponse
 import com.example.tutorapp395project.data.GetAvailabilityRequest
 import com.example.tutorapp395project.data.GetAvailabilityResponse
 import com.example.tutorapp395project.data.SessionRequest
 import com.example.tutorapp395project.data.SessionResponse
+import com.example.tutorapp395project.data.TutorFilterRequest
+import com.example.tutorapp395project.data.TutorFilterResponse
 import com.example.tutorapp395project.data.remote.AuthService
 import com.example.tutorapp395project.data.remote.UserService
 import retrofit2.Response
@@ -23,7 +27,7 @@ class UserRepository {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        userService = retrofit.create(AuthService::class.java)
+        userService = retrofit.create(UserService::class.java)
     }
 
     suspend fun getSessionList(sessionRequest: SessionRequest): Response<SessionResponse> {
@@ -36,6 +40,14 @@ class UserRepository {
 
     suspend fun addAvailability(addAvailabilityRequest: AddAvailabilityRequest): Response<AddAvailabilityResponse> {
         return userService.addAvailability(addAvailabilityRequest)
+    }
+
+    suspend fun filterTutors(tutorFilterRequest: TutorFilterRequest): Response<TutorFilterResponse> {
+        return userService.filterTutors(tutorFilterRequest)
+    }
+
+    suspend fun createSession(createSessionRequest: CreateSessionRequest): Response<CreateSessionResponse> {
+        return userService.createSession(createSessionRequest)
     }
 
 }

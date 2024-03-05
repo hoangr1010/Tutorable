@@ -31,7 +31,7 @@ class AuthViewModel(
     val registerState = mutableStateOf<String>("")
 
     // DEVELOPMENT ONLY
-    val UserState = mutableStateOf(dummyUserTutor)
+    val UserState = mutableStateOf(dummyUserStudent)
     val token = mutableStateOf(dummyToken)
 
     fun onLoginChange(update: (LoginData) -> LoginData) {
@@ -44,6 +44,11 @@ class AuthViewModel(
 
     fun onLogin() {
         Log.d("AuthViewModel", "Email: ${loginDataState.value.email}, Password: ${loginDataState.value.password}, Role: ${loginDataState.value.role}")
+        loginDataState.value = loginDataState.value.copy(
+            role = loginDataState.value.role.trim(),
+            email = loginDataState.value.email.trim(),
+            password = loginDataState.value.password.trim()
+        )
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = authRepository.login(loginDataState.value)
@@ -70,7 +75,7 @@ class AuthViewModel(
 
     fun onLogout() {
         token.value = ""
-        UserState.value = User()
+        UserState.value = UserState.value.copy(role = "")
     }
 
     fun onRegister() {

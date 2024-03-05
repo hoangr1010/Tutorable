@@ -4,6 +4,8 @@ data class TutoringSession(
     val tutoring_session_id: Int,
     val tutor_id: Int,
     val student_id: Int,
+    val tutor_name: String,
+    val student_name: String,
     val name: String,
     val description: String,
     val subject: String,
@@ -27,4 +29,28 @@ data class SessionResponse(
 data class SessionViewState(
     val isLoading: Boolean = true,
     val session_list: List<TutoringSession>? = listOf()
+)
+
+data class TutorFilterRequest (
+    val date: String = "",
+    val time_block_id_list: List<Int> = listOf(),
+)
+
+data class TutorFilterResponse (
+    val tutor_list: List<Tutor>? = listOf()
+)
+
+data class CreateSessionRequest(
+    val tutor_id: Int,
+    val student_id: Int,
+    val name: String,
+    val description: String,
+    val subject: String,
+    val grade: Int,
+    val date: String,
+    val time_block_id_list: List<Int>
+)
+
+data class CreateSessionResponse(
+    val time_block_id_list: List<Int>
 )

@@ -3,6 +3,22 @@ package com.example.tutorapp395project.data
 import androidx.annotation.DrawableRes
 import com.example.tutorapp395project.R
 
+data class Tutor(
+    val id: Int,
+    val email: String,
+    val role: String,
+    val first_name: String,
+    val last_name: String,
+    val date_of_birth: String,
+    val expertise: List<String>,
+    val verified_status: Boolean,
+    val experience: String,
+    val description: String,
+    val degrees: List<String>,
+    val grade: Int,
+    val school: String
+)
+
 data class TutorData(
     val name:String,
     val subject:String,

@@ -30,13 +30,23 @@ import com.example.tutorapp395project.utils.getTimeInterval
 import com.example.tutorapp395project.utils.stringToDate
 import com.example.tutorapp395project.utils.stringToReadableDate
 import com.example.tutorapp395project.viewModel.AuthViewModel
+import com.example.tutorapp395project.viewModel.HomeViewModel
 import com.example.tutorapp395project.viewModel.StudentViewModel
 
 @Composable
 fun StudentAppointmentLayout(
     studentViewModel: StudentViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    authViewModel: AuthViewModel,
+    homeViewModel: HomeViewModel
 ) {
+
+        if (homeViewModel.viewState.value == "schedule") {
+            studentViewModel.getSessionsForStudent(
+                role = authViewModel.UserState.value.role,
+                id = authViewModel.UserState.value.id.toInt()
+            )
+        }
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(15.dp, Alignment.Top),
@@ -68,15 +78,13 @@ fun StudentAppointmentLayout(
                                 date = stringToReadableDate(session.date),
                                 subject = session.subject,
                                 with = "Tutor",
-                                person = session.tutor_id.toString(),
+                                person = session.tutor_name,
                                 modifier = Modifier.padding(10.dp)
                             )
                         }
                     }
                 }
             }
-
-
         }
 
 }
@@ -113,7 +121,9 @@ fun BackgroundNoLogo(modifier: Modifier = Modifier) {
 fun PreviewStudentSChedule(){
     BackgroundNoLogo()
     StudentAppointmentLayout(
-        studentViewModel = StudentViewModel(authViewModel = AuthViewModel())
+        studentViewModel = StudentViewModel(authViewModel = AuthViewModel()),
+        authViewModel = AuthViewModel(),
+        homeViewModel = HomeViewModel()
     )
 //    Appointment("3:00PM", "024/02/21","math","Karen McTutor", "Nami" )
 

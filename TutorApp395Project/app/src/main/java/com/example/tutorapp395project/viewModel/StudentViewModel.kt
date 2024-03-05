@@ -7,32 +7,59 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.tutorapp395project.data.CreateSessionRequest
 import com.example.tutorapp395project.data.SessionRequest
 import com.example.tutorapp395project.data.SessionResponse
 import com.example.tutorapp395project.data.SessionViewState
+import com.example.tutorapp395project.data.Tutor
+import com.example.tutorapp395project.data.TutorFilterRequest
 import com.example.tutorapp395project.repository.UserRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import kotlin.math.abs
 
 class StudentViewModel(
     private val userRepository: UserRepository = UserRepository(),
-    authViewModel: AuthViewModel
-): ViewModel() {
+    val authViewModel: AuthViewModel
+) : ViewModel() {
 
-    init {
-//        getSessionsForStudent(
-//            role = authViewModel.UserState.value.role,
-//            id = authViewModel.UserState.value.id.toInt()
-//        )
-    }
-
+    // Date and time slot state
     @RequiresApi(Build.VERSION_CODES.O)
-    val selectedDate =  mutableStateOf<LocalDate>(LocalDate.now())
+    val selectedDate = mutableStateOf<LocalDate>(LocalDate.now())
     val selectedTimeSlotIdsSet = mutableStateOf<Set<Int>>(setOf())
 
+    // List of sessions state
     val sessionState = mutableStateOf(SessionViewState())
+
+    // List of tutor filter dialog state
+    val tutorFilterDialogState = mutableStateOf(TutorFilterDialogState())
+
+    // Session form state
+    val sessionFormOpen = mutableStateOf(false)
+    private val sessionTutorSelected = mutableStateOf(
+        Tutor(
+            id = 0,
+            email = "",
+            role = "",
+            first_name = "",
+            last_name = "",
+            date_of_birth = "",
+            expertise = listOf(),
+            verified_status = false,
+            experience = "",
+            description = "",
+            degrees = listOf(),
+            grade = 0,
+            school = ""
+        )
+    )
+    val sessionName = mutableStateOf("")
+    val sessionDescription = mutableStateOf("")
+
+    // Creating session button state
+    val createSessionButtonState = mutableStateOf("")
 
     fun toggleTimeSlotId(id: Int) {
         val set = selectedTimeSlotIdsSet.value.toMutableSet()
@@ -53,10 +80,10 @@ class StudentViewModel(
         selectedTimeSlotIdsSet.value = set
     }
 
-    private fun getSessionsForStudent(
+    fun getSessionsForStudent(
         role: String,
         id: Int
-    ){
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = userRepository.getSessionList(SessionRequest(role = role, id = id))
@@ -81,5 +108,124 @@ class StudentViewModel(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun tutorFilter() {
+        val tutorFilterRequest = TutorFilterRequest(
+            date = selectedDate.value.toString(),
+            time_block_id_list = selectedTimeSlotIdsSet.value.toList()
+        )
 
+        Log.d("StudentViewModel", "TutorFilterRequest: $tutorFilterRequest")
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = userRepository.filterTutors(tutorFilterRequest)
+                Log.d("StudentViewModel", "Response: $response")
+                Log.d("StudentViewModel", "Response body: ${response.body()}")
+
+                if (response.isSuccessful) {
+                    val tutorFilterResponse = response.body()
+
+                    if (tutorFilterResponse != null) {
+                        tutorFilterDialogState.value = tutorFilterDialogState.value.copy(
+                            isOpen = true,
+                            tutor_list = tutorFilterResponse.tutor_list ?: listOf()
+                        )
+                    }
+                } else {
+                    Log.d("StudentViewModel", "Error: ${response.errorBody()}")
+                }
+            } catch (e: Exception) {
+                Log.e("StudentViewModel", "Error: $e")
+            }
+        }
+    }
+
+    fun selectTutor(tutor: Tutor) {
+        sessionTutorSelected.value = tutor
+        tutorFilterDialogState.value = tutorFilterDialogState.value.copy(isOpen = false)
+        sessionFormOpen.value = true
+        Log.d("StudentViewModel", "Selected tutorId: ${sessionTutorSelected.value.id}")
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun createNewSession() {
+        Log.d(
+            "StudentViewModel",
+            "name: $sessionName, description: $sessionDescription, date: ${sessionName.value}, time_block_id_list: ${sessionDescription.value}"
+        )
+
+        val createSessionRequest = CreateSessionRequest(
+            tutor_id = sessionTutorSelected.value.id,
+            student_id = authViewModel.UserState.value.id.toInt(),
+            name = sessionName.value,
+            description = sessionDescription.value,
+            subject = sessionTutorSelected.value.expertise[0],
+            grade = authViewModel.UserState.value.grade,
+            date = selectedDate.value.toString(),
+            time_block_id_list = selectedTimeSlotIdsSet.value.toList()
+
+        )
+        Log.d("StudentViewModel", "CreateSessionRequest: $createSessionRequest")
+        createSessionButtonState.value = "loading"
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = userRepository.createSession(createSessionRequest)
+                Log.d("StudentViewModel", "Response: $response")
+                Log.d("StudentViewModel", "Response body: ${response.body()}")
+
+                if (response.isSuccessful) {
+                    val createSessionResponse = response.body()
+                    if (createSessionResponse != null) {
+                        Log.d(
+                            "StudentViewModel",
+                            "Session created with time block: ${createSessionResponse.time_block_id_list}"
+                        )
+                        getSessionsForStudent(
+                            role = authViewModel.UserState.value.role,
+                            id = authViewModel.UserState.value.id.toInt()
+                        )
+                        createSessionButtonState.value = "success"
+
+                        // Reset state of the form
+                        sessionDescription.value = ""
+                        sessionName.value = ""
+                        selectedTimeSlotIdsSet.value = setOf()
+                        sessionTutorSelected.value = Tutor(
+                            id = 0,
+                            email = "",
+                            role = "",
+                            first_name = "",
+                            last_name = "",
+                            date_of_birth = "",
+                            expertise = listOf(),
+                            verified_status = false,
+                            experience = "",
+                            description = "",
+                            degrees = listOf(),
+                            grade = 0,
+                            school = ""
+                        )
+
+                        delay(2000)
+
+                    }
+                } else {
+                    Log.d("StudentViewModel", "Error in Creating Session: ${response.errorBody()}")
+                }
+            } catch (e: Exception) {
+                Log.e("StudentViewModel", "Error in Creating Session: $e")
+            }
+
+            createSessionButtonState.value = ""
+            tutorFilterDialogState.value = tutorFilterDialogState.value.copy(isOpen = false)
+            sessionFormOpen.value = false
+        }
+    }
 }
+
+data class TutorFilterDialogState(
+    val isOpen: Boolean = false,
+    val tutor_list: List<Tutor>? = listOf()
+)

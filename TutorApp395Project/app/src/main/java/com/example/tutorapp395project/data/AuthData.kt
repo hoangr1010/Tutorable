@@ -31,7 +31,7 @@ data class User(
     var school: String = "",
 )
 
-data class Student(
+data class DisplayStudent(
     val id: String,
     val first_name: String,
     val last_name: String,
@@ -41,7 +41,7 @@ data class Student(
     val email: String
 )
 
-data class Tutor(
+data class DisplayTutor(
     val id: String,
     val first_name: String,
     val last_name: String,
@@ -54,8 +54,8 @@ data class Tutor(
     val date_of_birth: Date?
 )
 
-fun toStudent(user: User): Student {
-    return Student(
+fun toStudent(user: User): DisplayStudent {
+    return DisplayStudent(
         id = user.id,
         first_name = user.first_name,
         last_name = user.last_name,
@@ -66,8 +66,8 @@ fun toStudent(user: User): Student {
     )
 }
 
-fun toTutor(user: User): Tutor {
-    return Tutor(
+fun toTutor(user: User): DisplayTutor {
+    return DisplayTutor(
         id = user.id,
         first_name = user.first_name,
         last_name = user.last_name,
