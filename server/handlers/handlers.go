@@ -389,6 +389,7 @@ func GetTutorAvailability(db *sql.DB) http.HandlerFunc {
 	}
 }
 
+// should work now
 // Get tutoring session list
 func GetTutoringSessionList(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -408,8 +409,13 @@ func GetTutoringSessionList(db *sql.DB) http.HandlerFunc {
 		tutoringSessions, err := util.GetTutoringSessionList(db, user)
 
 		if err != nil {
-			http.Error(w, "Invalid JSON", http.StatusInternalServerError)
+			http.Error(w, "Whoopsie!", http.StatusInternalServerError)
 			return
+		}
+
+		// If tutorinSessions is empty redeclare it
+		if len(tutoringSessions) == 0 {
+			tutoringSessions = []util.TutoringSession{}
 		}
 		// Prepare response
 		response := struct {
@@ -438,6 +444,8 @@ func GetTutoringSessionList(db *sql.DB) http.HandlerFunc {
 	}
 }
 
+// BUG!!! CURRENTLY GIVING TUTOR IF THEY HAVE ATLEAST ONE OF THE TIME BLOCK ID'S
+// NEEDS TO RETURN [] INSTEAD OF NULL IF THERE ARE NO TUTORS
 // SearchTutorAvailability searches all tutor availability for particular time slots.
 func SearchTutorAvailability(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
