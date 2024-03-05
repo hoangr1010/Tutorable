@@ -34,14 +34,14 @@ fun SettingsColumn(
     Column(
         verticalArrangement = Arrangement.spacedBy(15.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
     ) {
 
         Button(
             onClick = {
-                authViewModel.onLogout()
                 navController.navigate(ScreenGraph.authGraph.route)
+                authViewModel.onLogout()
             },
             colors = ButtonDefaults.buttonColors(Color(0xFFEEA47F)),
             modifier = Modifier

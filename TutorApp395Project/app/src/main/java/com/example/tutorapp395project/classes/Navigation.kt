@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.example.tutorapp395project.data.User
 import com.example.tutorapp395project.screen.view.LandingPage
 import com.example.tutorapp395project.screen.view.LoginPage
 import com.example.tutorapp395project.screen.MainStudent
@@ -40,7 +41,6 @@ fun Navigation (
             startDestination = Screen.LandingPage.route,
             route = ScreenGraph.authGraph.route
         ) {
-
             composable(route = Screen.LandingPage.route) {
                 checkUserRoleAndNavigate(navController, authViewModel)
                 LandingPage(navController = navController)
