@@ -76,18 +76,18 @@ type TutorAvailability struct {
 }
 
 type TutoringSession struct {
-	TutoringSessionID int    `json:"tutor_session_id"`
-	TutorID           int    `json:"tutor_id"`
-	TutorName         string `json:"tutor_name"`
-	StudentID         int    `json:"student_id"`
-	StudentName       string `json:"student_name"`
-	Name              string `json:"name"`
-	Description       string `json:"description"`
-	Subject           string `json:"subject"`
-	Grade             int    `json:"grade"`
-	Status            string `json:"tutoring_session_status"`
-	Date              string `json:"date"`
-	TimeBlockIDList   []int  `json:"time_block_id_list"`
+	TutoringSessionID int       `json:"tutor_session_id"`
+	TutorID           int       `json:"tutor_id"`
+	TutorName         string    `json:"tutor_name"`
+	StudentID         int       `json:"student_id"`
+	StudentName       string    `json:"student_name"`
+	Name              string    `json:"name"`
+	Description       string    `json:"description"`
+	Subject           string    `json:"subject"`
+	Grade             int       `json:"grade"`
+	Status            string    `json:"tutoring_session_status"`
+	Date              time.Time `json:"date"`
+	TimeBlockIDList   []int     `json:"time_block_id_list"`
 }
 
 /*
@@ -248,6 +248,11 @@ func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringS
 				fmt.Println("Error scanning tutoring_session: ", err)
 			}
 
+			// If date is not in the future continue to next row
+			if !session.Date.After(time.Now()) {
+				continue
+			}
+
 			// Convert int64 array into int slices
 			for _, i := range int64Array {
 				session.TimeBlockIDList = append(session.TimeBlockIDList, int(i))
@@ -353,6 +358,11 @@ func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringS
 			// Convert int64 array into int slices
 			for _, i := range int64Array {
 				session.TimeBlockIDList = append(session.TimeBlockIDList, int(i))
+			}
+
+			// If date is not in the future continue to next row
+			if !session.Date.After(time.Now()) {
+				continue
 			}
 
 			var student User
@@ -744,3 +754,11 @@ func CreateToken(userInfo UserInfo) (string, error) {
 	signKey := []byte(os.Getenv("KEY"))
 	return token.SignedString(signKey)
 }
+
+/*
+// parseDate takes a date string in the format "yyyy-mm-dd" and returns a time.Time object
+func parseDate(dateString string) (time.Time, error) {
+	const layout = "2006-01-02" // Reference layout for parsing
+	return time.Parse(layout, dateString)
+}
+*/
