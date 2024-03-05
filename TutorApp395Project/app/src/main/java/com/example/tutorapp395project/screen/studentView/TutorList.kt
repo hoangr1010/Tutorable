@@ -2,6 +2,7 @@ package com.example.tutorapp395project.screen.studentView
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -44,97 +46,43 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tutorapp395project.R
-import com.example.tutorapp395project.data.TutorRepo
+import com.example.tutorapp395project.viewModel.AuthViewModel
+import com.example.tutorapp395project.viewModel.StudentViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TutorList(
     modifier: Modifier = Modifier,
-){
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = (Color(0xFFEEA47F)),
-                    titleContentColor = Color(0xFF191C1D),
-                ),
-                title = {
-                    Text(modifier = Modifier
-                        .fillMaxWidth(),
-                        textAlign = TextAlign.Center,
-                        text = "Say hi to your tutor",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis)
-                },
-                navigationIcon = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                },
-                scrollBehavior = scrollBehavior,
-            )
-        },
-        bottomBar = {
-            BottomAppBar(
-                containerColor = (Color(0xFFEEA47F)),
-                contentColor = Color(0xFF191C1D),
-            ) {
-                IconButton(onClick = { /* TODO */ }) {
-                    Icon(
-                        Icons.Filled.Edit,
-                        contentDescription = "",
-                    )
-                }
-            }
-        },
-
-    ) { innerPadding ->
+    studentViewModel: StudentViewModel
+) {
+    val tutorList = studentViewModel.tutorFilterDialogState.value.tutor_list ?: listOf()
+    if (tutorList.isEmpty()) {
+        Text(
+            text = "No tutors available",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxSize()
+        )
+    } else {
         LazyVerticalGrid(
-
-
             columns = GridCells.Fixed(2),
-            modifier = Modifier
-                .padding(innerPadding)
-                .background(Color(0xFF00539C)),
+            modifier = modifier
+                .background(Color(0xFF00539C))
+                .fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
-
-
-        ){
-            items(10){
-
-                val painter = painterResource(id = R.drawable.image2)
-                val name = "Roronoa Zoro"
-                val subject = "Geography"
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            items (tutorList) { tutor ->
                 TutorCard(
                     modifier,
-                    painter,
-                    name,
-                    subject
-                )
-
-                val painter1 = painterResource(id = R.drawable.image2)
-                val name1 = "Roronoa Zoro "
-                val subject1 = "Geography"
-                TutorCard(
-                    modifier,
-                    painter1,
-                    name1,
-                    subject1
+                    painter = painterResource(id = R.drawable.user_image),
+                    name = "${tutor.first_name} ${tutor.last_name}",
+                    subject = tutor.expertise[0],
+                    onClick = {
+                        studentViewModel.selectTutor(tutor)
+                    }
                 )
             }
         }
@@ -144,15 +92,19 @@ fun TutorList(
 
 
 @Composable
-fun TutorCard( modifier:Modifier,
-              painter: Painter,
-              name: String,
-              subject: String){
+fun TutorCard(
+    modifier:Modifier,
+    painter: Painter,
+    name: String,
+    subject: String,
+    onClick: () -> Unit,
+){
 
     Card(
         modifier
-            .size(200.dp)
-            .padding(6.dp),
+            .size(150.dp)
+            .padding(6.dp)
+            .clickable { onClick() },
         elevation = CardDefaults.cardElevation(10.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.White
@@ -164,7 +116,9 @@ fun TutorCard( modifier:Modifier,
 
         ) {
             Column(
-                modifier = modifier.fillMaxSize(),
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(top = 8.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -184,12 +138,12 @@ fun TutorCard( modifier:Modifier,
                     Text(
                         text = name,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
+                        fontSize = 15.sp,
 
                     )
                     Text(
                         text = subject,
-                        fontSize = 18.sp,
+                        fontSize = 15.sp,
                     )
 
 
@@ -205,6 +159,7 @@ fun TutorCard( modifier:Modifier,
 @Preview
 @Composable
 fun previewTutorList(){
-    BackgroundNoLogo()
-    TutorList()
+    TutorList(
+        studentViewModel = StudentViewModel(authViewModel = AuthViewModel())
+    )
 }

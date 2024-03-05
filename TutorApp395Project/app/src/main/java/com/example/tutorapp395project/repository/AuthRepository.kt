@@ -21,7 +21,7 @@ class AuthRepository {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        authService = retrofit.create(com.example.tutorapp395project.data.remote.AuthService::class.java)
+        authService = retrofit.create(AuthService::class.java)
     }
 
     suspend fun login(loginData: LoginData): Response<LoginResponse> {
