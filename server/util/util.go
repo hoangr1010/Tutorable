@@ -76,18 +76,18 @@ type TutorAvailability struct {
 }
 
 type TutoringSession struct {
-	TutoringSessionID int       `json:"tutor_session_id"`
-	TutorID           int       `json:"tutor_id"`
-	TutorName         string    `json:"tutor_name"`
-	StudentID         int       `json:"student_id"`
-	StudentName       string    `json:"student_name"`
-	Name              string    `json:"name"`
-	Description       string    `json:"description"`
-	Subject           string    `json:"subject"`
-	Grade             int       `json:"grade"`
-	Status            string    `json:"tutoring_session_status"`
-	Date              time.Time `json:"date"`
-	TimeBlockIDList   []int     `json:"time_block_id_list"`
+	TutoringSessionID int    `json:"tutor_session_id"`
+	TutorID           int    `json:"tutor_id"`
+	TutorName         string `json:"tutor_name"`
+	StudentID         int    `json:"student_id"`
+	StudentName       string `json:"student_name"`
+	Name              string `json:"name"`
+	Description       string `json:"description"`
+	Subject           string `json:"subject"`
+	Grade             int    `json:"grade"`
+	Status            string `json:"tutoring_session_status"`
+	Date              string `json:"date"`
+	TimeBlockIDList   []int  `json:"time_block_id_list"`
 }
 
 /*
@@ -248,8 +248,14 @@ func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringS
 				fmt.Println("Error scanning tutoring_session: ", err)
 			}
 
+			date, err := parseDate(session.Date)
+
+			if err != nil {
+				fmt.Println("Error parsing date: ", err)
+				return tutoringSessions, err
+			}
 			// If date is not in the future continue to next row
-			if !session.Date.After(time.Now()) {
+			if !date.After(time.Now()) {
 				continue
 			}
 
@@ -360,8 +366,14 @@ func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringS
 				session.TimeBlockIDList = append(session.TimeBlockIDList, int(i))
 			}
 
+			date, err := parseDate(session.Date)
+
+			if err != nil {
+				fmt.Println("Error parsing date: ", err)
+				return tutoringSessions, err
+			}
 			// If date is not in the future continue to next row
-			if !session.Date.After(time.Now()) {
+			if !date.After(time.Now()) {
 				continue
 			}
 
@@ -765,10 +777,21 @@ func CreateToken(userInfo UserInfo) (string, error) {
 	return token.SignedString(signKey)
 }
 
-/*
 // parseDate takes a date string in the format "yyyy-mm-dd" and returns a time.Time object
 func parseDate(dateString string) (time.Time, error) {
-	const layout = "2006-01-02" // Reference layout for parsing
-	return time.Parse(layout, dateString)
+	// Layouts to try
+	layouts := []string{
+		"2006-01-02", // Reference layout for date only
+		time.RFC3339, // Reference layout for date and time with timezone
+	}
+
+	var parsedTime time.Time
+	var err error
+	for _, layout := range layouts {
+		parsedTime, err = time.Parse(layout, dateString)
+		if err == nil {
+			return parsedTime, nil // Successfully parsed
+		}
+	}
+	return time.Time{}, fmt.Errorf("unable to parse date: %v", dateString)
 }
-*/

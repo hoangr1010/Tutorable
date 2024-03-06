@@ -528,6 +528,7 @@ func AddTutoringSession(db *sql.DB) http.HandlerFunc {
 		err := util.DecodeJSONRequestBody(r, &session)
 		if err != nil {
 			fmt.Println("Invalid JSON:", err)
+			http.Error(w, "Error parsing JSON", http.StatusBadRequest)
 			return
 		}
 
@@ -538,7 +539,7 @@ func AddTutoringSession(db *sql.DB) http.HandlerFunc {
 			exists, err := util.PeekTimeSlot(db, session, id)
 			if err != nil {
 				fmt.Println("Error checking tutor_availability: ", err)
-				http.Error(w, "Inavlid JSON", http.StatusBadRequest)
+				http.Error(w, "HEEEEEEELP", http.StatusBadRequest)
 			}
 			if !exists {
 				http.Error(w, "Tutor is not available", http.StatusUnauthorized) // status code 401
