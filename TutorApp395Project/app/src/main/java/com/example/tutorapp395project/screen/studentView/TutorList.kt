@@ -78,7 +78,7 @@ fun TutorList(
                 TutorCard(
                     modifier,
                     painter = painterResource(id = R.drawable.user_image),
-                    name = "${tutor.first_name} ${tutor.last_name}",
+                    name = "${tutor.first_name}",
                     subject = tutor.expertise[0],
                     onClick = {
                         studentViewModel.selectTutor(tutor)
