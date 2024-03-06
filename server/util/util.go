@@ -76,18 +76,18 @@ type TutorAvailability struct {
 }
 
 type TutoringSession struct {
-	TutoringSessionID int    `json:"tutor_session_id"`
-	TutorID           int    `json:"tutor_id"`
-	TutorName         string `json:"tutor_name"`
-	StudentID         int    `json:"student_id"`
-	StudentName       string `json:"student_name"`
-	Name              string `json:"name"`
-	Description       string `json:"description"`
-	Subject           string `json:"subject"`
-	Grade             int    `json:"grade"`
-	Status            string `json:"tutoring_session_status"`
-	Date              string `json:"date"`
-	TimeBlockIDList   []int  `json:"time_block_id_list"`
+	TutoringSessionID int       `json:"tutor_session_id"`
+	TutorID           int       `json:"tutor_id"`
+	TutorName         string    `json:"tutor_name"`
+	StudentID         int       `json:"student_id"`
+	StudentName       string    `json:"student_name"`
+	Name              string    `json:"name"`
+	Description       string    `json:"description"`
+	Subject           string    `json:"subject"`
+	Grade             int       `json:"grade"`
+	Status            string    `json:"tutoring_session_status"`
+	Date              time.Time `json:"date"`
+	TimeBlockIDList   []int     `json:"time_block_id_list"`
 }
 
 /*
@@ -248,6 +248,11 @@ func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringS
 				fmt.Println("Error scanning tutoring_session: ", err)
 			}
 
+			// If date is not in the future continue to next row
+			if !session.Date.After(time.Now()) {
+				continue
+			}
+
 			// Convert int64 array into int slices
 			for _, i := range int64Array {
 				session.TimeBlockIDList = append(session.TimeBlockIDList, int(i))
@@ -355,6 +360,11 @@ func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringS
 				session.TimeBlockIDList = append(session.TimeBlockIDList, int(i))
 			}
 
+			// If date is not in the future continue to next row
+			if !session.Date.After(time.Now()) {
+				continue
+			}
+
 			var student User
 			// Make query for student name
 			studentQuery := `
@@ -429,12 +439,22 @@ func SearchAvailability(db *sql.DB, date string, timeBlockIDs []int) ([]int, err
 		placeholders += fmt.Sprintf("$%d", i+2)
 	}
 
+	fmt.Println(placeholders)
 	// Your SQL query to fetch tutor IDs based on date and time block IDs
 	query := fmt.Sprintf(`
 		SELECT DISTINCT tutor_id FROM tutor_availability
 		WHERE date = $1 AND time_block_id IN (%s)
 	`, placeholders)
 
+	// Makes a new query for in there are more placeholders
+	if len(timeBlockIDs) > 1 {
+		query = fmt.Sprintf(`
+		SELECT DISTINCT tutor_id FROM tutor_availability
+		WHERE date = $1 AND time_block_id IN (%s)
+		GROUP BY tutor_id
+		HAVING COUNT(DISTINCT time_block_id) = %d;
+		`, placeholders, len(timeBlockIDs))
+	}
 	// Construct arguments for the query
 	args := make([]interface{}, len(timeBlockIDs)+1)
 	args[0] = date
@@ -744,3 +764,11 @@ func CreateToken(userInfo UserInfo) (string, error) {
 	signKey := []byte(os.Getenv("KEY"))
 	return token.SignedString(signKey)
 }
+
+/*
+// parseDate takes a date string in the format "yyyy-mm-dd" and returns a time.Time object
+func parseDate(dateString string) (time.Time, error) {
+	const layout = "2006-01-02" // Reference layout for parsing
+	return time.Parse(layout, dateString)
+}
+*/
