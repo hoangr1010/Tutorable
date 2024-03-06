@@ -78,7 +78,9 @@ type TutorAvailability struct {
 type TutoringSession struct {
 	TutoringSessionID int    `json:"tutor_session_id"`
 	TutorID           int    `json:"tutor_id"`
+	TutorName         string `json:"tutor_name"`
 	StudentID         int    `json:"student_id"`
+	StudentName       string `json:"student_name"`
 	Name              string `json:"name"`
 	Description       string `json:"description"`
 	Subject           string `json:"subject"`
@@ -117,7 +119,7 @@ func PeekAvailabilityDate(db *sql.DB, tutor TutorAvailability) (bool, error) {
 // Peeks into tutor availability table and checks if tutor's timeslot is taken
 func PeekTimeSlot(db *sql.DB, session TutoringSession, timeBlockId int) (bool, error) {
 	var exists bool
-	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM tutor_availability WHERE tutor_idtime_block_id = $1)", timeBlockId).Scan(&exists)
+	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM tutor_availability WHERE tutor_id =$1 AND date = $2 AND time_block_id = $3)", session.TutorID, session.Date, timeBlockId).Scan(&exists)
 	if err != nil {
 		fmt.Println("Error checking tutor_availability: ", err)
 		return false, err
@@ -165,6 +167,19 @@ func GetAvailability(db *sql.DB, tutorID int, date string) ([]int, error) {
 	return timeBlockIDs, nil
 }
 
+// Delete only specified time slots from tutor availabilty
+func DeleteSomeTutorAvailability(db *sql.DB, session TutoringSession, timeBlockID int) error {
+	query := `
+	DELETE FROM tutor_availability WHERE tutor_id = $1 AND date = $2 AND time_block_id = $3
+	`
+	_, err := db.Exec(query, session.TutorID, session.Date, timeBlockID)
+	if err != nil {
+		fmt.Printf("Error deleting tutor availability: %v\n", err)
+		return err
+	}
+	return nil
+}
+
 // DeleteTutorAvailability deletes all available time blocks for a tutor on a specific date.
 func DeleteTutorAvailability(db *sql.DB, tutorID int, date time.Time) error {
 	query := `
@@ -190,12 +205,7 @@ func gernerateHMAC(message []byte) string {
 }
 */
 
-// Add tutoring session
-func AddTutoringSession(db *sql.DB, session TutoringSession) error {
-
-	return nil
-}
-
+// Returns all of the sessions that student or tutor is in
 func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringSession, err error) {
 	//var query string
 
@@ -238,11 +248,77 @@ func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringS
 				fmt.Println("Error scanning tutoring_session: ", err)
 			}
 
+			date, err := parseDate(session.Date)
+
+			if err != nil {
+				fmt.Println("Error parsing date: ", err)
+				return tutoringSessions, err
+			}
+			// If date is not in the future continue to next row
+			if !date.After(time.Now()) {
+				continue
+			}
+
 			// Convert int64 array into int slices
 			for _, i := range int64Array {
 				session.TimeBlockIDList = append(session.TimeBlockIDList, int(i))
 			}
+			var student User
+			// Make query for student name
+			studentQuery := `
+				SELECT
+				first_name,
+				last_name
+				FROM student
+				WHERE student_id = $1
+			`
+			// Execute the SQL query for student
+			studentRow := db.QueryRow(studentQuery, user.ID)
+
+			// Scan student first name and student last name
+			err = studentRow.Scan(
+				&student.FirstName,
+				&student.LastName)
+
+			if err != nil {
+				fmt.Println("Error scanning student: ", err)
+			}
+			// Concatenate first name and last name into one string
+			studentName := student.FirstName + " " + student.LastName
+
+			// Add studentName into session
+			session.StudentName = studentName
+
+			var tutor User
+			// Make query for tutor name
+			tutorQuery := `
+				SELECT
+				first_name,
+				last_name
+				FROM tutor
+				WHERE tutor_id = $1
+			`
+			// Execute the SQL query for tutor
+			tutorRow := db.QueryRow(tutorQuery, session.TutorID)
+
+			// Scan tutor first name and tutor last name
+			err = tutorRow.Scan(
+				&tutor.FirstName,
+				&tutor.LastName)
+
+			if err != nil {
+				fmt.Println("Error scanning tutor: ", err)
+			}
+			// Concatenate first name and last name into one string
+			tutorName := tutor.FirstName + " " + tutor.LastName
+
+			// Add tutor name to session
+			session.TutorName = tutorName
+
+			// Add student ID to session
 			session.StudentID = user.ID
+
+			// Append session to list
 			tutoringSessions = append(tutoringSessions, session)
 		}
 
@@ -290,12 +366,153 @@ func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringS
 				session.TimeBlockIDList = append(session.TimeBlockIDList, int(i))
 			}
 
+			date, err := parseDate(session.Date)
+
+			if err != nil {
+				fmt.Println("Error parsing date: ", err)
+				return tutoringSessions, err
+			}
+			// If date is not in the future continue to next row
+			if !date.After(time.Now()) {
+				continue
+			}
+
+			var student User
+			// Make query for student name
+			studentQuery := `
+				SELECT
+				first_name,
+				last_name
+				FROM student
+				WHERE student_id = $1
+			`
+			// Execute the SQL query for student
+			studentRow := db.QueryRow(studentQuery, session.StudentID)
+
+			// Scan student first name and student last name
+			err = studentRow.Scan(
+				&student.FirstName,
+				&student.LastName)
+
+			if err != nil {
+				fmt.Println("Error scanning student: ", err)
+			}
+			// Concatenate first name and last name into one string
+			studentName := student.FirstName + " " + student.LastName
+
+			// Add studentName into session
+			session.StudentName = studentName
+
+			var tutor User
+			// Make query for tutor name
+			tutorQuery := `
+				SELECT
+				first_name,
+				last_name
+				FROM tutor
+				WHERE tutor_id = $1
+			`
+			// Execute the SQL query for student
+			tutorRow := db.QueryRow(tutorQuery, user.ID)
+
+			// Scan tutor first name and tutor last name
+			err = tutorRow.Scan(
+				&tutor.FirstName,
+				&tutor.LastName)
+
+			if err != nil {
+				fmt.Println("Error scanning tutor: ", err)
+			}
+			// Concatenate first name and last name into one string
+			tutorName := tutor.FirstName + " " + tutor.LastName
+
+			// Add tutor name to session
+			session.TutorName = tutorName
+
+			// Add tutor id to session
 			session.TutorID = user.ID
+
+			// Append session to list
 			tutoringSessions = append(tutoringSessions, session)
 		}
 		return tutoringSessions, err
 	}
 	return tutoringSessions, nil
+}
+
+// SearchTutorsAvailability fetches tutors' availability based on the provided date and time block IDs.
+func SearchAvailability(db *sql.DB, date string, timeBlockIDs []int) ([]int, error) {
+	// Construct placeholders for the time block IDs
+	var placeholders string
+	for i := range timeBlockIDs {
+		if i > 0 {
+			placeholders += ", "
+		}
+		placeholders += fmt.Sprintf("$%d", i+2)
+	}
+
+	fmt.Println(placeholders)
+	// Your SQL query to fetch tutor IDs based on date and time block IDs
+	query := fmt.Sprintf(`
+		SELECT DISTINCT tutor_id FROM tutor_availability
+		WHERE date = $1 AND time_block_id IN (%s)
+	`, placeholders)
+
+	// Makes a new query for in there are more placeholders
+	if len(timeBlockIDs) > 1 {
+		query = fmt.Sprintf(`
+		SELECT DISTINCT tutor_id FROM tutor_availability
+		WHERE date = $1 AND time_block_id IN (%s)
+		GROUP BY tutor_id
+		HAVING COUNT(DISTINCT time_block_id) = %d;
+		`, placeholders, len(timeBlockIDs))
+	}
+	// Construct arguments for the query
+	args := make([]interface{}, len(timeBlockIDs)+1)
+	args[0] = date
+	for i, id := range timeBlockIDs {
+		args[i+1] = id
+	}
+
+	// Execute the query
+	rows, err := db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var tutorIDs []int
+	for rows.Next() {
+		var tutorID int
+		err := rows.Scan(&tutorID)
+		if err != nil {
+			return nil, err
+		}
+		tutorIDs = append(tutorIDs, tutorID)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return tutorIDs, nil
+}
+
+// GetTutorEmailByID fetches the email of the tutor with the given ID.
+func GetTutorEmailByID(db *sql.DB, tutorID int) (string, error) {
+	// Prepare the SQL query
+	query := `
+		SELECT email FROM tutor WHERE tutor_id = $1
+	`
+	// Execute the SQL query
+	row := db.QueryRow(query, tutorID)
+	// Scan the result into a string
+	var email string
+	err := row.Scan(&email)
+	if err != nil {
+		fmt.Println("Error scanning tutor email: ", err)
+		return "", err
+	}
+	return email, nil
 }
 
 func GetTutorUser(db *sql.DB, email string) (User User, err error) {
@@ -475,6 +692,33 @@ func InsertTutorAvailability(db *sql.DB, tutorAvailability TutorAvailability, ti
 	return nil
 }
 
+// Insert tutoring session
+func InsertTutoringSession(db *sql.DB, session TutoringSession) error {
+	query := `
+	INSERT INTO 
+	tutoring_session 
+	(tutor_id, student_id, name, description, subject, grade, date, time_block_id_list) 
+	VALUES
+	($1, $2, $3, $4, $5, $6, $7, $8)
+	`
+	_, err := db.Exec(query,
+		session.TutorID,
+		session.StudentID,
+		session.Name,
+		session.Description,
+		session.Subject,
+		session.Grade,
+		session.Date,
+		pq.Array(session.TimeBlockIDList))
+
+	if err != nil {
+		fmt.Println("Error inserting into tutoring session: ", err)
+		return err
+	}
+
+	return nil
+}
+
 // Verifies password for login attempt and database
 func CheckLoginStudent(db *sql.DB, student Login) (bool, error) {
 
@@ -531,4 +775,23 @@ func CreateToken(userInfo UserInfo) (string, error) {
 	// Create token string
 	signKey := []byte(os.Getenv("KEY"))
 	return token.SignedString(signKey)
+}
+
+// parseDate takes a date string in the format "yyyy-mm-dd" and returns a time.Time object
+func parseDate(dateString string) (time.Time, error) {
+	// Layouts to try
+	layouts := []string{
+		"2006-01-02", // Reference layout for date only
+		time.RFC3339, // Reference layout for date and time with timezone
+	}
+
+	var parsedTime time.Time
+	var err error
+	for _, layout := range layouts {
+		parsedTime, err = time.Parse(layout, dateString)
+		if err == nil {
+			return parsedTime, nil // Successfully parsed
+		}
+	}
+	return time.Time{}, fmt.Errorf("unable to parse date: %v", dateString)
 }

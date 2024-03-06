@@ -1,5 +1,6 @@
 package com.example.tutorapp395project.screen.tutorView
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -24,8 +26,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -35,8 +39,15 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.tutorapp395project.screen.studentView.Appointment
-import com.example.tutorapp395project.screen.studentView.BackgroundNoLogo
+import androidx.compose.ui.unit.dp
+import androidx.test.espresso.intent.Intents.init
+import com.example.tutorapp395project.screen.view.SessionView
+import com.example.tutorapp395project.utils.getTimeInterval
+import com.example.tutorapp395project.utils.stringToDate
+import com.example.tutorapp395project.utils.stringToReadableDate
+import com.example.tutorapp395project.viewModel.AuthViewModel
+import com.example.tutorapp395project.viewModel.HomeViewModel
+import com.example.tutorapp395project.viewModel.TutorViewModel
 
 /*
     Function: This creates a column that lays out all the users scheduled appointments
@@ -45,43 +56,54 @@ import com.example.tutorapp395project.screen.studentView.BackgroundNoLogo
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TutorAppointmentLayout(modifier: Modifier = Modifier) {
-    var presses by remember { mutableIntStateOf(0) }
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+fun TutorAppointmentLayout(
+    modifier: Modifier = Modifier,
+    tutorViewModel: TutorViewModel,
+    authViewModel: AuthViewModel,
+    homeViewModel: HomeViewModel
+) {
 
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
-    ) { innerPadding ->
-        LazyColumn(
-//            verticalArrangement = Arrangement.spacedBy(15.dp, Alignment.Top),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .background(color = Color(0xFF00539C))
-        ) {
-            items(19) {
-                Appointment(
-                    "3:00PM - 4:00PM", "January 24th, 2024", "Math",
-                    "Student", "Nami"
-                )
-                Appointment(
-                    "4:00PM - 5:00PM", "January 24th, 2024", "Chemistry",
-                    "Student", "Vinsmoke Sanji"
-                )
-                Appointment(
-                    "3:00PM - 4:00PM", "January 31th, 2024", "Biology",
-                    "Student", "Tony Tony Chopper"
-                )
-                Appointment(
-                    "4:00PM - 5:00PM", "January 31th, 2024", "History",
-                    "Student", "Nico Robin"
-                )
-                Appointment(
-                    "6:00PM - 7:00PM", "January 31th, 2024", "Physics",
-                    "Student", "Franky"
-                )
+    if (homeViewModel.viewState.value == "schedule") {
+        tutorViewModel.getSessionsForTutor(
+            role = authViewModel.UserState.value.role,
+            id = authViewModel.UserState.value.id.toInt()
+        )
+    }
+
+    LazyColumn(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .fillMaxSize()
+            .padding(top = 10.dp)
+            .background(color = Color(0xFF00539C))
+    ) {
+        Log.d("TutorAppointmentLayout", "sessionState: ${tutorViewModel.sessionState.value}")
+        if (tutorViewModel.sessionState.value.isLoading) {
+            item {
+                CircularProgressIndicator(color = Color.White)
+            }
+        } else {
+            if (tutorViewModel.sessionState.value.session_list.isNullOrEmpty()) {
+                item {
+                    Text(
+                        text = "No appointments scheduled",
+                        color = Color.White
+                    )
+                }
+            } else {
+                tutorViewModel.sessionState.value.session_list?.forEach { session ->
+                    Log.d("TutorAppointmentLayout", "date: ${stringToDate(session.date).toString()}")
+                    item {
+                        SessionView(
+                            time = getTimeInterval(session.time_block_id_list),
+                            date = stringToReadableDate(session.date),
+                            subject = session.subject,
+                            with = "Student",
+                            person = session.student_name,
+                            modifier = Modifier.padding(10.dp)
+                        )
+                    }
+                }
             }
         }
     }
@@ -92,6 +114,11 @@ fun TutorAppointmentLayout(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun previewTutorSchedule(){
-    BackgroundNoLogo()
-    TutorAppointmentLayout()
+    TutorAppointmentLayout(
+        tutorViewModel = TutorViewModel(
+            authViewModel = AuthViewModel()
+        ),
+        authViewModel = AuthViewModel(),
+        homeViewModel = HomeViewModel()
+    )
 }

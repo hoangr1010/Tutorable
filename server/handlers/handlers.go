@@ -8,7 +8,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/go-chi/jwtauth/v5"
+	//"github.com/go-chi/jwtauth"
+	//"github.com/go-chi/jwtauth/v5"
+
 	"github.com/lib/pq"
 	"github.com/macewanCS/w24MacroHard/server/util"
 )
@@ -387,6 +389,7 @@ func GetTutorAvailability(db *sql.DB) http.HandlerFunc {
 	}
 }
 
+// should work now
 // Get tutoring session list
 func GetTutoringSessionList(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -406,8 +409,13 @@ func GetTutoringSessionList(db *sql.DB) http.HandlerFunc {
 		tutoringSessions, err := util.GetTutoringSessionList(db, user)
 
 		if err != nil {
-			http.Error(w, "Invalid JSON", http.StatusInternalServerError)
+			http.Error(w, "Whoopsie!", http.StatusInternalServerError)
 			return
+		}
+
+		// If tutorinSessions is empty redeclare it
+		if len(tutoringSessions) == 0 {
+			tutoringSessions = []util.TutoringSession{}
 		}
 		// Prepare response
 		response := struct {
@@ -436,14 +444,11 @@ func GetTutoringSessionList(db *sql.DB) http.HandlerFunc {
 	}
 }
 
+// fixed
 // SearchTutorAvailability searches all tutor availability for particular time slots.
 func SearchTutorAvailability(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// This will store the information from token
-		_, claims, _ := jwtauth.FromContext(r.Context())
-		w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
-		// Put code here :))
-
+		// Decode request body into TutorAvailability struct
 		var tutorAvailability util.TutorAvailability
 		err := util.DecodeJSONRequestBody(r, &tutorAvailability)
 		if err != nil {
@@ -458,38 +463,44 @@ func SearchTutorAvailability(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		// Parse date string
-		date, err := time.Parse("2006-01-02", tutorAvailability.Date)
+		// Search for tutor availability based on date and time block IDs
+		tutorIDs, err := util.SearchAvailability(db, tutorAvailability.Date, tutorAvailability.TimeBlockIdList)
 		if err != nil {
-			http.Error(w, "Invalid date format", http.StatusBadRequest)
+			fmt.Println("Error searching tutor availability: ", err)
+			http.Error(w, "Error searching table", http.StatusInternalServerError)
 			return
 		}
 
-		// Delete existing tutor availability for the specified date
-		err = util.DeleteTutorAvailability(db, tutorAvailability.ID, date)
-		if err != nil {
-			fmt.Printf("Error deleting tutor availability: %v\n", err)
-			http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError)
-			return
-		}
-
-		// Add new tutor availability for the specified time blocks
-		for _, id := range tutorAvailability.TimeBlockIdList {
-			err := util.InsertTutorAvailability(db, tutorAvailability, id)
+		// Fetch tutor details based on tutor IDs
+		var tutors []util.User
+		for _, tutorID := range tutorIDs {
+			// Get the tutor's email
+			tutorEmail, err := util.GetTutorEmailByID(db, tutorID)
 			if err != nil {
-				fmt.Printf("Error adding tutor availability: %v\n", err)
-				http.Error(w, "Error adding tutor availability", http.StatusInternalServerError)
+				fmt.Println("Error fetching tutor email: ", err)
+				http.Error(w, "Error fetching tutor email", http.StatusInternalServerError)
 				return
 			}
+
+			// Fetch tutor details based on email
+			tutor, err := util.GetTutorUser(db, tutorEmail)
+			if err != nil {
+				fmt.Println("Error fetching tutor details: ", err)
+				http.Error(w, "Error fetching tutor details", http.StatusInternalServerError)
+				return
+			}
+			tutors = append(tutors, tutor)
 		}
 
+		// If tutors is empty redeclare it
+		if len(tutors) == 0 {
+			tutors = []util.User{}
+		}
 		// Prepare response
 		response := struct {
-			Date            string `json:"date"`
-			TimeBlockIDList []int  `json:"time_block_id_list"`
+			TutorList []util.User `json:"tutor_list"`
 		}{
-			Date:            tutorAvailability.Date,
-			TimeBlockIDList: tutorAvailability.TimeBlockIdList,
+			TutorList: tutors,
 		}
 
 		// Marshal response to JSON
@@ -517,16 +528,10 @@ func AddTutoringSession(db *sql.DB) http.HandlerFunc {
 		err := util.DecodeJSONRequestBody(r, &session)
 		if err != nil {
 			fmt.Println("Invalid JSON:", err)
+			http.Error(w, "Error parsing JSON", http.StatusBadRequest)
 			return
 		}
 
-		// Parse the date
-		date, err := time.Parse("2006-01-02", session.Date)
-		if err != nil {
-			http.Error(w, "Invalid date format", http.StatusBadRequest)
-			return
-		}
-		fmt.Println(date)
 		var tutor util.TutorAvailability
 		tutor.ID = session.TutorID
 		// Check if tutor has availability in timeslot
@@ -534,15 +539,46 @@ func AddTutoringSession(db *sql.DB) http.HandlerFunc {
 			exists, err := util.PeekTimeSlot(db, session, id)
 			if err != nil {
 				fmt.Println("Error checking tutor_availability: ", err)
-				http.Error(w, "Inavlid JSON", http.StatusBadRequest)
+				http.Error(w, "HEEEEEEELP", http.StatusBadRequest)
 			}
-			if exists {
-				http.Error(w, "Tutor is not available", http.StatusBadRequest)
+			if !exists {
+				http.Error(w, "Tutor is not available", http.StatusUnauthorized) // status code 401
 				return
 			}
 		}
 		// Create session if they are available
-
+		err = util.InsertTutoringSession(db, session)
+		if err != nil {
+			http.Error(w, "Error inserting into tutoring session", http.StatusInternalServerError) // status code 500
+			return
+		}
 		// Delete all availability shown in time_block_id_list
+		for _, id := range session.TimeBlockIDList {
+			err = util.DeleteSomeTutorAvailability(db, session, id)
+			if err != nil {
+				http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+				return
+			}
+		}
+
+		// Prepare response
+		response := struct {
+			TimeBlockIDList []int `json:"time_block_id_list"`
+		}{
+			TimeBlockIDList: session.TimeBlockIDList,
+		}
+
+		// Marshal response to JSON
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			fmt.Printf("Error encoding JSON response: %v\n", err)
+			http.Error(w, "Error encoding JSON response", http.StatusInternalServerError)
+			return
+		}
+
+		// Write response
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
 	}
 }
