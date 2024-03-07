@@ -87,9 +87,9 @@ func router() http.Handler {
 		r.Post("/auth/login", handlers.LoginHandler(db))
 		r.Post("/auth/register", handlers.RegisterHandler(db))
 		r.Post("/add_tutor_availability", handlers.AddTutorAvailability(db)) // Done
-		r.Get("/get_tutor_availability", handlers.GetTutorAvailability(db))  // This is for a tutor
-		r.Get("/get_tutoring_session_list", handlers.GetTutoringSessionList(db))
-		r.Get("/search_tutor_availability", handlers.SearchTutorAvailability(db)) // This is for many
+		r.Post("/get_tutor_availability", handlers.GetTutorAvailability(db))  // This is for a tutor
+		r.Post("/get_tutoring_session_list", handlers.GetTutoringSessionList(db))
+		r.Post("/search_tutor_availability", handlers.SearchTutorAvailability(db)) // This is for many
 		r.Post("/add_tutoring_session", handlers.AddTutoringSession(db))
 
 	})
