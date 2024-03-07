@@ -18,12 +18,11 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-    testOptions {
-        reportDir = file("${buildDir}/test_reports").toString()
+        testOptions {
+            reportDir = file("${buildDir}/test_reports").toString()
 
+        }
     }
-    }
-
 
     buildTypes {
         release {
@@ -32,6 +31,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        getByName("debug") {
+            enableAndroidTestCoverage= true
+            enableUnitTestCoverage = true
         }
     }
     compileOptions {
@@ -50,7 +53,9 @@ android {
     }
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        excludes += "/META-INF/LICENSE.md"
+        excludes += "/META-INF/LICENSE-notice.md" // Corrected file name
         }
     }
 }
@@ -58,6 +63,11 @@ android {
 dependencies {
 
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+    implementation("androidx.navigation:navigation-testing:2.7.7")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    androidTestImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     annotationProcessor("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-common:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
@@ -123,7 +133,15 @@ dependencies {
     implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.3.0")
     implementation("com.maxkeppeler.sheets-compose-dialogs:calendar:1.3.0")
 
-
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.1")
     implementation("androidx.compose.ui:ui-tooling-preview:1.6.1")
+
+    // Mockito
+    testImplementation("org.mockito:mockito-core:3.12.4")
+
+    // Navigation testing
+    androidTestImplementation ("androidx.navigation:navigation-testing:2.7.7")
+
+    // Roboelectric
+    testImplementation ("org.robolectric:robolectric:4.6.1")
 }
