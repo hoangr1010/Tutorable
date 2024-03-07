@@ -1,24 +1,24 @@
 # w24MacroHard
 ## DESCRIPTION
 
-> In this project, we aim to build an Android tutor scheduling application
-> Application Name: TutorMe
-> Operating system:Android 7.0 Nougat or newer
-> Key Features:  
-> Matching tutor(s) and student(s) based on desired subjects, grade level, and preferred time availability  
-> Creating a weekly schedule for users  
-> Facilitating communication between tutor(s) and student(s)  
-> Notifying tutors via emails  
-> Programming Languages: Kotlin and Go  
+In this project, we aim to build an Android tutor scheduling application  
+**Application Name:** TutorMe  
+**Operating system:** Android 7.0 Nougat or newer  
+**Key Features:**  
+1. Matching tutor(s) and student(s) based on desired subjects, grade level, and preferred time availability  
+2. Creating a weekly schedule for users  
+3. Facilitating communication between tutor(s) and student(s)  
+4. Notifying tutors via emails  
+5. Programming Languages: Kotlin and Go  
 
 ## AUTHORS
 Group A4 from Winter 2024
 
-Vy Tran         vtranv
-Hoang Nguyen    hoangr1010
-Joseph Foote    JoeFoote
-Andrae Barradas AndraeB
-Ryan Cabral     cabralr2
+Vy Tran         (vtranv)  
+Hoang Nguyen    (hoangr1010)  
+Joseph Foote    (JoeFoote)  
+Andrae Barradas (AndraeB)  
+Ryan Cabral     (cabralr2)  
 
 ## INSTALLATION
 Clone this repository and import into Android Studio
