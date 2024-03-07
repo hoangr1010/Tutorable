@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -113,6 +114,7 @@ fun Fields(
             .padding(20.dp)
             .background(color = Color.White, shape = RoundedCornerShape(30.dp))
             .padding(20.dp)
+            .testTag("loginPage")
     ){
         OutlinedTextField(
             value = loginData.email,
@@ -122,7 +124,9 @@ fun Fields(
                 }
             },
             label = { Text("Email", fontWeight = FontWeight.Black) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("emailField")
         )
         Spacer(modifier = Modifier.height(10.dp))
         DropdownTextBox(
@@ -145,7 +149,9 @@ fun Fields(
             label = { Text("Password", fontWeight = FontWeight.Black)},
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("passwordField")
 
         )
 
@@ -212,7 +218,7 @@ fun DropdownTextBox(
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().testTag("roleField")
         ) {
             items.forEach { item ->
                 DropdownMenuItem(onClick = {

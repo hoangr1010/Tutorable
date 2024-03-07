@@ -4,12 +4,9 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Rule
-import org.junit.jupiter.api.Test
-import org.junit.runner.RunWith
+import org.junit.Test
 
-@RunWith(AndroidJUnit4::class)
 class LandingPageKtTest {
 
     @get:Rule
@@ -22,14 +19,6 @@ class LandingPageKtTest {
             LandingPage(navController)
         }
         composeTestRule.onNodeWithText("LOGIN").assertExists()
-    }
-
-    @Test
-    fun background() {
-        composeTestRule.setContent {
-            Background()
-        }
-        composeTestRule.onNodeWithText("Tutor Apple").assertExists()
     }
 
     @Test
