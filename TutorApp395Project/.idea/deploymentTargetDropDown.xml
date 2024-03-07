@@ -2,19 +2,16 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="LandingPageKtTest">
-        <State />
-      </entry>
       <entry key="LoginPageKtTest">
         <State />
       </entry>
       <entry key="NavigationKtTest">
         <State />
       </entry>
-      <entry key="TutorListKtTest">
+      <entry key="RegistrationPageKtTest">
         <State />
       </entry>
-      <entry key="TutorProfileKtTest">
+      <entry key="SettingsKtTest">
         <State />
       </entry>
       <entry key="app">
