@@ -141,4 +141,7 @@ dependencies {
 
     // Navigation testing
     androidTestImplementation ("androidx.navigation:navigation-testing:2.7.7")
+
+    // Roboelectric
+    testImplementation ("org.robolectric:robolectric:4.6.1")
 }

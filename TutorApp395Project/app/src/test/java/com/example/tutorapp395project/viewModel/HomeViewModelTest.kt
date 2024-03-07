@@ -1,48 +1,51 @@
 package com.example.tutorapp395project.viewModel
 
-import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
 class HomeViewModelTest {
 
+    private lateinit var homeViewModel: HomeViewModel
+
     @Before
     fun setUp() {
-    }
-
-    @After
-    fun tearDown() {
+        homeViewModel = HomeViewModel()
     }
 
     @Test
-    fun addCloseable() {
+    fun changeViewState_updatesViewState() {
+        val newState = "setting"
+
+        homeViewModel.changeViewState(newState)
+
+        assertEquals(newState, homeViewModel.viewState.value)
     }
 
     @Test
-    fun onCleared() {
+    fun changeViewState_updatesViewStateToSchedule() {
+        val newState = "schedule"
+
+        homeViewModel.changeViewState(newState)
+
+        assertEquals(newState, homeViewModel.viewState.value)
     }
 
     @Test
-    fun clear() {
+    fun changeViewState_updatesViewStateToProfile() {
+        val newState = "profile"
+
+        homeViewModel.changeViewState(newState)
+
+        assertEquals(newState, homeViewModel.viewState.value)
     }
 
     @Test
-    fun setTagIfAbsent() {
-    }
+    fun changeViewState_updatesViewStateToSetting() {
+        val newState = "setting"
 
-    @Test
-    fun getTag() {
-    }
+        homeViewModel.changeViewState(newState)
 
-    @Test
-    fun getViewState() {
-    }
-
-    @Test
-    fun getFields() {
-    }
-
-    @Test
-    fun changeViewState() {
+        assertEquals(newState, homeViewModel.viewState.value)
     }
 }

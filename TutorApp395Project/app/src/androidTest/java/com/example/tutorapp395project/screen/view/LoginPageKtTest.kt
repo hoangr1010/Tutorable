@@ -29,12 +29,4 @@ class LoginPageKtTest {
         onView(withTagValue(Matchers.equalTo("emailField"))).check(matches(isDisplayed()))
         onView(withTagValue(Matchers.equalTo("passwordField"))).check(matches(isDisplayed()))
     }
-
-    @Test
-    fun testDropdownTextBox() {
-        //onView(withTagValue(Matchers.equalTo("roleField"))).perform(click())
-        //onView(withText("student")).perform(click())
-        //onView(withTagValue(Matchers.equalTo("roleField")))
-        //    .check(matches(withText("student")))
-    }
 }

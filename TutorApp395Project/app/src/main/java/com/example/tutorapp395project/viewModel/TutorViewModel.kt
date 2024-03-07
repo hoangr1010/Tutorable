@@ -16,11 +16,10 @@ import com.example.tutorapp395project.repository.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.util.Date
 
 class TutorViewModel(
     private val userRepository: UserRepository = UserRepository(),
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
 ): ViewModel() {
 
     @RequiresApi(Build.VERSION_CODES.O)

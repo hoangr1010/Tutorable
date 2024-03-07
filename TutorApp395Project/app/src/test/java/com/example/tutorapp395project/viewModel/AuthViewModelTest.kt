@@ -54,15 +54,4 @@ class AuthViewModelTest {
         assertEquals("", authViewModel.token.value)
         assertEquals("", authViewModel.UserState.value.role)
     }
-
-/*    @Test
-    fun onRegister_updatesRegisterDataStateAndRegisterState() = runBlockingTest {
-        val registerData = RegisterData(email = "test@example.com", password = "password", role = "student")
-
-        authViewModel.onRegisterChange { registerData }
-        authViewModel.onRegister()
-
-        assertEquals(registerData, authViewModel.registerDataState.value)
-        assertTrue(authViewModel.registerState.value.isNotEmpty())
-    }*/
 }

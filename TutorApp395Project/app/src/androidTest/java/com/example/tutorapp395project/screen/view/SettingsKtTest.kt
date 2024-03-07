@@ -7,7 +7,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
 import com.example.tutorapp395project.viewModel.AuthViewModel
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -27,10 +26,6 @@ class SettingsKtTest {
         composeTestRule.setContent {
             SettingsColumn(navController, authViewModel, Modifier)
         }
-    }
-
-    @After
-    fun tearDown() {
     }
 
     @Test
