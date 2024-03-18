@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/smtp"
 
 	"os"
 	"time"
@@ -794,4 +795,33 @@ func parseDate(dateString string) (time.Time, error) {
 		}
 	}
 	return time.Time{}, fmt.Errorf("unable to parse date: %v", dateString)
+}
+
+func SendEmail(recipient []string, subject string, body string) error {
+	// Set up authentication credentials
+	smtpUsername := "macrohard2024@gmail.com"
+	smtpPassword := "codingiscool"
+	smtpServer := "smtp.gmail.com"
+	smtpPort := "587"
+
+	// Set up the email
+	from := "macrohard2024@gmail.com"
+
+	// Set up the SMTP client
+	auth := smtp.PlainAuth("", smtpUsername, smtpPassword, smtpServer)
+	smtpAddr := smtpServer + ":" + smtpPort
+
+	// Compose the email message
+	message := []byte("To: " + recipient[0] + "\r\n" +
+		"Subject: " + subject + "\r\n" +
+		"\r\n" +
+		body + "\r\n")
+
+	// Send the email
+	err := smtp.SendMail(smtpAddr, auth, from, recipient, message)
+	if err != nil {
+		fmt.Println("Error sending email: ", err)
+	}
+	fmt.Println("Email sent successfully!")
+	return err
 }
