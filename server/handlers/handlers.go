@@ -15,11 +15,6 @@ import (
 	"github.com/macewanCS/w24MacroHard/server/util"
 )
 
-// HelloHandler is a sample HTTP handler
-func HelloHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Hello, Chi!")
-}
-
 // Add more routes as needed
 func LoginHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -28,6 +23,7 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 		err := util.DecodeJSONRequestBody(r, &login)
 		if err != nil {
 			fmt.Println("Invalid JSON:", err)
+			http.Error(w, "Invalid JSON", http.StatusBadRequest)
 			return
 		}
 
@@ -129,6 +125,8 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 			}
 		} else if login.Role == "administrator" {
 			fmt.Println("Administrator")
+		} else {
+			http.Error(w, "Invalid role", http.StatusBadRequest)
 		}
 
 		//fmt.Printf("%+v\n", login)
@@ -152,7 +150,7 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		fmt.Println("Hashed Password:", register.Password)
+		//fmt.Println("Hashed Password:", register.Password)
 
 		// Check the role
 		if register.Role == "student" {
@@ -189,6 +187,9 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 					http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
 					return
 				}
+
+				// Write the response status code
+				w.WriteHeader(http.StatusOK)
 
 				// Set the Content-Type header to application/json
 				w.Header().Set("Content-Type", "application/json")
@@ -228,6 +229,9 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 					http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
 					return
 				}
+
+				// Write the response status code
+				w.WriteHeader(http.StatusOK)
 
 				// Set the Content-Type header to application/json
 				w.Header().Set("Content-Type", "application/json")
@@ -389,61 +393,6 @@ func GetTutorAvailability(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-// should work now
-// Get tutoring session list
-func GetTutoringSessionList(db *sql.DB) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		// This will store the information from token
-		//_, claims, _ := jwtauth.FromContext(r.Context())
-		//w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
-
-		// Pull role and id from JSON body
-		var user util.User
-		err := util.DecodeJSONRequestBody(r, &user)
-		if err != nil {
-			fmt.Println("Invalid JSON:", err)
-			http.Error(w, "Invalid JSON", http.StatusBadRequest)
-			return
-		}
-
-		tutoringSessions, err := util.GetTutoringSessionList(db, user)
-
-		if err != nil {
-			http.Error(w, "Whoopsie!", http.StatusInternalServerError)
-			return
-		}
-
-		// If tutorinSessions is empty redeclare it
-		if len(tutoringSessions) == 0 {
-			tutoringSessions = []util.TutoringSession{}
-		}
-		// Prepare response
-		response := struct {
-			ID               int                    `json:"id"`
-			Role             string                 `json:"role"`
-			TutoringSessions []util.TutoringSession `json:"tutoring_session_list"`
-		}{
-			ID:               user.ID,
-			Role:             user.Role,
-			TutoringSessions: tutoringSessions,
-		}
-
-		// Marshal response to JSON
-		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			fmt.Printf("Error encoding JSON response: %v\n", err)
-			http.Error(w, "Error encoding JSON response", http.StatusInternalServerError)
-			return
-		}
-
-		// Write response
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		w.Write(jsonResponse)
-
-	}
-}
-
 // fixed
 // SearchTutorAvailability searches all tutor availability for particular time slots.
 func SearchTutorAvailability(db *sql.DB) http.HandlerFunc {
@@ -580,5 +529,60 @@ func AddTutoringSession(db *sql.DB) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		w.Write(jsonResponse)
+	}
+}
+
+// should work now
+// Get tutoring session list
+func GetTutoringSessionList(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// This will store the information from token
+		//_, claims, _ := jwtauth.FromContext(r.Context())
+		//w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+
+		// Pull role and id from JSON body
+		var user util.User
+		err := util.DecodeJSONRequestBody(r, &user)
+		if err != nil {
+			fmt.Println("Invalid JSON:", err)
+			http.Error(w, "Invalid JSON", http.StatusBadRequest)
+			return
+		}
+
+		tutoringSessions, err := util.GetTutoringSessionList(db, user)
+
+		if err != nil {
+			http.Error(w, "Whoopsie!", http.StatusInternalServerError)
+			return
+		}
+
+		// If tutorinSessions is empty redeclare it
+		if len(tutoringSessions) == 0 {
+			tutoringSessions = []util.TutoringSession{}
+		}
+		// Prepare response
+		response := struct {
+			ID               int                    `json:"id"`
+			Role             string                 `json:"role"`
+			TutoringSessions []util.TutoringSession `json:"tutoring_session_list"`
+		}{
+			ID:               user.ID,
+			Role:             user.Role,
+			TutoringSessions: tutoringSessions,
+		}
+
+		// Marshal response to JSON
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			fmt.Printf("Error encoding JSON response: %v\n", err)
+			http.Error(w, "Error encoding JSON response", http.StatusInternalServerError)
+			return
+		}
+
+		// Write response
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
+
 	}
 }
