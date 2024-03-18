@@ -1,17 +1,18 @@
-package util_test 
+package util_test
 
 import (
 	//"bytes"
 	"database/sql"
 	//"encoding/json"
 	"fmt"
-  "testing"
-  //"time"
+	"testing"
+
+	//"time"
 
 	//"github.com/golang-jwt/jwt/v5"
-  //"github.com/lib/pq"
+	//"github.com/lib/pq"
 	"github.com/macewanCS/w24MacroHard/server/util"
-  //"github.com/stretchr/testify/assert"
+	//"github.com/stretchr/testify/assert"
 )
 
 // Define constants for database connection
@@ -30,7 +31,7 @@ func TestPeekAvail(t *testing.T) {
 
 	// Open the database connection
 	db, err := sql.Open("postgres", connStr)
-  if err != nil {
+	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
 	defer db.Close()
@@ -52,5 +53,16 @@ func TestPeekAvail(t *testing.T) {
 		t.Errorf("Test case 1 failed: expected tutor to be available, but it is not")
 	} else {
 		fmt.Println("Test case 1 passed: Tutor is available on the specified date")
+	}
+}
+
+func TestSendEmail(t *testing.T) {
+	recipient := []string{"j.foote777@gmail.com"}
+	subject := "Test Subject"
+	body := "This is a test email body."
+
+	err := util.SendEmail(recipient, subject, body)
+	if err != nil {
+		t.Errorf("Error sending email: %v", err)
 	}
 }
