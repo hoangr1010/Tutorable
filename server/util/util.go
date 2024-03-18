@@ -800,7 +800,7 @@ func parseDate(dateString string) (time.Time, error) {
 func SendEmail(recipient []string, subject string, body string) error {
 	// Set up authentication credentials
 	smtpUsername := "macrohard2024@gmail.com"
-	smtpPassword := "codingiscool"
+	smtpPassword := "tvpo evlv syou zllf"
 	smtpServer := "smtp.gmail.com"
 	smtpPort := "587"
 
@@ -821,6 +821,7 @@ func SendEmail(recipient []string, subject string, body string) error {
 	err := smtp.SendMail(smtpAddr, auth, from, recipient, message)
 	if err != nil {
 		fmt.Println("Error sending email: ", err)
+		return err
 	}
 	fmt.Println("Email sent successfully!")
 	return err
