@@ -116,7 +116,7 @@ fun FixedSessionInfoCard(){
             .padding(3.dp)
     ) {
         Title("Session Information")
-        FixedSessionInfo(123456, "Pikachu", "Math")
+        FixedSessionInfo(123456, "Pikachu", "Maths")
     }
 }
 
@@ -149,14 +149,19 @@ fun FreeSessionInfoCard(){
  */
 @Composable
 fun Title(title: String){
-    Text(
-        text = title,
-        fontSize = 24.sp,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier
-            .padding(16.dp),
-        textAlign = TextAlign.Center,
-    )
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = title,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .padding(16.dp),
+        )
+    }
     Divider(color = Color.Gray, thickness = 1.dp)
 }
 
