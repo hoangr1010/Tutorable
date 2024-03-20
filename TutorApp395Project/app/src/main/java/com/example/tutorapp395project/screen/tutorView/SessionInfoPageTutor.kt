@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.sp
 import com.example.tutorapp395project.screen.studentView.BackgroundNoLogo
 import com.example.tutorapp395project.viewModel.AuthViewModel
 import com.example.tutorapp395project.viewModel.HomeViewModel
-import com.example.tutorapp395project.viewModel.StudentViewModel
 import com.example.tutorapp395project.viewModel.TutorViewModel
 
 
@@ -68,12 +67,13 @@ fun SessionButtons(){
     Column(
         modifier = Modifier
             .fillMaxHeight(),
-        //verticalArrangement = Arrangement.SpaceBetween
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.Bottom,
-            modifier = Modifier.fillMaxWidth().padding(8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
         ) {
             ElevatedButton(
                 onClick = {/* TODO */ },
@@ -89,8 +89,7 @@ fun SessionButtons(){
             ElevatedButton(
                 onClick = {/* TODO */ },
                 modifier = Modifier
-                    .size(width = 150.dp, height = 40.dp)
-                ,
+                    .size(width = 150.dp, height = 40.dp),
                 shape = RoundedCornerShape(25),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFB4A9)),
 
@@ -115,11 +114,11 @@ fun FixedSessionInfoCard(){
             defaultElevation = 6.dp
         ),
         modifier = Modifier
-            .size(width = 450.dp, height = 400.dp)
+            .size(width = 450.dp, height = 450.dp)
             .padding(3.dp)
     ) {
         Title("Session Information")
-        FixedSessionInfo(123456, "Hawking", "Maths")
+        FixedSessionInfo(123456, "Hawking", 6,"Maths")
     }
 }
 
@@ -136,7 +135,7 @@ fun FreeSessionInfoCard(){
             defaultElevation = 6.dp
         ),
         modifier = Modifier
-            .size(width = 450.dp, height = 350.dp)
+            .size(width = 450.dp, height = 330.dp)
             .padding(3.dp)
     ) {
         FreeSessionInfo("2024/04/04", "14:00-15:00")
@@ -152,14 +151,19 @@ fun FreeSessionInfoCard(){
  */
 @Composable
 fun Title(title: String){
-    Text(
-        text = title,
-        fontSize = 24.sp,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier
-            .padding(16.dp),
-        textAlign = TextAlign.Center,
-    )
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = title,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .padding(16.dp),
+        )
+    }
     Divider(color = Color.Gray, thickness = 1.dp)
 }
 
@@ -175,7 +179,7 @@ fun Subtitle(subtitle: String){
         subtitle,
         fontSize = 20.sp,
         modifier = Modifier
-            .padding(16.dp),
+            .padding(12.dp),
     )
 
 }
@@ -192,41 +196,50 @@ fun Subtitle(subtitle: String){
 fun FixedSessionInfo(
     sessionId: Int,
     studentName: String,
+    gradeLevel: Int,
     subject: String
 ) {
     LazyColumn(
     ) {
         item {
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(vertical = 10.dp),
-                //horizontalArrangement = Arrangement.Start,
-                //verticalAlignment = Alignment.CenterVertically
+                    .padding(vertical = 12.dp),
+
             ) {
                 Subtitle("Session ID")
                 Text(
                     "$sessionId",
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     modifier = Modifier
-                        .padding(16.dp),
+                        .padding(12.dp),
                 )
                 Subtitle("Student")
                 Text(
                     studentName,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     modifier = Modifier
-                        .padding(16.dp),
+                        .padding(12.dp),
+                )
+                Subtitle("Grade Level")
+                Text(
+                    "$gradeLevel",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    modifier = Modifier
+                        .padding(12.dp),
                 )
                 Subtitle("Subject")
                 Text(
                     subject,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     modifier = Modifier
-                        .padding(16.dp),
+                        .padding(12.dp),
                 )
             }
         }
@@ -250,7 +263,8 @@ fun FreeSessionInfo(
     ) {
         item {
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .wrapContentHeight()
                     .padding(vertical = 25.dp),
                 //horizontalArrangement = Arrangement.Start,
@@ -263,7 +277,7 @@ fun FreeSessionInfo(
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
                     modifier = Modifier
-                        .padding(16.dp),
+                        .padding(12.dp),
                 )
                 Subtitle("Time")
                 Text(
@@ -271,7 +285,7 @@ fun FreeSessionInfo(
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
                     modifier = Modifier
-                        .padding(16.dp),
+                        .padding(12.dp),
                 )
             }
         }
