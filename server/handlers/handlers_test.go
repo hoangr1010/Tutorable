@@ -7,14 +7,21 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-  "testing"
-  "time"
+	"testing"
+	"time"
 
-  "github.com/macewanCS/w24MacroHard/server/handlers"
+	"github.com/macewanCS/w24MacroHard/server/handlers"
 
 	"github.com/macewanCS/w24MacroHard/server/util"
-  "github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/assert"
 )
+
+// RUNNING TESTS:
+// 1. use "go test -coverprofile="NAME_OF_FILE.out" ./..." | this will run the test and output an out file of results
+// 2. use "go tool cover -html="NAME_OF_FILE.out" -o ./reports/NAME_OF_FILE.html"
+// Step 2 will convert the out file to a detailed coverage report in html format the name of file is important
+// because if you run the same command again then it will replace the old test reports (we want them as test logs)
+// so naming scheme should follow: ie. "2024-03-04-handlers.out" and "2024-03-04-handlers.html"
 
 // Define constants for database connection
 const (
@@ -107,6 +114,25 @@ func TestLoginHandler(t *testing.T) {
 
 	assert.Equal(t, http.StatusBadRequest, rr.Code, "Handler returned wrong status code for empty request body")
 
+	// Test case 4.1: Error validation
+	fmt.Println("")
+	fmt.Println("Test 5: Valid login")
+	login = util.Login{
+		Email:    "demotest@COOLCODE.com",
+		Password: "passwd",
+		Role:     "student",
+	}
+	loginJSON, err = json.Marshal(login)
+	assert.NoError(t, err, "Failed to marsal login JSON")
+
+	req = httptest.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(loginJSON))
+	req.Header.Set("Content-type", "application/json")
+
+	rr = httptest.NewRecorder()
+	handlers.LoginHandler(db)(rr, req)
+
+	assert.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code for valid login")
+
 	// Test case 5: Valid login
 	fmt.Println("")
 	fmt.Println("Test 5: Valid login")
@@ -132,58 +158,57 @@ func TestLoginHandler(t *testing.T) {
 }
 
 // Test: Checks if the register handler works
- func TestRegisterHandler(t *testing.T) {
- 	// Construct connection string
- 	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", DBHost, DBPort, DBUser, DBPassword, DBName)
+func TestRegisterHandler(t *testing.T) {
+	// Construct connection string
+	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", DBHost, DBPort, DBUser, DBPassword, DBName)
 
- 	// Open database connection
- 	db, err := sql.Open("postgres", connStr)
- 	if err != nil {
- 		t.Fatalf("Failed to connect to database: %v", err)
- 	}
- 	defer db.Close()
+	// Open database connection
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer db.Close()
 
- 	// Create a sample register payload
- 	register := util.Register{
- 		Email:       "test@example.com",
- 		Password:    "password123",
- 		Role:        "student",
- 		FirstName:   "Joe",
- 		LastName:    "Feete",
- 		DateOfBirth: "07/12/1989",
- 		Expertise:   []string{"mathematics", "computer science", "literature"},
- 		Experience:  "senior",
- 		Description: "I am the greatest tutor to ever exist.",
- 		Degrees:     []string{"high school diploma", "proserve(expired)", "plat 4 in league of legends"},
- 		Grade:       12,
- 	}
- 	registerJSON, err := json.Marshal(register)
- 	if err != nil {
- 		t.Fatalf("Failed to marshal register JSON: %v", err)
- 	}
+	// Create a sample register payload
+	register := util.Register{
+		Email:       "test@example.com",
+		Password:    "password123",
+		Role:        "student",
+		FirstName:   "Joe",
+		LastName:    "Feete",
+		DateOfBirth: "07/12/1989",
+		Expertise:   []string{"mathematics", "computer science", "literature"},
+		Experience:  "senior",
+		Description: "I am the greatest tutor to ever exist.",
+		Degrees:     []string{"high school diploma", "proserve(expired)", "plat 4 in league of legends"},
+		Grade:       12,
+	}
+	registerJSON, err := json.Marshal(register)
+	if err != nil {
+		t.Fatalf("Failed to marshal register JSON: %v", err)
+	}
 
- 	// Create a new HTTP request with the register payload
- 	req := httptest.NewRequest(http.MethodPost, "/register", bytes.NewBuffer(registerJSON))
- 	req.Header.Set("Content-Type", "application/json")
+	// Create a new HTTP request with the register payload
+	req := httptest.NewRequest(http.MethodPost, "/register", bytes.NewBuffer(registerJSON))
+	req.Header.Set("Content-Type", "application/json")
 
- 	// Create a new recorder to record the response
- 	rr := httptest.NewRecorder()
+	// Create a new recorder to record the response
+	rr := httptest.NewRecorder()
 
- 	// Call the handler function with the recorder, request, and real DB
- 	handlers.RegisterHandler(db)(rr, req)
+	// Call the handler function with the recorder, request, and real DB
+	handlers.RegisterHandler(db)(rr, req)
 
- 	// Check the response status code
- 	if rr.Code != http.StatusOK {
- 		t.Errorf("Handler returned wrong status code: got %v want %v", rr.Code, http.StatusOK)
- 	}
+	// Check the response status code
+	if rr.Code != http.StatusOK {
+		t.Errorf("Handler returned wrong status code: got %v want %v", rr.Code, http.StatusOK)
+	}
 
- 	// Print the response body (results)
- 	fmt.Println("Registration Results:")
- 	fmt.Println(rr.Body.String())
- }
+	// Print the response body (results)
+	fmt.Println("Registration Results:")
+	fmt.Println(rr.Body.String())
+}
 
-
- // Test: Tests the registration and login handler functionality.
+// Test: Tests the registration and login handler functionality.
 func TestRegistrationAndLoginHandler(t *testing.T) {
 	// Construct connection string
 	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", DBHost, DBPort, DBUser, DBPassword, DBName)
@@ -328,8 +353,8 @@ func TestAddTutorAvailabilityHandler(t *testing.T) {
 
 	// Define a mock request payload
 	tutorAvailability := util.TutorAvailability{
-		ID:             1,
-		Date:           "2024-03-04",
+		ID:              1,
+		Date:            "2024-03-04",
 		TimeBlockIdList: []int{1, 2, 3}, // Sample list of time block IDs
 	}
 
@@ -380,13 +405,13 @@ func TestAddTutorAvailabilityHandler(t *testing.T) {
 			t.Errorf("Handler returned incorrect time block ID at index %d: got %d want %d", i, response.TimeBlockIdList[i], tutorAvailability.TimeBlockIdList[i])
 		}
 	}
-    
+
 	// Additional test cases:
 
-  fmt.Println("")
+	fmt.Println("")
 	// Test case 2: Empty payload
-  fmt.Println("Test case 2: Empty payload")
-  reqEmpty := httptest.NewRequest(http.MethodPost, "/add_tutor_availability", nil)
+	fmt.Println("Test case 2: Empty payload")
+	reqEmpty := httptest.NewRequest(http.MethodPost, "/add_tutor_availability", nil)
 	reqEmpty.Header.Set("Content-Type", "application/json")
 
 	rrEmpty := httptest.NewRecorder()
@@ -395,10 +420,10 @@ func TestAddTutorAvailabilityHandler(t *testing.T) {
 		t.Errorf("Handler returned wrong status code for empty payload: got %v want %v", rrEmpty.Code, http.StatusBadRequest)
 	}
 
-  fmt.Println("")
+	fmt.Println("")
 	// Test case 3: Invalid date format
 	fmt.Println("Test case 3: Invalid date format")
-  reqInvalidDate := httptest.NewRequest(http.MethodPost, "/add_tutor_availability", bytes.NewBuffer([]byte("{")))
+	reqInvalidDate := httptest.NewRequest(http.MethodPost, "/add_tutor_availability", bytes.NewBuffer([]byte("{")))
 	reqInvalidDate.Header.Set("Content-Type", "application/json")
 
 	rrInvalidDate := httptest.NewRecorder()
@@ -406,19 +431,19 @@ func TestAddTutorAvailabilityHandler(t *testing.T) {
 	if rrInvalidDate.Code != http.StatusBadRequest {
 		t.Errorf("Handler returned wrong status code for invalid date format: got %v want %v", rrInvalidDate.Code, http.StatusBadRequest)
 	}
-	
-  fmt.Println("")
+
+	fmt.Println("")
 	// Test case 4: Tutor with existing availability
 	fmt.Println("Test case 4: Tutor with existing availability")
-  rrExisting := httptest.NewRecorder()
+	rrExisting := httptest.NewRecorder()
 	handlers.AddTutorAvailability(db)(rrExisting, req)
 	if rrExisting.Code != http.StatusOK {
 		t.Errorf("Handler returned wrong status code for tutor with existing availability: got %v want %v", rrExisting.Code, http.StatusOK)
 	}
 
-  fmt.Println("")
-  fmt.Println("Add Tutor Availability test complete")
-  fmt.Println("")
+	fmt.Println("")
+	fmt.Println("Add Tutor Availability test complete")
+	fmt.Println("")
 }
 
 // Test: tests the GetTutorAvailability handler functionality.
@@ -479,8 +504,8 @@ func TestAvailabilityHandlers(t *testing.T) {
 	fmt.Println("Test case 1: Add Tutor Availability with valid input")
 	// Define a mock request payload
 	tutorAvailability := util.TutorAvailability{
-		ID:             1,
-		Date:           "2024-03-04",
+		ID:              1,
+		Date:            "2024-03-04",
 		TimeBlockIdList: []int{1, 2, 3}, // Sample list of time block IDs
 	}
 	// Marshal request payload to JSON
@@ -499,7 +524,7 @@ func TestAvailabilityHandlers(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rrAdd.Code, "Handler returned wrong status code for valid input")
 
 	// Test case 2: Add Tutor Availability with empty payload
-  fmt.Println("")
+	fmt.Println("")
 	fmt.Println("Test case 2: Add Tutor Availability with empty payload")
 	reqEmpty := httptest.NewRequest(http.MethodPost, "/add_tutor_availability", nil)
 	reqEmpty.Header.Set("Content-Type", "application/json")
@@ -509,7 +534,7 @@ func TestAvailabilityHandlers(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, rrEmpty.Code, "Handler returned wrong status code for empty payload")
 
 	// Test case 3: Add Tutor Availability with invalid date format
-  fmt.Println("")
+	fmt.Println("")
 	fmt.Println("Test case 3: Add Tutor Availability with invalid date format")
 	reqInvalidDate := httptest.NewRequest(http.MethodPost, "/add_tutor_availability", bytes.NewBuffer([]byte("{")))
 	reqInvalidDate.Header.Set("Content-Type", "application/json")
@@ -519,12 +544,12 @@ func TestAvailabilityHandlers(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, rrInvalidDate.Code, "Handler returned wrong status code for invalid date format")
 
 	// Test case 4: Search Tutor Availability
-  fmt.Println("")
+	fmt.Println("")
 	fmt.Println("Test case 4: Search Tutor Availability")
 
-  // Mock request body
+	// Mock request body
 	requestBody := util.TutorAvailability{
-		Date:           "2024-03-04",
+		Date:            "2024-03-04",
 		TimeBlockIdList: []int{1, 2, 3},
 	}
 	// Marshal request body to JSON

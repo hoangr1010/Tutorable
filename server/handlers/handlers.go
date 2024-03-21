@@ -7,18 +7,12 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-
-	//"github.com/go-chi/jwtauth"
+//"github.com/go-chi/jwtauth"
 	//"github.com/go-chi/jwtauth/v5"
 
 	"github.com/lib/pq"
 	"github.com/macewanCS/w24MacroHard/server/util"
 )
-
-// HelloHandler is a sample HTTP handler
-func HelloHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Hello, Chi!")
-}
 
 // Add more routes as needed
 func LoginHandler(db *sql.DB) http.HandlerFunc {
