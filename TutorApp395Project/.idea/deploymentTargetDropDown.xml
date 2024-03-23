@@ -2,7 +2,10 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="RegistrationPageKtTest">
+      <entry key="SessionInfoPageStudentKtTest">
+        <State />
+      </entry>
+      <entry key="SessionInfoPageTutorKtTest">
         <State />
       </entry>
       <entry key="app">
@@ -13,12 +16,12 @@
               <deviceKey>
                 <Key>
                   <type value="VIRTUAL_DEVICE_PATH" />
-                  <value value="C:\Users\ryanc\.android\avd\Pixel_7_Pro_API_34.avd" />
+                  <value value="C:\Users\ryanc\.android\avd\Medium_Phone_API_34.avd" />
                 </Key>
               </deviceKey>
             </Target>
           </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-03-03T04:22:55.735131700Z" />
+          <timeTargetWasSelectedWithDropDown value="2024-03-23T02:22:39.318087900Z" />
         </State>
       </entry>
     </value>
