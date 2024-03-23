@@ -6,7 +6,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.tutorapp395project.viewModel.AuthViewModel
 import com.example.tutorapp395project.viewModel.HomeViewModel
 import com.example.tutorapp395project.viewModel.StudentViewModel
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -27,10 +26,6 @@ class SessionInfoPageStudentKtTest {
         studentViewModel = StudentViewModel(authViewModel = AuthViewModel())
         authViewModel = AuthViewModel()
         homeViewModel = HomeViewModel()
-    }
-
-    @After
-    fun tearDown() {
     }
 
     @Test
