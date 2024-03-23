@@ -24,15 +24,15 @@ class AuthViewModel(
 ): ViewModel() {
 
     val loginDataState = mutableStateOf(LoginData())
-    val UserState = mutableStateOf(User())
-    val token = mutableStateOf("")
+//    val UserState = mutableStateOf(User())
+//    val token = mutableStateOf("")
 
     val registerDataState = mutableStateOf(RegisterData())
     val registerState = mutableStateOf<String>("")
 
     // DEVELOPMENT ONLY
-//    val UserState = mutableStateOf(dummyUserStudent)
-//    val token = mutableStateOf(dummyToken)
+    val UserState = mutableStateOf(dummyUserStudent)
+    val token = mutableStateOf(dummyToken)
 
     fun onLoginChange(update: (LoginData) -> LoginData) {
         loginDataState.value = update(loginDataState.value)

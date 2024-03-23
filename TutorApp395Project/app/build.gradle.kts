@@ -85,7 +85,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest:$composeVersion")
 
     implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
     implementation("androidx.compose.ui:ui")
@@ -95,7 +95,7 @@ dependencies {
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("com.google.android.material:material:1.4.+")
+    implementation("com.google.android.material:material:1.4.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
@@ -133,8 +133,8 @@ dependencies {
     implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.3.0")
     implementation("com.maxkeppeler.sheets-compose-dialogs:calendar:1.3.0")
 
-    debugImplementation("androidx.compose.ui:ui-tooling:1.6.1")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.6.1")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.6.3")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.6.3")
 
     // Mockito
     testImplementation("org.mockito:mockito-core:3.12.4")
@@ -144,4 +144,11 @@ dependencies {
 
     // Roboelectric
     testImplementation ("org.robolectric:robolectric:4.6.1")
+
+    // Getstream.io
+    implementation("io.getstream:stream-chat-android-compose:6.0.8")
+    implementation("io.getstream:stream-chat-android-offline:6.0.8")
+
+    implementation("androidx.compose.material:material-icons-extended:1.6.3")
+
 }

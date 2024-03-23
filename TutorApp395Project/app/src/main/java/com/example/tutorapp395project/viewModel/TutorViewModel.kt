@@ -43,7 +43,6 @@ class TutorViewModel(
             )
         }
         Log.d("TutorViewModel", "timeblock: ${availabilityState.value.time_block_id_list}")
-
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
