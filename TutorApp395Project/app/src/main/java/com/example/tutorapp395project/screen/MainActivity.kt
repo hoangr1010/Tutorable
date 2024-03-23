@@ -44,76 +44,76 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // 1 - Set up the OfflinePlugin for offline storage
-        val offlinePluginFactory = StreamOfflinePluginFactory(appContext = applicationContext,)
-        val statePluginFactory = StreamStatePluginFactory(config = StatePluginConfig(), appContext = this)
-
-        // 2 - Set up the client for API calls and with the plugin for offline storage
-        val client = ChatClient.Builder("5evz2k4ym9pu", applicationContext)
-            .withPlugins(offlinePluginFactory, statePluginFactory)
-            .logLevel(ChatLogLevel.ALL) // Set to NOTHING in prod
-            .build()
-
-        // 3 - Authenticate and connect the user
-        val user = User(
-            id = "tutorial-droid",
-            name = "Tutorial Droid",
-            image = "https://bit.ly/2TIt8NR"
-        )
-
-        client.connectUser(
-            user = user,
-            token = client.devToken("tutorial-droid")
-        ).enqueue()
+//
+//        // 1 - Set up the OfflinePlugin for offline storage
+//        val offlinePluginFactory = StreamOfflinePluginFactory(appContext = applicationContext,)
+//        val statePluginFactory = StreamStatePluginFactory(config = StatePluginConfig(), appContext = this)
+//
+//        // 2 - Set up the client for API calls and with the plugin for offline storage
+//        val client = ChatClient.Builder("5evz2k4ym9pu", applicationContext)
+//            .withPlugins(offlinePluginFactory, statePluginFactory)
+//            .logLevel(ChatLogLevel.ALL) // Set to NOTHING in prod
+//            .build()
+//
+//        // 3 - Authenticate and connect the user
+//        val user = User(
+//            id = "tutorial-droid",
+//            name = "Tutorial Droid",
+//            image = "https://bit.ly/2TIt8NR"
+//        )
+//
+//        client.connectUser(
+//            user = user,
+//            token = client.devToken("tutorial-droid")
+//        ).enqueue()
 
 
         setContent {
-//            Navigation()
+            Navigation()
             // Observe the client connection state
-            val clientInitialisationState by client.clientState.initializationState.collectAsState()
-
-
-
-            ChatTheme {
-
-                var showDialog by remember {
-                    mutableStateOf(false)
-                }
-
-                if (showDialog) {
-                    CreateChannelDialog(
-                        dismiss = { channelName ->
-                            chatViewModel.createChannel(channelName)
-                            showDialog = false
-                        }
-                    )
-                }
-
-
-                when (clientInitialisationState) {
-                    InitializationState.COMPLETE -> {
-                        ChannelsScreen(
-                            title = "hehe",
-                            isShowingSearch = true,
-                            onItemClick = { channel ->
-                                TODO()
-                            },
-                            onBackPressed = { finish() },
-                            onHeaderActionClick = {
-                                showDialog = true
-                            }
-                        )
-                    }
-                    InitializationState.INITIALIZING -> {
-                        Text(text = "Initializing...")
-                    }
-                    InitializationState.NOT_INITIALIZED -> {
-                        Text(text = "Not initialized...")
-                    }
-                }
-            }
-        }
+//            val clientInitialisationState by client.clientState.initializationState.collectAsState()
+//
+//
+//
+//            ChatTheme {
+//
+//                var showDialog by remember {
+//                    mutableStateOf(false)
+//                }
+//
+//                if (showDialog) {
+//                    CreateChannelDialog(
+//                        dismiss = { channelName ->
+//                            chatViewModel.createChannel(channelName)
+//                            showDialog = false
+//                        }
+//                    )
+//                }
+//
+//
+//                when (clientInitialisationState) {
+//                    InitializationState.COMPLETE -> {
+//                        ChannelsScreen(
+//                            title = "hehe",
+//                            isShowingSearch = true,
+//                            onItemClick = { channel ->
+//                                TODO()
+//                            },
+//                            onBackPressed = { finish() },
+//                            onHeaderActionClick = {
+//                                showDialog = true
+//                            }
+//                        )
+//                    }
+//                    InitializationState.INITIALIZING -> {
+//                        Text(text = "Initializing...")
+//                    }
+//                    InitializationState.NOT_INITIALIZED -> {
+//                        Text(text = "Not initialized...")
+//                    }
+//                }
+//            }
+//        }
     }
 }
 
@@ -149,5 +149,6 @@ private fun CreateChannelDialog(dismiss: (String) -> Unit) {
             }
         }
     )
+}
 }
 

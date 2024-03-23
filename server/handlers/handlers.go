@@ -15,11 +15,6 @@ import (
 	"github.com/macewanCS/w24MacroHard/server/util"
 )
 
-// HelloHandler is a sample HTTP handler
-func HelloHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Hello, Chi!")
-}
-
 // Add more routes as needed
 func LoginHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -28,6 +23,7 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 		err := util.DecodeJSONRequestBody(r, &login)
 		if err != nil {
 			fmt.Println("Invalid JSON:", err)
+			http.Error(w, "Invalid JSON", http.StatusBadRequest)
 			return
 		}
 
@@ -129,6 +125,8 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 			}
 		} else if login.Role == "administrator" {
 			fmt.Println("Administrator")
+		} else {
+			http.Error(w, "Invalid role", http.StatusBadRequest)
 		}
 
 		//fmt.Printf("%+v\n", login)
@@ -152,7 +150,7 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		fmt.Println("Hashed Password:", register.Password)
+		//fmt.Println("Hashed Password:", register.Password)
 
 		// Check the role
 		if register.Role == "student" {
@@ -189,6 +187,9 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 					http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
 					return
 				}
+
+				// Write the response status code
+				w.WriteHeader(http.StatusOK)
 
 				// Set the Content-Type header to application/json
 				w.Header().Set("Content-Type", "application/json")
@@ -228,6 +229,9 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 					http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
 					return
 				}
+
+				// Write the response status code
+				w.WriteHeader(http.StatusOK)
 
 				// Set the Content-Type header to application/json
 				w.Header().Set("Content-Type", "application/json")
@@ -389,61 +393,6 @@ func GetTutorAvailability(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-// should work now
-// Get tutoring session list
-func GetTutoringSessionList(db *sql.DB) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		// This will store the information from token
-		//_, claims, _ := jwtauth.FromContext(r.Context())
-		//w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
-
-		// Pull role and id from JSON body
-		var user util.User
-		err := util.DecodeJSONRequestBody(r, &user)
-		if err != nil {
-			fmt.Println("Invalid JSON:", err)
-			http.Error(w, "Invalid JSON", http.StatusBadRequest)
-			return
-		}
-
-		tutoringSessions, err := util.GetTutoringSessionList(db, user)
-
-		if err != nil {
-			http.Error(w, "Whoopsie!", http.StatusInternalServerError)
-			return
-		}
-
-		// If tutorinSessions is empty redeclare it
-		if len(tutoringSessions) == 0 {
-			tutoringSessions = []util.TutoringSession{}
-		}
-		// Prepare response
-		response := struct {
-			ID               int                    `json:"id"`
-			Role             string                 `json:"role"`
-			TutoringSessions []util.TutoringSession `json:"tutoring_session_list"`
-		}{
-			ID:               user.ID,
-			Role:             user.Role,
-			TutoringSessions: tutoringSessions,
-		}
-
-		// Marshal response to JSON
-		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			fmt.Printf("Error encoding JSON response: %v\n", err)
-			http.Error(w, "Error encoding JSON response", http.StatusInternalServerError)
-			return
-		}
-
-		// Write response
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		w.Write(jsonResponse)
-
-	}
-}
-
 // fixed
 // SearchTutorAvailability searches all tutor availability for particular time slots.
 func SearchTutorAvailability(db *sql.DB) http.HandlerFunc {
@@ -573,6 +522,149 @@ func AddTutoringSession(db *sql.DB) http.HandlerFunc {
 		if err != nil {
 			fmt.Printf("Error encoding JSON response: %v\n", err)
 			http.Error(w, "Error encoding JSON response", http.StatusInternalServerError)
+			return
+		}
+
+		// Write response
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
+	}
+}
+
+// should work now
+// Get tutoring session list
+func GetTutoringSessionList(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// This will store the information from token
+		//_, claims, _ := jwtauth.FromContext(r.Context())
+		//w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+
+		// Pull role and id from JSON body
+		var user util.User
+		err := util.DecodeJSONRequestBody(r, &user)
+		if err != nil {
+			fmt.Println("Invalid JSON:", err)
+			http.Error(w, "Invalid JSON", http.StatusBadRequest)
+			return
+		}
+
+		tutoringSessions, err := util.GetTutoringSessionList(db, user)
+
+		if err != nil {
+			http.Error(w, "Whoopsie!", http.StatusInternalServerError)
+			return
+		}
+
+		// If tutorinSessions is empty redeclare it
+		if len(tutoringSessions) == 0 {
+			tutoringSessions = []util.TutoringSession{}
+		}
+		// Prepare response
+		response := struct {
+			ID               int                    `json:"id"`
+			Role             string                 `json:"role"`
+			TutoringSessions []util.TutoringSession `json:"tutoring_session_list"`
+		}{
+			ID:               user.ID,
+			Role:             user.Role,
+			TutoringSessions: tutoringSessions,
+		}
+
+		// Marshal response to JSON
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			fmt.Printf("Error encoding JSON response: %v\n", err)
+			http.Error(w, "Error encoding JSON response", http.StatusInternalServerError)
+			return
+		}
+
+		// Write response
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
+
+	}
+}
+
+// Deletes tutor session
+func DeleteTutorSession(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		//_, claims, _ := jwtauth.FromContext(r.Context())
+		//w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+		// Read JSON payload
+		type ID struct {
+			ID int `json:"session_id"`
+		}
+		var sessionID ID
+		err := util.DecodeJSONRequestBody(r, &sessionID)
+		if err != nil {
+			fmt.Println("Invalid JSON:", err)
+			http.Error(w, "Error parsing JSON", http.StatusBadRequest) // status code 400
+			return
+		}
+
+		// get tutor session
+		var session util.TutoringSession
+		session, err = util.GetTutorSession(db, sessionID.ID)
+		if err != nil {
+			http.Error(w, "Error fetching tutoring session", http.StatusUnauthorized) // status code 401
+			return
+		}
+
+		// Delete Session session
+		err = util.DeleteTutoringSession(db, sessionID.ID)
+		if err != nil {
+			http.Error(w, "Error deleting tutoring session", http.StatusUnauthorized) // status code 401
+			return
+		}
+
+		var tutorAvailability util.TutorAvailability
+		tutorAvailability.ID = session.TutorID
+		tutorAvailability.Date = session.Date
+		tutorAvailability.TimeBlockIdList = session.TimeBlockIDList
+		// Return all availability shown in time_block_id_list
+		for _, id := range tutorAvailability.TimeBlockIdList {
+			err = util.InsertTutorAvailability(db, tutorAvailability, id)
+			if err != nil {
+				http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+				return
+			}
+		}
+
+		// Email tutor and student
+		subject := "Session Change"
+		body := "A session you are involved with has been deleted."
+		tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
+		if err != nil {
+			http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+			return
+		}
+		studentEmail, err := util.GetStudentEmailByID(db, session.StudentID)
+		if err != nil {
+			http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+			return
+		}
+		recipients := []string{tutorEmail, studentEmail}
+		err = util.SendEmail(recipients, subject, body)
+		if err != nil {
+			fmt.Println("Error sending email: ", err)
+		}
+
+		// Prepare response
+		response := struct {
+			TimeBlockIDList  []int `json:"time_block_id_list"`
+			SessionIDDeleted int   `json:"session_id_deleted"`
+		}{
+			TimeBlockIDList:  session.TimeBlockIDList,
+			SessionIDDeleted: sessionID.ID,
+		}
+
+		// Marshal response to JSON
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			fmt.Printf("Error encoding JSON response: %v\n", err)
+			http.Error(w, "Error encoding JSON response", http.StatusInternalServerError) // status code 500
 			return
 		}
 

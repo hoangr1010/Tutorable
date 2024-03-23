@@ -8,11 +8,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tutorapp395project.data.CreateSessionRequest
+import com.example.tutorapp395project.data.DeleteSessionRequest
 import com.example.tutorapp395project.data.SessionRequest
 import com.example.tutorapp395project.data.SessionResponse
 import com.example.tutorapp395project.data.SessionViewState
 import com.example.tutorapp395project.data.Tutor
 import com.example.tutorapp395project.data.TutorFilterRequest
+import com.example.tutorapp395project.data.TutoringSession
 import com.example.tutorapp395project.repository.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -35,6 +37,23 @@ class StudentViewModel(
 
     // List of tutor filter dialog state
     val tutorFilterDialogState = mutableStateOf(TutorFilterDialogState())
+
+    // Session Card state
+    val sessionInfoCardShow = mutableStateOf(false)
+    val sessionInfo = mutableStateOf(TutoringSession(
+        tutor_session_id = 0,
+        tutor_id = 0,
+        student_id = 0,
+        tutor_name = "",
+        student_name = "",
+        name = "",
+        description = "",
+        subject = "",
+        grade = 0,
+        tutoring_session_status = "",
+        date = "",
+        time_block_id_list = listOf()
+    ))
 
     // Session form state
     val sessionFormOpen = mutableStateOf(false)
@@ -78,6 +97,64 @@ class StudentViewModel(
             }
         }
         selectedTimeSlotIdsSet.value = set
+    }
+
+    /**
+     * Handles the event when a tutoring session is clicked.
+     *
+     * This function is responsible for updating the state of the application
+     * when a tutoring session is selected by the user. It updates the `sessionInfo`
+     * state with the selected session and sets the `sessionInfoCardShow` state to true,
+     * indicating that the session information card should be displayed.
+     *
+     * @param session The selected TutoringSession object.
+     */
+    fun onSessionClick(session: TutoringSession) {
+        Log.d("StudentViewModel", "Session clicked: $session")
+        Log.d("StudentViewModel", "current session: ${sessionInfo.value}")
+        sessionInfo.value = session
+        if (session == sessionInfo.value) {
+            sessionInfoCardShow.value = true
+            return
+        }
+    }
+
+    /**
+     * Deletes a tutoring session.
+     *
+     * This function is responsible for deleting a tutoring session from the server.
+     * It makes a network request to the server with the session ID to delete the session.
+     * If the request is successful, it updates the list of sessions by calling `getSessionsForStudent`.
+     * It also sets the `sessionInfoCardShow` state to false, indicating that the session information card should be hidden.
+     *
+     * @param sessionId The ID of the session to be deleted.
+     */
+    fun deleteSession(sessionId: Int) {
+        Log.d("StudentViewModel", "SessionId: $sessionId")
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = userRepository.deleteSession(DeleteSessionRequest(session_id = sessionId))
+                Log.d("StudentViewModel", "Response: $response")
+                Log.d("StudentViewModel", "Response body for Delete: ${response.body()}")
+
+                if (response.isSuccessful) {
+                    val deleteSessionResponse = response.body()
+                    if (deleteSessionResponse != null) {
+                        Log.d("StudentViewModel", "Session deleted: $sessionId")
+                        getSessionsForStudent(
+                            role = authViewModel.UserState.value.role,
+                            id = authViewModel.UserState.value.id.toInt()
+                        )
+                        sessionInfoCardShow.value = false
+                    }
+                } else {
+                    Log.d("StudentViewModel", "Error in Deleting Session: ${response.errorBody()}")
+                }
+            } catch (e: Exception) {
+                Log.e("StudentViewModel", "Error in Deleting Session: $e")
+            }
+        }
     }
 
     fun getSessionsForStudent(

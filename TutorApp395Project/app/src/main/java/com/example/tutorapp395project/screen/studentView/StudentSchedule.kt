@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,7 +26,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import com.example.tutorapp395project.screen.view.FixedSessionInfo
+import com.example.tutorapp395project.screen.view.FixedSessionInfoCard
+import com.example.tutorapp395project.screen.view.FreeSessionInfoCard
+import com.example.tutorapp395project.screen.view.SessionInfoDialog
 import com.example.tutorapp395project.screen.view.SessionView
+import com.example.tutorapp395project.screen.view.Title
 import com.example.tutorapp395project.utils.getTimeInterval
 import com.example.tutorapp395project.utils.stringToDate
 import com.example.tutorapp395project.utils.stringToReadableDate
@@ -71,7 +78,10 @@ fun StudentAppointmentLayout(
                     }
                 } else {
                     studentViewModel.sessionState.value.session_list?.forEach { session ->
-                        Log.d("StudentAppointmentLayout", "date: ${stringToDate(session.date).toString()}")
+                        Log.d("StudentAppointmentLayout", "session: $session")
+
+
+
                         item {
                             SessionView(
                                 time = getTimeInterval(session.time_block_id_list),
@@ -79,8 +89,31 @@ fun StudentAppointmentLayout(
                                 subject = session.subject,
                                 with = "Tutor",
                                 person = session.tutor_name,
-                                modifier = Modifier.padding(10.dp)
+                                onClick = {
+                                    studentViewModel.onSessionClick(session = session)
+                                },
+                                 modifier = Modifier.padding(10.dp)
                             )
+
+                            if (studentViewModel.sessionInfoCardShow.value) {
+                                SessionInfoDialog(
+                                    sessionId = studentViewModel.sessionInfo.value.tutor_session_id,
+                                    tutorName = studentViewModel.sessionInfo.value.tutor_name,
+                                    subject = studentViewModel.sessionInfo.value.subject,
+                                    dateIn = stringToReadableDate(studentViewModel.sessionInfo.value.date),
+                                    timeslot = getTimeInterval(studentViewModel.sessionInfo.value.time_block_id_list),
+
+                                    onDismiss = {
+                                        studentViewModel.sessionInfoCardShow.value = false
+                                    },
+
+                                    onDelete = {
+                                        studentViewModel.deleteSession(
+                                            studentViewModel.sessionInfo.value.tutor_session_id
+                                        )
+                                    }
+                                )
+                            }
                         }
                     }
                 }
@@ -118,7 +151,7 @@ fun BackgroundNoLogo(modifier: Modifier = Modifier) {
 
 @Preview
 @Composable
-fun PreviewStudentSChedule(){
+fun PreviewStudentSchedule(){
     BackgroundNoLogo()
     StudentAppointmentLayout(
         studentViewModel = StudentViewModel(authViewModel = AuthViewModel()),
