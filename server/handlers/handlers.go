@@ -7,7 +7,8 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-//"github.com/go-chi/jwtauth"
+
+	//"github.com/go-chi/jwtauth"
 	//"github.com/go-chi/jwtauth/v5"
 
 	"github.com/lib/pq"
@@ -583,5 +584,93 @@ func GetTutoringSessionList(db *sql.DB) http.HandlerFunc {
 		w.WriteHeader(http.StatusOK)
 		w.Write(jsonResponse)
 
+	}
+}
+
+// Deletes tutor session
+func DeleteTutorSession(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		//_, claims, _ := jwtauth.FromContext(r.Context())
+		//w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+		// Read JSON payload
+		type ID struct {
+			ID int `json:"session_id"`
+		}
+		var sessionID ID
+		err := util.DecodeJSONRequestBody(r, &sessionID)
+		if err != nil {
+			fmt.Println("Invalid JSON:", err)
+			http.Error(w, "Error parsing JSON", http.StatusBadRequest) // status code 400
+			return
+		}
+
+		// get tutor session
+		var session util.TutoringSession
+		session, err = util.GetTutorSession(db, sessionID.ID)
+		if err != nil {
+			http.Error(w, "Error fetching tutoring session", http.StatusUnauthorized) // status code 401
+			return
+		}
+
+		// Delete Session session
+		err = util.DeleteTutoringSession(db, sessionID.ID)
+		if err != nil {
+			http.Error(w, "Error deleting tutoring session", http.StatusUnauthorized) // status code 401
+			return
+		}
+
+		var tutorAvailability util.TutorAvailability
+		tutorAvailability.ID = session.TutorID
+		tutorAvailability.Date = session.Date
+		tutorAvailability.TimeBlockIdList = session.TimeBlockIDList
+		// Return all availability shown in time_block_id_list
+		for _, id := range tutorAvailability.TimeBlockIdList {
+			err = util.InsertTutorAvailability(db, tutorAvailability, id)
+			if err != nil {
+				http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+				return
+			}
+		}
+
+		// Email tutor and student
+		subject := "Session Change"
+		body := "A session you are involved with has been deleted."
+		tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
+		if err != nil {
+			http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+			return
+		}
+		studentEmail, err := util.GetStudentEmailByID(db, session.StudentID)
+		if err != nil {
+			http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+			return
+		}
+		recipients := []string{tutorEmail, studentEmail}
+		err = util.SendEmail(recipients, subject, body)
+		if err != nil {
+			fmt.Println("Error sending email: ", err)
+		}
+
+		// Prepare response
+		response := struct {
+			TimeBlockIDList  []int `json:"time_block_id_list"`
+			SessionIDDeleted int   `json:"session_id_deleted"`
+		}{
+			TimeBlockIDList:  session.TimeBlockIDList,
+			SessionIDDeleted: sessionID.ID,
+		}
+
+		// Marshal response to JSON
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			fmt.Printf("Error encoding JSON response: %v\n", err)
+			http.Error(w, "Error encoding JSON response", http.StatusInternalServerError) // status code 500
+			return
+		}
+
+		// Write response
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
 	}
 }

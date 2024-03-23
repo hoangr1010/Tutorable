@@ -516,6 +516,24 @@ func GetTutorEmailByID(db *sql.DB, tutorID int) (string, error) {
 	return email, nil
 }
 
+// GetStudentEmailByID fetches the email of the student with the given ID.
+func GetStudentEmailByID(db *sql.DB, tutorID int) (string, error) {
+	// Prepare the SQL query
+	query := `
+		SELECT email FROM student WHERE student_id = $1
+	`
+	// Execute the SQL query
+	row := db.QueryRow(query, tutorID)
+	// Scan the result into a string
+	var email string
+	err := row.Scan(&email)
+	if err != nil {
+		fmt.Println("Error scanning student email: ", err)
+		return "", err
+	}
+	return email, nil
+}
+
 func GetTutorUser(db *sql.DB, email string) (User User, err error) {
 	// Prepare the SQL query
 	query := `
@@ -825,4 +843,61 @@ func SendEmail(recipient []string, subject string, body string) error {
 	}
 	fmt.Println("Email sent successfully!")
 	return err
+}
+
+// Insert tutoring session
+func DeleteTutoringSession(db *sql.DB, sessionID int) error {
+	query := `
+	DELETE FROM tutoring_session WHERE tutor_session_id = $1
+	`
+	_, err := db.Exec(query, sessionID)
+	if err != nil {
+		fmt.Printf("Error deleting tutor session: %v\n", err)
+		return err
+	}
+
+	return nil
+}
+
+// Get tutor session
+func GetTutorSession(db *sql.DB, sessionID int) (session TutoringSession, err error) {
+	query := `
+		SELECT
+		student_id,
+		tutor_id,
+		name,
+		description,
+		subject,
+		grade,
+		status,
+		date,
+		time_block_id_list
+		FROM tutoring_session
+		WHERE tutor_session_id = $1
+		`
+	// Execute the SQL query
+	row := db.QueryRow(query, sessionID)
+	// Scan the results into a struct
+
+	var int64Array pq.Int64Array
+	err = row.Scan(
+		&session.StudentID,
+		&session.TutorID,
+		&session.Name,
+		&session.Description,
+		&session.Subject,
+		&session.Grade,
+		&session.Status,
+		&session.Date,
+		(&int64Array))
+	if err != nil {
+		fmt.Println("Error scanning tutoring_session: ", err)
+		return session, err
+	}
+
+	// Convert int64 array into int slices
+	for _, i := range int64Array {
+		session.TimeBlockIDList = append(session.TimeBlockIDList, int(i))
+	}
+	return session, err
 }
