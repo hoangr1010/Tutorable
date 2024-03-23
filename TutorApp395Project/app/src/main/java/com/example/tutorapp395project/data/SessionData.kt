@@ -1,7 +1,7 @@
 package com.example.tutorapp395project.data
 
 data class TutoringSession(
-    val tutoring_session_id: Int,
+    val tutor_session_id: Int,
     val tutor_id: Int,
     val student_id: Int,
     val tutor_name: String,
@@ -53,4 +53,13 @@ data class CreateSessionRequest(
 
 data class CreateSessionResponse(
     val time_block_id_list: List<Int>
+)
+
+data class DeleteSessionRequest(
+    val session_id: Int
+)
+
+data class DeleteSessionResponse(
+    val time_block_id_list: List<Int>,
+    val session_id_deleted: Int
 )

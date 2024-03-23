@@ -4,6 +4,8 @@ import com.example.tutorapp395project.data.AddAvailabilityRequest
 import com.example.tutorapp395project.data.AddAvailabilityResponse
 import com.example.tutorapp395project.data.CreateSessionRequest
 import com.example.tutorapp395project.data.CreateSessionResponse
+import com.example.tutorapp395project.data.DeleteSessionRequest
+import com.example.tutorapp395project.data.DeleteSessionResponse
 import com.example.tutorapp395project.data.GetAvailabilityRequest
 import com.example.tutorapp395project.data.GetAvailabilityResponse
 import com.example.tutorapp395project.data.SessionRequest
@@ -30,4 +32,7 @@ interface UserService {
 
     @POST("add_tutoring_session")
     suspend fun createSession(@Body createSessionRequest: CreateSessionRequest): Response<CreateSessionResponse>
+
+    @POST("delete_tutoring_session")
+    suspend fun deleteSession(@Body deleteSessionRequest: DeleteSessionRequest): Response<DeleteSessionResponse>
 }

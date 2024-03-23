@@ -1,4 +1,4 @@
-package com.example.tutorapp395project.screen.studentView
+package com.example.tutorapp395project.screen.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -6,13 +6,16 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ElevatedCard
@@ -22,83 +25,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tutorapp395project.screen.studentView.BackgroundNoLogo
 import com.example.tutorapp395project.viewModel.AuthViewModel
 import com.example.tutorapp395project.viewModel.HomeViewModel
 import com.example.tutorapp395project.viewModel.StudentViewModel
-
-
-/**
- * Function : Display session information page (Student's perspective)
- * Param    :studentViewModel: StudentViewModel,
- *           modifier: Modifier = Modifier,
- *           authViewModel: AuthViewModel,
- *           homeViewModel: HomeViewModel
- * Return   : None
- */
-@Composable
-fun SessionInfoDisplayS(studentViewModel: StudentViewModel,
-                       modifier: Modifier = Modifier,
-                       authViewModel: AuthViewModel,
-                       homeViewModel: HomeViewModel
-){
-    LazyColumn( contentPadding = PaddingValues(15.dp)
-    ){
-        item {
-            FixedSessionInfoCard()
-            FreeSessionInfoCard()
-        }
-    }
-}
-
-
-/**
- * Function : Creating 2 buttons (Edit and Cancel)
- * Param    : Void
- * Return   : None
- */
-@Composable
-fun SessionButtons(){
-    Column(
-        modifier = Modifier
-            .fillMaxHeight(),
-        //verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.Bottom,
-            modifier = Modifier.fillMaxWidth().padding(8.dp)
-        ) {
-            ElevatedButton(
-                onClick = {/* TODO */ },
-                modifier = Modifier
-                    .size(width = 150.dp, height = 40.dp),
-                shape = RoundedCornerShape(25),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF66B8FF)),
-
-
-                ) {
-                Text("Edit", fontSize = 20.sp)
-            }
-            ElevatedButton(
-                onClick = {/* TODO */ },
-                modifier = Modifier
-                    .size(width = 150.dp, height = 40.dp)
-                ,
-                shape = RoundedCornerShape(25),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFB4A9)),
-
-
-                ) {
-                Text("Cancel", fontSize = 20.sp)
-            }
-        }
-    }
-}
-
 
 /**
  * Function : Creating session information card (uneditable Information)
@@ -106,17 +39,19 @@ fun SessionButtons(){
  * Return   : None
  */
 @Composable
-fun FixedSessionInfoCard(){
-    ElevatedCard(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
-        ),
+fun FixedSessionInfoCard(
+    sessionId: Int,
+    tutorName: String,
+    subject: String,
+){
+    Card(
         modifier = Modifier
-            .size(width = 450.dp, height = 400.dp)
+            .fillMaxWidth(0.8f)
+            .wrapContentHeight()
             .padding(3.dp)
     ) {
         Title("Session Information")
-        FixedSessionInfo(123456, "Pikachu", "Maths")
+        FixedSessionInfo(sessionId, tutorName, subject)
     }
 }
 
@@ -127,17 +62,18 @@ fun FixedSessionInfoCard(){
  * Return   : None
  */
 @Composable
-fun FreeSessionInfoCard(){
-    ElevatedCard(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
-        ),
+fun FreeSessionInfoCard(
+    dateIn: String,
+    timeslot: String,
+    onDelete: () -> Unit = { }
+){
+    Card(
         modifier = Modifier
-            .size(width = 450.dp, height = 350.dp)
+            .fillMaxWidth(0.8f)
+            .wrapContentHeight()
             .padding(3.dp)
     ) {
-        FreeSessionInfo("2024/04/04", "14:00-15:00")
-        SessionButtons()
+        FreeSessionInfo(dateIn, timeslot, onDelete)
     }
 }
 
@@ -177,7 +113,7 @@ fun Subtitle(subtitle: String){
         subtitle,
         fontSize = 20.sp,
         modifier = Modifier
-            .padding(16.dp),
+            .padding(start = 16.dp, 5.dp),
     )
 
 }
@@ -197,6 +133,7 @@ fun FixedSessionInfo(
     subject: String
 ) {
     LazyColumn(
+
     ) {
         item {
             Column(
@@ -246,7 +183,9 @@ fun FixedSessionInfo(
 @Composable
 fun FreeSessionInfo(
     dateIn: String,
-    timeslot: String) {
+    timeslot: String,
+    onDelete: () -> Unit = { }
+) {
     LazyColumn(
 
     ) {
@@ -275,19 +214,38 @@ fun FreeSessionInfo(
                     modifier = Modifier
                         .padding(16.dp),
                 )
+
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.Bottom,
+                    modifier = Modifier.fillMaxWidth().padding(8.dp)
+                ) {
+                    Button(
+                        onClick = {/* TODO */ },
+                        modifier = Modifier
+                            .height(40.dp),
+                        shape = RoundedCornerShape(25),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF66B8FF)),
+
+
+                        ) {
+                        Text("Edit", fontSize = 20.sp)
+                    }
+                    Button(
+                        onClick = { onDelete() },
+                        modifier = Modifier
+                            .height(40.dp)
+                        ,
+                        shape = RoundedCornerShape(25),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFB4A9)),
+
+
+                        ) {
+                        Text("Cancel", fontSize = 20.sp)
+                    }
+                }
             }
         }
 
     }
-}
-
-
-@Preview
-@Composable
-fun PreviewSessionInfoPage(){
-    BackgroundNoLogo()
-    SessionInfoDisplayS(studentViewModel = StudentViewModel(authViewModel = AuthViewModel()),
-        authViewModel = AuthViewModel(),
-        homeViewModel = HomeViewModel())
-
 }

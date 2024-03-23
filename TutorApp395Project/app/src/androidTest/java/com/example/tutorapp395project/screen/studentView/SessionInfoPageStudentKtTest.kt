@@ -3,6 +3,14 @@ package com.example.tutorapp395project.screen.studentView
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.tutorapp395project.screen.view.FixedSessionInfo
+import com.example.tutorapp395project.screen.view.FixedSessionInfoCard
+import com.example.tutorapp395project.screen.view.FreeSessionInfo
+import com.example.tutorapp395project.screen.view.FreeSessionInfoCard
+import com.example.tutorapp395project.screen.view.SessionButtons
+import com.example.tutorapp395project.screen.view.SessionInfoView
+import com.example.tutorapp395project.screen.view.Subtitle
+import com.example.tutorapp395project.screen.view.Title
 import com.example.tutorapp395project.viewModel.AuthViewModel
 import com.example.tutorapp395project.viewModel.HomeViewModel
 import com.example.tutorapp395project.viewModel.StudentViewModel
@@ -29,9 +37,9 @@ class SessionInfoPageStudentKtTest {
     }
 
     @Test
-    fun sessionInfoDisplayS() {
+    fun sessionInfoView() {
         composeTestRule.setContent {
-            SessionInfoDisplayS(
+            SessionInfoView(
                 studentViewModel = studentViewModel,
                 authViewModel = authViewModel,
                 homeViewModel = homeViewModel

@@ -1,6 +1,7 @@
 package com.example.tutorapp395project.screen.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +22,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun SessionView(time: String, date: String, subject: String, with: String, person: String,
+fun SessionView(time: String,
+                date: String,
+                subject: String,
+                with: String,
+                person: String,
+                onClick: () -> Unit = {},
                 modifier: Modifier = Modifier
 ) {
     Column(
@@ -37,6 +43,7 @@ fun SessionView(time: String, date: String, subject: String, with: String, perso
                     color = Color(0xFFD9D9D9),
                     shape = RoundedCornerShape(size = 15.dp)
                 )
+                .clickable { onClick() }
         ) {
             Column (
                 verticalArrangement = Arrangement.SpaceAround,
