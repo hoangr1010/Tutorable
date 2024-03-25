@@ -1,12 +1,14 @@
 
 import com.example.tutorapp395project.data.SessionRequest
 import com.example.tutorapp395project.data.SessionResponse
+import com.example.tutorapp395project.data.TutoringSession
 import com.example.tutorapp395project.repository.UserRepository
 import com.example.tutorapp395project.viewModel.AuthViewModel
 import com.example.tutorapp395project.viewModel.StudentViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -67,5 +69,31 @@ class StudentViewModelTest {
 
         studentViewModel.getSessionsForStudent(role, id)
         verify(userRepository).getSessionList(sessionRequest)
+    }
+
+    @Test
+    fun onSessionClick_updatesState() {
+        // Arrange
+        val session = TutoringSession(
+            tutor_session_id = 1,
+            tutor_id = 1,
+            student_id = 1,
+            tutor_name = "Tutor",
+            student_name = "Student",
+            name = "Session",
+            description = "Description",
+            subject = "Subject",
+            grade = 1,
+            tutoring_session_status = "Status",
+            date = "Date",
+            time_block_id_list = listOf(1)
+        )
+
+        // Act
+        studentViewModel.onSessionClick(session)
+
+        // Assert
+        assertEquals(session, studentViewModel.sessionInfo.value)
+        assertTrue(studentViewModel.sessionInfoCardShow.value)
     }
 }
