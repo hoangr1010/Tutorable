@@ -17,8 +17,8 @@ import (
 )
 
 // RUNNING TESTS:
-// 1. use "go test -coverprofile="NAME_OF_FILE.out" ./..." | this will run the test and output an out file of results
-// 2. use "go tool cover -html="NAME_OF_FILE.out" -o ./reports/NAME_OF_FILE.html"
+// 1. use "go test -coverprofile="delete_session.out" ./..." | this will run the test and output an out file of results
+// 2. use "go tool cover -html="delete_session.out" -o ./reports/delete_session.html"
 // Step 2 will convert the out file to a detailed coverage report in html format the name of file is important
 // because if you run the same command again then it will replace the old test reports (we want them as test logs)
 // so naming scheme should follow: ie. "2024-03-04-handlers.out" and "2024-03-04-handlers.html"
@@ -116,7 +116,7 @@ func TestLoginHandler(t *testing.T) {
 
 	// Test case 4.1: Error validation
 	fmt.Println("")
-	fmt.Println("Test 5: Valid login")
+	fmt.Println("Test 4.1: Invalid login")
 	login = util.Login{
 		Email:    "demotest@COOLCODE.com",
 		Password: "passwd",
@@ -577,4 +577,93 @@ func TestAvailabilityHandlers(t *testing.T) {
 	err = json.NewDecoder(rrSearch.Body).Decode(&response)
 	assert.NoError(t, err, "Failed to decode JSON response")
 
+}
+
+// go test -coverprofile="delete_session.out" ./...
+// go tool cover -html="delete_session.out" -o ./reports/delete_session.html
+func TestDeleteTutorSession(t *testing.T) {
+	// Construct connection string
+	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", DBHost, DBPort, DBUser, DBPassword, DBName)
+
+	// Open database connection
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer db.Close()
+
+	fmt.Println("")
+	fmt.Println("Testing DeleteTutorSession")
+	fmt.Println("")
+
+	// // Add a tutoring session using AddTutoringSession function
+
+	// TutorID := 1
+	// TutorName := "Joe Feete"
+	// StudentID := 4
+	// StudentName := "Joey Foote"
+	// Name := "Sample Session"
+	// Description := "Sample"
+	// Subject := "Mathematics"
+	// Grade := 12
+	// Status := "scheduled"
+	// Date := "2024-03-06"
+	// TimeBlockIDList := []int{1, 2, 3}
+
+	// session := util.TutoringSession{
+
+	// 	TutoringSessionID: TutoringSessionID,
+	// 	TutorID:           TutorID,
+	// 	TutorName:         TutorName,
+	// 	StudentID:         StudentID,
+	// 	StudentName:       StudentName,
+	// 	Name:              Name,
+	// 	Description:       Description,
+	// 	Subject:           Subject,
+	// 	Grade:             Grade,
+	// 	Status:            Status,
+	// 	Date:              Date,
+	// 	TimeBlockIDList:   TimeBlockIDList,
+	// }
+
+	type SessionID struct {
+		SessionID int `json:"session_id"`
+	}
+
+	session := SessionID{
+		SessionID: 2,
+	}
+
+	// Marshal session to JSON
+	sessionJSON, err := json.Marshal(session)
+	assert.NoError(t, err, "Failed to marshal session JSON")
+
+	reqAdd := httptest.NewRequest(http.MethodPost, "/add_tutoring_session", bytes.NewBuffer(sessionJSON))
+	reqAdd.Header.Set("Content-Type", "application/json")
+
+	rrAdd := httptest.NewRecorder()
+
+	// Call AddTutoringSession handler function
+	handlers.AddTutoringSession(db)(rrAdd, reqAdd)
+
+	// Check if the response status code is 200 OK
+	assert.Equal(t, http.StatusOK, rrAdd.Code, "Expected 200 OK response")
+
+	sessionJSON, err = json.Marshal(session)
+	assert.NoError(t, err, "Failed to marshal session ID JSON")
+
+	reqDel := httptest.NewRequest(http.MethodPost, "/delete_tutoring_session", bytes.NewBuffer(sessionJSON))
+	reqDel.Header.Set("Content-Type", "application/json")
+
+	rrDel := httptest.NewRecorder()
+
+	// Call DeleteTutorSession handler function
+	handlers.DeleteTutorSession(db)(rrDel, reqDel)
+
+	// Check if the response status code is 200 OK
+	assert.Equal(t, http.StatusOK, rrDel.Code, "Expected 200 OK response")
+
+	fmt.Println("")
+	fmt.Println("DeleteTutorSession test complete")
+	fmt.Println("")
 }
