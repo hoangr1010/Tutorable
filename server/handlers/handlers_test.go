@@ -667,3 +667,80 @@ func TestDeleteTutorSession(t *testing.T) {
 	fmt.Println("DeleteTutorSession test complete")
 	fmt.Println("")
 }
+
+
+// Input:
+// {
+//   “tutor_id”: int 
+//   “student_id”: int 
+//   “name”: string 
+//   “description”: string
+//   “subject:” tutoring_subject 
+//   “grade”: grade 
+//   ‘’date”: “YYYY-MM-DD” 
+//   “time_block_id_list”: [unique <time_block_id<Int>>]
+// }
+// 
+// Output: 
+// {
+//   “time_block_id_list”: [unique <time_block_id<Int>>]
+// }
+
+// go test -coverprofile="add_session.out" ./...
+// go tool cover -html="add_session.out" -o ./reports/add_session.html
+func TestAddSession(t *testing.T){
+	// Construct connection string
+	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", DBHost, DBPort, DBUser, DBPassword, DBName)
+
+	// Open database connection
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer db.Close()
+
+	fmt.Println("")
+	fmt.Println("Testing DeleteTutorSession")
+	fmt.Println("")
+
+	type TutorSession struct {
+		TutorID           int
+		StudentID         int
+		Name              string
+		Description       string
+		Subject           string
+		Grade             int
+		Date              string  // Format: "YYYY-MM-DD"
+		TimeBlockIDList   []int   // Assuming the time_block_id is of type int
+	}
+	
+	NewSession := TutorSession{
+		TutorID: 1,
+		StudentID: 1,
+		Name: "Backend Test",
+		Description: "Backend Test",
+		Subject: "English",
+		Grade: 11,
+		Date: "2024-03-25",
+		TimeBlockIDList: []int{12, 13},
+	}
+
+	// Marshal session to JSON
+	sessionJSON, err := json.Marshal(NewSession)
+	assert.NoError(t, err, "Failed to marshal session JSON")
+
+	reqAdd := httptest.NewRequest(http.MethodPost, "/add_tutoring_session", bytes.NewBuffer(sessionJSON))
+	reqAdd.Header.Set("Content-Type", "application/json")
+
+	rrAdd := httptest.NewRecorder()
+
+	// Call AddTutoringSession handler function
+	handlers.AddTutoringSession(db)(rrAdd, reqAdd)
+
+	// Check if the response status code is 200 OK
+	assert.Equal(t, http.StatusOK, rrAdd.Code, "Expected 200 OK response")
+
+	fmt.Println("")
+	fmt.Println("Add Session Test Complete")
+
+}
