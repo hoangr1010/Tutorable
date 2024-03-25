@@ -41,6 +41,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.test.espresso.intent.Intents.init
+import com.example.tutorapp395project.screen.view.SessionInfoDialog
 import com.example.tutorapp395project.screen.view.SessionView
 import com.example.tutorapp395project.utils.getTimeInterval
 import com.example.tutorapp395project.utils.stringToDate
@@ -100,8 +101,31 @@ fun TutorAppointmentLayout(
                             subject = session.subject,
                             with = "Student",
                             person = session.student_name,
-                            modifier = Modifier.padding(10.dp)
+                            modifier = Modifier.padding(10.dp),
+                            onClick = {
+                                tutorViewModel.onSessionClick(session = session)
+                            }
                         )
+
+                        if (tutorViewModel.sessionInfoCardShow.value) {
+                            SessionInfoDialog(
+                                sessionId = tutorViewModel.sessionInfo.value.tutor_session_id,
+                                tutorName = tutorViewModel.sessionInfo.value.tutor_name,
+                                subject = tutorViewModel.sessionInfo.value.subject,
+                                dateIn = stringToReadableDate(tutorViewModel.sessionInfo.value.date),
+                                timeslot = getTimeInterval(tutorViewModel.sessionInfo.value.time_block_id_list),
+
+                                onDismiss = {
+                                    tutorViewModel.sessionInfoCardShow.value = false
+                                },
+
+                                onDelete = {
+                                    tutorViewModel.deleteSession(
+                                        tutorViewModel.sessionInfo.value.tutor_session_id
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
             }
