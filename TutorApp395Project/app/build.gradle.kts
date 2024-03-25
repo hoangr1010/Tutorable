@@ -151,4 +151,5 @@ dependencies {
 
     implementation("androidx.compose.material:material-icons-extended:1.6.3")
 
+    testImplementation ("androidx.test:core:1.5.0")
 }
