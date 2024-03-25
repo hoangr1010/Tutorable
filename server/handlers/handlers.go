@@ -509,6 +509,24 @@ func AddTutoringSession(db *sql.DB) http.HandlerFunc {
 				return
 			}
 		}
+		// Email tutor and student
+		subject := fmt.Sprintf("Onlytutor %s", session.Date)
+		body := fmt.Sprintf("A new session has been made for %s", session.Date) // Maybe add time
+		tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
+		if err != nil {
+			http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+			return
+		}
+		studentEmail, err := util.GetStudentEmailByID(db, session.StudentID)
+		if err != nil {
+			http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+			return
+		}
+		recipients := []string{tutorEmail, studentEmail}
+		err = util.SendEmail(recipients, subject, body)
+		if err != nil {
+			fmt.Println("Error sending email: ", err)
+		}
 
 		// Prepare response
 		response := struct {
@@ -633,8 +651,8 @@ func DeleteTutorSession(db *sql.DB) http.HandlerFunc {
 		}
 
 		// Email tutor and student
-		subject := "Session Change"
-		body := "A session you are involved with has been deleted."
+		subject := fmt.Sprintf("Onlytutor: %s", session.Date)
+		body := fmt.Sprintf("Session ID:%d has been deleted.", session.TutoringSessionID)
 		tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
 		if err != nil {
 			http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
