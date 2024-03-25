@@ -1,6 +1,5 @@
 package com.example.tutorapp395project.viewModel
 
-import android.graphics.PointF.length
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi

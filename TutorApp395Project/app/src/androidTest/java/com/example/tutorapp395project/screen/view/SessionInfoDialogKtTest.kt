@@ -47,4 +47,5 @@ class SessionInfoDialogKtTest {
     fun sessionInfoDialog_timeslotExists() {
         composeTestRule.onNodeWithText("3:00-4:00").assertExists()
     }
+
 }
