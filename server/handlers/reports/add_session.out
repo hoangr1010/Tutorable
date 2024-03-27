@@ -100,10 +100,10 @@ github.com/macewanCS/w24MacroHard/server/handlers/handlers.go:471.54,472.54 1 1
 github.com/macewanCS/w24MacroHard/server/handlers/handlers.go:472.54,478.17 3 1
 github.com/macewanCS/w24MacroHard/server/handlers/handlers.go:478.17,482.4 3 0
 github.com/macewanCS/w24MacroHard/server/handlers/handlers.go:484.3,487.46 3 1
-github.com/macewanCS/w24MacroHard/server/handlers/handlers.go:487.46,489.18 2 0
-github.com/macewanCS/w24MacroHard/server/handlers/handlers.go:489.18,492.5 2 0
-github.com/macewanCS/w24MacroHard/server/handlers/handlers.go:493.4,493.15 1 0
-github.com/macewanCS/w24MacroHard/server/handlers/handlers.go:493.15,496.5 2 0
+github.com/macewanCS/w24MacroHard/server/handlers/handlers.go:487.46,489.18 2 1
+github.com/macewanCS/w24MacroHard/server/handlers/handlers.go:489.18,492.5 2 1
+github.com/macewanCS/w24MacroHard/server/handlers/handlers.go:493.4,493.15 1 1
+github.com/macewanCS/w24MacroHard/server/handlers/handlers.go:493.15,496.5 2 1
 github.com/macewanCS/w24MacroHard/server/handlers/handlers.go:499.3,500.17 2 1
 github.com/macewanCS/w24MacroHard/server/handlers/handlers.go:500.17,503.4 2 1
 github.com/macewanCS/w24MacroHard/server/handlers/handlers.go:505.3,505.46 1 0
