@@ -728,3 +728,62 @@ func TestAddTutoringSession(t *testing.T) {
 	fmt.Println("Testing Adding Tutor Session Complete")
 	fmt.Println("")
 }
+
+// input: {
+//   “session_id”: int (required)
+//   ‘’date”: “YYYY-MM-DD” (required)
+//   “time_block_id_list”: [unique <time_block_id<Int>>]
+// }
+//
+// output:(return list of time_block_id)
+// {
+// 	“session_id”: int (required)
+// 	‘’new_date”: “YYYY-MM-DD” (required)
+// 	“new_time_block_id_list”: [unique <time_block_id<Int>>]
+//   }
+// go test -coverprofile="edit_session.out" ./...
+// go tool cover -html="edit_session.out" -o ./reports/add_session.html
+func TestEditSession(t *testing.T){
+
+	// Construct connection string
+	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", DBHost, DBPort, DBUser, DBPassword, DBName)
+
+	// Open database connection
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer db.Close()
+
+	fmt.Println("")
+	fmt.Println("Testing EditTutorSession")
+	fmt.Println("")
+
+	type EditSession struct {
+		SessionID	int
+		Date	string
+		TimeBlockIDList   []int
+	}
+
+	session := EditSession{
+		SessionID:	2,
+		Date: "2024-03-31",
+		TimeBlockIDList: []int{7,9},
+	}
+
+	sessionJSON, err := json.Marshal(session)
+	assert.NoError(t, err, "Failed to marshal session JSON")
+
+	reqEdit := httptest.NewRequest(http.MethodPost, "/edit_tutoring_session", bytes.NewBuffer(sessionJSON))
+	reqEdit.Header.Set("Content-Type", "application/json")
+
+	rrEdit := httptest.NewRecorder()
+
+	handlers.EditTutorSession(db)(rrEdit,reqEdit)
+
+	assert.Equal(t, http.StatusOK, rrEdit.Code, "Expected 200 OK Response")
+
+	fmt.Println("")
+	fmt.Println("Testing EditTutorSession Complete")
+	fmt.Println("")
+}
