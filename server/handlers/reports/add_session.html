@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/macewanCS/w24MacroHard/server/handlers/handlers.go (43.8%)</option>
+				<option value="file0">github.com/macewanCS/w24MacroHard/server/handlers/handlers.go (45.8%)</option>
 				
 				</select>
 			</div>
@@ -555,13 +555,13 @@ func AddTutoringSession(db *sql.DB) http.HandlerFunc <span class="cov8" title="1
                 <span class="cov8" title="1">var tutor util.TutorAvailability
                 tutor.ID = session.TutorID
                 // Check if tutor has availability in timeslot
-                for _, id := range session.TimeBlockIDList </span><span class="cov0" title="0">{
+                for _, id := range session.TimeBlockIDList </span><span class="cov8" title="1">{
                         exists, err := util.PeekTimeSlot(db, session, id)
-                        if err != nil </span><span class="cov0" title="0">{
+                        if err != nil </span><span class="cov8" title="1">{
                                 fmt.Println("Error checking tutor_availability: ", err)
                                 http.Error(w, "HEEEEEEELP", http.StatusBadRequest)
                         }</span>
-                        <span class="cov0" title="0">if !exists </span><span class="cov0" title="0">{
+                        <span class="cov8" title="1">if !exists </span><span class="cov8" title="1">{
                                 http.Error(w, "Tutor is not available", http.StatusUnauthorized) // status code 401
                                 return
                         }</span>

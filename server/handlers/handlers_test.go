@@ -596,36 +596,6 @@ func TestDeleteTutorSession(t *testing.T) {
 	fmt.Println("Testing DeleteTutorSession")
 	fmt.Println("")
 
-	// // Add a tutoring session using AddTutoringSession function
-
-	// TutorID := 1
-	// TutorName := "Joe Feete"
-	// StudentID := 4
-	// StudentName := "Joey Foote"
-	// Name := "Sample Session"
-	// Description := "Sample"
-	// Subject := "Mathematics"
-	// Grade := 12
-	// Status := "scheduled"
-	// Date := "2024-03-06"
-	// TimeBlockIDList := []int{1, 2, 3}
-
-	// session := util.TutoringSession{
-
-	// 	TutoringSessionID: TutoringSessionID,
-	// 	TutorID:           TutorID,
-	// 	TutorName:         TutorName,
-	// 	StudentID:         StudentID,
-	// 	StudentName:       StudentName,
-	// 	Name:              Name,
-	// 	Description:       Description,
-	// 	Subject:           Subject,
-	// 	Grade:             Grade,
-	// 	Status:            Status,
-	// 	Date:              Date,
-	// 	TimeBlockIDList:   TimeBlockIDList,
-	// }
-
 	type SessionID struct {
 		SessionID int `json:"session_id"`
 	}
@@ -668,29 +638,28 @@ func TestDeleteTutorSession(t *testing.T) {
 	fmt.Println("")
 }
 
-
 // Input:
 // {
-//   “tutor_id”: int 
-//   “student_id”: int 
-//   “name”: string 
+//   “tutor_id”: int
+//   “student_id”: int
+//   “name”: string
 //   “description”: string
-//   “subject:” tutoring_subject 
-//   “grade”: grade 
-//   ‘’date”: “YYYY-MM-DD” 
+//   “subject:” tutoring_subject
+//   “grade”: grade
+//   ‘’date”: “YYYY-MM-DD”
 //   “time_block_id_list”: [unique <time_block_id<Int>>]
 // }
-// 
-// Output: 
+//
+// Output:
 // {
 //   “time_block_id_list”: [unique <time_block_id<Int>>]
 // }
 
 // go test -coverprofile="add_session.out" ./...
 // go tool cover -html="add_session.out" -o ./reports/add_session.html
-func TestAddSession(t *testing.T){
-	// Construct connection string
-	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", DBHost, DBPort, DBUser, DBPassword, DBName)
+func TestAddTutoringSession(t *testing.T) {
+	// Construct connection string for the test database
+	connStr := "host=localhost port=5432 user=testuser password=testpassword dbname=testdb sslmode=disable"
 
 	// Open database connection
 	db, err := sql.Open("postgres", connStr)
@@ -700,49 +669,64 @@ func TestAddSession(t *testing.T){
 	defer db.Close()
 
 	fmt.Println("")
-	fmt.Println("Testing DeleteTutorSession")
+	fmt.Println("Testing Adding Tutor Session")
 	fmt.Println("")
 
-	type TutorSession struct {
-		TutorID           int
-		StudentID         int
-		Name              string
-		Description       string
-		Subject           string
-		Grade             int
-		Date              string  // Format: "YYYY-MM-DD"
-		TimeBlockIDList   []int   // Assuming the time_block_id is of type int
-	}
-	
-	NewSession := TutorSession{
-		TutorID: 1,
-		StudentID: 1,
-		Name: "Backend Test",
-		Description: "Backend Test",
-		Subject: "English",
-		Grade: 11,
-		Date: "2024-03-25",
+	// Define a sample tutoring session payload
+	tutoringSession := util.TutoringSession{
+		TutorID:         1,
+		StudentID:       1,
+		Name:            "Sample Session",
+		Description:     "Sample Description",
+		Subject:         "computer science",
+		Grade:           11,
+		Date:            "2024-03-25",
 		TimeBlockIDList: []int{12, 13},
 	}
 
-	// Marshal session to JSON
-	sessionJSON, err := json.Marshal(NewSession)
-	assert.NoError(t, err, "Failed to marshal session JSON")
+	// Marshal tutoring session to JSON
+	tutoringSessionJSON, err := json.Marshal(tutoringSession)
+	assert.NoError(t, err, "Failed to marshal tutoring session JSON")
 
-	reqAdd := httptest.NewRequest(http.MethodPost, "/add_tutoring_session", bytes.NewBuffer(sessionJSON))
+	// Create a new HTTP request with the JSON payload
+	reqAdd := httptest.NewRequest(http.MethodPost, "/add_tutoring_session", bytes.NewBuffer(tutoringSessionJSON))
 	reqAdd.Header.Set("Content-Type", "application/json")
 
+	// Create a new HTTP recorder
 	rrAdd := httptest.NewRecorder()
 
 	// Call AddTutoringSession handler function
 	handlers.AddTutoringSession(db)(rrAdd, reqAdd)
 
 	// Check if the response status code is 200 OK
+	if rrAdd.Code != http.StatusOK {
+		fmt.Println("Received non-200 response:", rrAdd.Code)
+		fmt.Println("Raw Response Body:", rrAdd.Body.String())
+		t.Fatalf("Received non-200 response: %d", rrAdd.Code)
+		return // Exit the function to prevent further processing
+	}
+
+	// Attempt to parse the response body as JSON
+	var responseBody map[string][]int
+	err = json.Unmarshal(rrAdd.Body.Bytes(), &responseBody)
+	if err != nil {
+		fmt.Println("Failed to unmarshal response JSON:", err)
+		fmt.Println("Response Body:", rrAdd.Body.String())
+		t.Fatalf("Failed to unmarshal response JSON")
+		return // Exit the function to prevent further processing
+	}
+
+	timeBlockIDList := responseBody["time_block_id_list"]
+
+	// Print the timeBlockIDList for debugging
+	fmt.Println("timeBlockIDList:", timeBlockIDList)
+
+	// Check if all operations were successful -> return status code 200
 	assert.Equal(t, http.StatusOK, rrAdd.Code, "Expected 200 OK response")
 
 	fmt.Println("")
-	fmt.Println("Add Session Test Complete")
-
+	fmt.Println("Testing Adding Tutor Session Complete")
+	fmt.Println("")
 }
 
 // input: {
