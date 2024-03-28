@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/smtp"
+	"sort"
 
 	"os"
 	"time"
@@ -918,4 +919,42 @@ func UpdateTutorSessionDateAndTimeBlockList(db *sql.DB, session TutoringSession)
 	}
 
 	return nil
+}
+
+// Converts TimeBlockIDList into a string of smallest and largest time
+func TimeBlockToString(db *sql.DB, session TutoringSession) (timeString string, err error) {
+	// Create a slice of time
+	var timeList []time.Time
+	query := `
+	SELECT
+	start_time,
+	end_time
+	FROM time_block
+	WHERE time_block_id = $1 
+	`
+	for _, i := range session.TimeBlockIDList {
+		// Execute the SQL query
+		var startTime time.Time
+		var endTime time.Time
+		row := db.QueryRow(query, i)
+		err = row.Scan(&startTime, &endTime)
+		if err != nil {
+			fmt.Println("Error scanning timeblock: ", err)
+			return timeString, err
+		}
+		timeList = append(timeList, startTime, endTime)
+	}
+
+	// Sort time values
+	sort.Slice(timeList, func(i, j int) bool {
+		return timeList[i].Before(timeList[j])
+	})
+
+	// Convert the smallest and largest time values into strings
+	smallestTime := timeList[0].Format("15:04")
+	largestTime := timeList[len(timeList)-1].Format("15:04")
+
+	// eg. 15:00 - 17:00
+	timeString = fmt.Sprintf("%s - %s", smallestTime, largestTime)
+	return timeString, err
 }
