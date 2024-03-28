@@ -903,6 +903,69 @@ func GetTutorSession(db *sql.DB, sessionID int) (session TutoringSession, err er
 	return session, err
 }
 
+// Get tutorID from session ID
+func GetTutorFromSession(db *sql.DB, session TutoringSession) (tutorID int, err error) {
+	// Define SQL query
+	query := `
+	SELECT tutor_id
+	FROM tutoring_session
+	WHERE tutor_session_id = $1
+	`
+	// Execute sql query
+	row := db.QueryRow(query, session.TutoringSessionID)
+	err = row.Scan(&tutorID)
+	if err != nil {
+		fmt.Println("Error searching tutoring session for tutor_id: ", err)
+		return tutorID, err
+	}
+
+	return tutorID, err
+}
+
+// Get time_block_id_list from session ID
+func GetTimeBlockIdListFromSession(db *sql.DB, session TutoringSession) (time_block_id_list []int, err error) {
+	// Define SQL query
+	query := `
+	SELECT time_block_id_list
+	FROM tutoring_session
+	WHERE tutor_session_id = $1
+	`
+	// Execute sql query
+	row := db.QueryRow(query, session.TutoringSessionID)
+	var uint8Array []uint8
+	err = row.Scan(&uint8Array)
+	if err != nil {
+		fmt.Println("Error searching tutoring session for time_block_id_list: ", err)
+		return time_block_id_list, err
+	}
+	time_block_id_list = make([]int, len(uint8Array))
+	//Convert uint8Array into intArray
+	for i, v := range uint8Array {
+		time_block_id_list[i] = int(v)
+	}
+
+	return time_block_id_list, err
+}
+
+// Get date from session_id
+func GetDateFromSession(db *sql.DB, session TutoringSession) (date time.Time, err error) {
+	// Define SQL query
+	query := `
+	SELECT date
+	FROM tutoring_session
+	WHERE tutor_session_id = $1
+	`
+	// Execute sql query
+	row := db.QueryRow(query, session.TutoringSessionID)
+	err = row.Scan(&date)
+	if err != nil {
+		fmt.Println("Error searching tutoring session for date: ", err)
+		return date, err
+	}
+
+	return date, err
+}
+
 // Updates the Tutoring Session Date and Time Block List
 func UpdateTutorSessionDateAndTimeBlockList(db *sql.DB, session TutoringSession) error {
 	// Define the SQL query to update a row
@@ -957,4 +1020,22 @@ func TimeBlockToString(db *sql.DB, session TutoringSession) (timeString string, 
 	// eg. 15:00 - 17:00
 	timeString = fmt.Sprintf("%s - %s", smallestTime, largestTime)
 	return timeString, err
+}
+
+// GetStudentEmailBySessionID fetches the email of the student with the given ID.
+func GetStudentEmailBySessionID(db *sql.DB, session TutoringSession) (string, error) {
+	// Prepare the SQL query
+	query := `
+		SELECT email FROM tutoring_session WHERE tutor_session_id = $1
+	`
+	// Execute the SQL query
+	row := db.QueryRow(query, session.TutoringSessionID)
+	// Scan the result into a string
+	var email string
+	err := row.Scan(&email)
+	if err != nil {
+		fmt.Println("Error scanning student email: ", err)
+		return "", err
+	}
+	return email, nil
 }
