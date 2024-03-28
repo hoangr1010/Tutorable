@@ -92,6 +92,7 @@ func router() http.Handler {
 		r.Post("/search_tutor_availability", handlers.SearchTutorAvailability(db)) // This is for many
 		r.Post("/add_tutoring_session", handlers.AddTutoringSession(db))
 		r.Post("/delete_tutoring_session", handlers.DeleteTutorSession(db))
+		r.Post("/edit_tutoring_session", handlers.EditTutorSession(db))
 
 	})
 

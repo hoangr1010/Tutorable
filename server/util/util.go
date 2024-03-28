@@ -249,7 +249,7 @@ func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringS
 				fmt.Println("Error scanning tutoring_session: ", err)
 			}
 
-			date, err := parseDate(session.Date)
+			date, err := ParseDate(session.Date)
 
 			if err != nil {
 				fmt.Println("Error parsing date: ", err)
@@ -367,7 +367,7 @@ func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringS
 				session.TimeBlockIDList = append(session.TimeBlockIDList, int(i))
 			}
 
-			date, err := parseDate(session.Date)
+			date, err := ParseDate(session.Date)
 
 			if err != nil {
 				fmt.Println("Error parsing date: ", err)
@@ -797,7 +797,7 @@ func CreateToken(userInfo UserInfo) (string, error) {
 }
 
 // parseDate takes a date string in the format "yyyy-mm-dd" and returns a time.Time object
-func parseDate(dateString string) (time.Time, error) {
+func ParseDate(dateString string) (time.Time, error) {
 	// Layouts to try
 	layouts := []string{
 		"2006-01-02", // Reference layout for date only
@@ -900,4 +900,22 @@ func GetTutorSession(db *sql.DB, sessionID int) (session TutoringSession, err er
 		session.TimeBlockIDList = append(session.TimeBlockIDList, int(i))
 	}
 	return session, err
+}
+
+// Updates the Tutoring Session Date and Time Block List
+func UpdateTutorSessionDateAndTimeBlockList(db *sql.DB, session TutoringSession) error {
+	// Define the SQL query to update a row
+	query := `
+	UPDATE tutoring_session
+	SET date = $1, time_block_id_list = $2 
+	WHERE tutor_session_id = $3   
+`
+	// Execute the update query
+	_, err := db.Exec(query, session.Date, pq.Array(session.TimeBlockIDList), session.TutoringSessionID)
+	if err != nil {
+		fmt.Println("Error updating tutoring_session Date and timeblock", err)
+		return err
+	}
+
+	return nil
 }
