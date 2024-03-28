@@ -655,12 +655,12 @@ func DeleteTutorSession(db *sql.DB) http.HandlerFunc {
 		body := fmt.Sprintf("Session ID:%d has been deleted.", session.TutoringSessionID)
 		tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
 		if err != nil {
-			http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+			http.Error(w, "Error getting tutor email", http.StatusInternalServerError) // status code 500
 			return
 		}
 		studentEmail, err := util.GetStudentEmailByID(db, session.StudentID)
 		if err != nil {
-			http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+			http.Error(w, "Error getting student email", http.StatusInternalServerError) // status code 500
 			return
 		}
 		recipients := []string{tutorEmail, studentEmail}
@@ -706,10 +706,68 @@ func EditTutorSession(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
+		//get tutorID from session
+		session.TutorID, err = util.GetTutorFromSession(db, session)
+		if err != nil {
+			http.Error(w, "Error searching tutoring_session for tutor_id", http.StatusInternalServerError) // status code 500
+			return
+		}
+
+		//get time_block_id_list from session
+		oldTimeBlockIdList, err := util.GetTimeBlockIdListFromSession(db, session)
+		if err != nil {
+			http.Error(w, "Error searching tutoring_session for time_block_id_list", http.StatusInternalServerError) // status code 500
+			return
+		}
+
+		// get old date from session
+		oldDate, err := util.GetDateFromSession(db, session)
+		if err != nil {
+			http.Error(w, "Error searching tutoring_session for date", http.StatusInternalServerError) // status code 500
+			return
+		}
+		// Check if tutor is available on that date and time before updating
+		for _, id := range session.TimeBlockIDList {
+			exists, err := util.PeekTimeSlot(db, session, id)
+			if err != nil {
+				fmt.Println("Error checking tutor_availability: ", err)
+				http.Error(w, "HEEEEEEELP", http.StatusInternalServerError) // Code 500
+			}
+			if !exists {
+				http.Error(w, "Tutor is not available", http.StatusUnauthorized) // status code 401
+				return
+			}
+		}
+
+		// Update tutor session with new date and time_block_list
 		err = util.UpdateTutorSessionDateAndTimeBlockList(db, session)
 		if err != nil {
 			http.Error(w, "Error updating tutoring_session", http.StatusInternalServerError) // status code 500
 			return
+		}
+
+		// Delete all availability shown in time_block_id_list -- BUG HERE?
+		for _, id := range session.TimeBlockIDList {
+			err = util.DeleteSomeTutorAvailability(db, session, id)
+			if err != nil {
+				http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+				return
+			}
+		}
+
+		// Add old availability shown in oldTimeBlockIdList -- BUG HERE??
+		if oldDate.Before(time.Now()) {
+			var tutorAvailability util.TutorAvailability
+			tutorAvailability.ID = session.TutorID
+			tutorAvailability.Date = oldDate.Format("2006-01-02 15:04:05")
+			for _, id := range oldTimeBlockIdList {
+				// requires old date and tutor id
+				err = util.InsertTutorAvailability(db, tutorAvailability, id)
+				if err != nil {
+					http.Error(w, "Error adding tutor availability", http.StatusInternalServerError) // status code 500
+					return
+				}
+			}
 		}
 
 		fmt.Println("Row updated successfully!")
@@ -732,18 +790,22 @@ func EditTutorSession(db *sql.DB) http.HandlerFunc {
 		body := fmt.Sprintf("Session ID:%d's date and time have been moved to: %s from %s ", session.TutoringSessionID, session.Date, timeString)
 		tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
 		if err != nil {
-			http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+			fmt.Println("Error getting tutor email: ", err)
+			http.Error(w, "Error getting tutor email", http.StatusInternalServerError) // status code 500
 			return
 		}
-		studentEmail, err := util.GetStudentEmailByID(db, session.StudentID)
+		studentEmail, err := util.GetStudentEmailBySessionID(db, session)
 		if err != nil {
-			http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+			fmt.Println("Error getting student email: ", err)
+			http.Error(w, "Error getting student email", http.StatusInternalServerError) // status code 500
 			return
 		}
 		recipients := []string{tutorEmail, studentEmail}
 		err = util.SendEmail(recipients, subject, body)
 		if err != nil {
 			fmt.Println("Error sending email: ", err)
+			http.Error(w, "Error sending email", http.StatusInternalServerError) // status code 500
+			return
 		}
 
 		// Prepare response

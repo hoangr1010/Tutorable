@@ -597,7 +597,7 @@ func TestDeleteTutorSession(t *testing.T) {
 	fmt.Println("")
 
 	type SessionID struct {
-		SessionID int `json:"session_id"`
+		SessionID int `json:"tutor_session_id"`
 	}
 
 	session := SessionID{
@@ -762,15 +762,15 @@ func TestEditSession(t *testing.T) {
 	fmt.Println("")
 
 	type EditSession struct {
-		TutoringSessionID int
-		Date              string
-		TimeBlockIDList   []int
+		TutoringSessionID int    `json:"tutor_session_id"`
+		Date              string `json:"date"`
+		TimeBlockIDList   []int  `json:"time_block_id_list"`
 	}
 
 	session := EditSession{
-		TutoringSessionID: 2,
-		Date:              "2024-03-31",
-		TimeBlockIDList:   []int{7, 9},
+		TutoringSessionID: 28,
+		Date:              "2024-03-30",
+		TimeBlockIDList:   []int{8, 9},
 	}
 
 	sessionJSON, err := json.Marshal(session)
