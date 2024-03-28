@@ -692,3 +692,55 @@ func DeleteTutorSession(db *sql.DB) http.HandlerFunc {
 		w.Write(jsonResponse)
 	}
 }
+
+// Updates the tutor session's date and time block id list
+func EditTutorSession(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		//w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+		// Read JSON payload
+		var session util.TutoringSession
+		err := util.DecodeJSONRequestBody(r, &session)
+		if err != nil {
+			fmt.Println("Invalid JSON:", err)
+			http.Error(w, "Error parsing JSON", http.StatusBadRequest) // status code 400
+			return
+		}
+
+		err = util.UpdateTutorSessionDateAndTimeBlockList(db, session)
+		if err != nil {
+			http.Error(w, "Error updating tutoring_session", http.StatusInternalServerError) // status code 500
+			return
+		}
+
+		fmt.Println("Row updated successfully!")
+		date, err := util.ParseDate(session.Date)
+		if err != nil {
+			fmt.Println("Error parsing date ;_; ", err)
+			http.Error(w, "Unexpected error", http.StatusInternalServerError) // status code 500
+			return
+		}
+		// Prepare response
+		response := struct {
+			TutorSessionID  int
+			SessionDate     time.Time
+			TimeBlockIDList []int `json:"time_block_id_list"`
+		}{
+			TutorSessionID:  session.TutoringSessionID,
+			SessionDate:     date,
+			TimeBlockIDList: session.TimeBlockIDList,
+		}
+
+		// Marshal response to JSON
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			fmt.Printf("Error encoding JSON response: %v\n", err)
+			http.Error(w, "Error encoding JSON response", http.StatusInternalServerError) // status code 500
+			return
+		}
+
+		// Write response
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
+	}
+}
