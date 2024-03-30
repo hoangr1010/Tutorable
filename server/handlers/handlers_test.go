@@ -597,7 +597,7 @@ func TestDeleteTutorSession(t *testing.T) {
 	fmt.Println("")
 
 	type SessionID struct {
-		SessionID int `json:"session_id"`
+		SessionID int `json:"tutor_session_id"`
 	}
 
 	session := SessionID{
@@ -729,21 +729,23 @@ func TestAddTutoringSession(t *testing.T) {
 	fmt.Println("")
 }
 
-// input: {
-//   “session_id”: int (required)
-//   ‘’date”: “YYYY-MM-DD” (required)
-//   “time_block_id_list”: [unique <time_block_id<Int>>]
-// }
+//	input: {
+//	  “session_id”: int (required)
+//	  ‘’date”: “YYYY-MM-DD” (required)
+//	  “time_block_id_list”: [unique <time_block_id<Int>>]
+//	}
 //
 // output:(return list of time_block_id)
-// {
-// 	“session_id”: int (required)
-// 	‘’new_date”: “YYYY-MM-DD” (required)
-// 	“new_time_block_id_list”: [unique <time_block_id<Int>>]
-//   }
+//
+//	{
+//		“session_id”: int (required)
+//		‘’new_date”: “YYYY-MM-DD” (required)
+//		“new_time_block_id_list”: [unique <time_block_id<Int>>]
+//	  }
+//
 // go test -coverprofile="edit_session.out" ./...
 // go tool cover -html="edit_session.out" -o ./reports/add_session.html
-func TestEditSession(t *testing.T){
+func TestEditSession(t *testing.T) {
 
 	// Construct connection string
 	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", DBHost, DBPort, DBUser, DBPassword, DBName)
@@ -760,15 +762,15 @@ func TestEditSession(t *testing.T){
 	fmt.Println("")
 
 	type EditSession struct {
-		SessionID	int
-		Date	string
-		TimeBlockIDList   []int
+		TutoringSessionID int    `json:"tutor_session_id"`
+		Date              string `json:"date"`
+		TimeBlockIDList   []int  `json:"time_block_id_list"`
 	}
 
 	session := EditSession{
-		SessionID:	2,
-		Date: "2024-03-31",
-		TimeBlockIDList: []int{7,9},
+		TutoringSessionID: 28,
+		Date:              "2024-03-30",
+		TimeBlockIDList:   []int{8, 9},
 	}
 
 	sessionJSON, err := json.Marshal(session)
@@ -779,7 +781,7 @@ func TestEditSession(t *testing.T){
 
 	rrEdit := httptest.NewRecorder()
 
-	handlers.EditTutorSession(db)(rrEdit,reqEdit)
+	handlers.EditTutorSession(db)(rrEdit, reqEdit)
 
 	assert.Equal(t, http.StatusOK, rrEdit.Code, "Expected 200 OK Response")
 
