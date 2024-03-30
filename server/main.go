@@ -24,6 +24,8 @@ var tokenAuth *jwtauth.JWTAuth
 func initDB() {
 	// Connect to the PostgreSQL database
 	godotenv.Load()
+	//   dbConfig := LoadDatasebaseConfig()
+
 	DBHost := os.Getenv("DB_HOST")
 	DBPort, _ := strconv.Atoi(os.Getenv("DB_PORT"))
 	DBUser := os.Getenv("DB_USER")
