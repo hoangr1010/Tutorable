@@ -17,7 +17,7 @@ type MockDBConfig struct {
   UseMock bool
 }
 
-func LoadDatabseConfig() *DatabaseConfig {
+func LoadDatabaseConfig() *DatabaseConfig {
   dbConfig := &DatabaseConfig{
         Host:     os.Getenv("DB_HOST"),
         Port:     os.Getenv("DB_PORT"),
@@ -32,7 +32,6 @@ func LoadDatabseConfig() *DatabaseConfig {
   }
 
   return dbConfig
-   
 }
 
 func LoadMockDBConfig() *MockDBConfig {
@@ -42,4 +41,3 @@ func LoadMockDBConfig() *MockDBConfig {
     UseMock: useMock,
   }
 }
-
