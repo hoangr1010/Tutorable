@@ -6,6 +6,8 @@ import com.example.tutorapp395project.data.CreateSessionRequest
 import com.example.tutorapp395project.data.CreateSessionResponse
 import com.example.tutorapp395project.data.DeleteSessionRequest
 import com.example.tutorapp395project.data.DeleteSessionResponse
+import com.example.tutorapp395project.data.EditSessionTimeRequest
+import com.example.tutorapp395project.data.EditSessionTimeResponse
 import com.example.tutorapp395project.data.GetAvailabilityRequest
 import com.example.tutorapp395project.data.GetAvailabilityResponse
 import com.example.tutorapp395project.data.SessionRequest
@@ -54,6 +56,10 @@ class UserRepository {
 
     suspend fun deleteSession(deleteSessionRequest: DeleteSessionRequest): Response<DeleteSessionResponse> {
         return userService.deleteSession(deleteSessionRequest)
+    }
+
+    suspend fun editSessionTime(editSessionTimeRequest: EditSessionTimeRequest): Response<EditSessionTimeResponse> {
+        return userService.editSessionTime(editSessionTimeRequest)
     }
 
 }
