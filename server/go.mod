@@ -8,6 +8,7 @@ replace github.com/macewanCS/w24MacroHard/server/middleware => ./middleware
 
 replace github.com/macewanCS/w24MacroHard/server/mock => ./mock
 
+
 require github.com/go-chi/chi/v5 v5.0.11
 
 require (
