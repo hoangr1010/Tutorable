@@ -63,3 +63,15 @@ data class DeleteSessionResponse(
     val time_block_id_list: List<Int>,
     val session_id_deleted: Int
 )
+
+data class EditSessionTimeRequest(
+    val tutor_session_id: Int,
+    val date: String,
+    val time_block_id_list: List<Int>
+)
+
+data class EditSessionTimeResponse(
+    val TutorSessionID: Int,
+    val SessionDate: String,
+    val time_block_id_list: List<Int>
+)

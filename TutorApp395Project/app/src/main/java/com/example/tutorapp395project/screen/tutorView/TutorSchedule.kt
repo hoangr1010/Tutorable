@@ -1,6 +1,8 @@
 package com.example.tutorapp395project.screen.tutorView
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -55,6 +57,7 @@ import com.example.tutorapp395project.viewModel.TutorViewModel
     Parameters: modifier -> takes modifier parameters
     Return: None
  */
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TutorAppointmentLayout(
@@ -123,7 +126,7 @@ fun TutorAppointmentLayout(
                                     tutorViewModel.deleteSession(
                                         tutorViewModel.sessionInfo.value.tutor_session_id
                                     )
-                                }
+                                },
                             )
                         }
                     }
@@ -135,6 +138,7 @@ fun TutorAppointmentLayout(
 
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun previewTutorSchedule(){

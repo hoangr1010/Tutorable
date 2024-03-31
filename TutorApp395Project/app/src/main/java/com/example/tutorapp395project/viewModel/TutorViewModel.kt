@@ -21,7 +21,7 @@ import java.time.LocalDate
 
 class TutorViewModel(
     private val userRepository: UserRepository = UserRepository(),
-    val authViewModel: AuthViewModel,
+    val authViewModel: AuthViewModel = AuthViewModel(),
 ): ViewModel() {
 
     @RequiresApi(Build.VERSION_CODES.O)
