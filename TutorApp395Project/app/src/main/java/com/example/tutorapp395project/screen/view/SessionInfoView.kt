@@ -1,5 +1,13 @@
 package com.example.tutorapp395project.screen.view
 
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,12 +23,17 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tutorapp395project.viewModel.StudentViewModel
+import com.maxkeppeker.sheets.core.models.base.UseCaseState
+import kotlinx.coroutines.launch
 
 /**
  * Function : Creating session information card (uneditable Information)
@@ -54,11 +67,14 @@ fun FixedSessionInfoCard(
  *            onDelete: () -> Unit
  * Return   : None
  */
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FreeSessionInfoCard(
     dateIn: String,
     timeslot: String,
-    onDelete: () -> Unit = { }
+    onDelete: () -> Unit = { },
+    calendarState: UseCaseState,
+    studentViewModel: StudentViewModel
 ){
     Card(
         modifier = Modifier
@@ -66,7 +82,7 @@ fun FreeSessionInfoCard(
             .wrapContentHeight()
             .padding(3.dp)
     ) {
-        FreeSessionInfo(dateIn, timeslot, onDelete)
+        FreeSessionInfo(dateIn, timeslot, onDelete, calendarState, studentViewModel)
     }
 }
 
@@ -123,14 +139,15 @@ fun Subtitle(subtitle: String){
 fun FixedSessionInfo(
     sessionId: Int,
     tutorName: String,
-    subject: String
+    subject: String,
 ) {
     LazyColumn(
 
     ) {
         item {
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .wrapContentHeight()
                     .padding(vertical = 10.dp),
                 //horizontalArrangement = Arrangement.Start,
@@ -166,7 +183,6 @@ fun FixedSessionInfo(
     }
 }
 
-
 /**
  * Function : Creating editable content for session information
  * Param    : dateIn: String,
@@ -174,23 +190,28 @@ fun FixedSessionInfo(
  *            onDelete: () -> Unit
  * Return   : None
  */
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FreeSessionInfo(
     dateIn: String,
     timeslot: String,
-    onDelete: () -> Unit = { }
+    onDelete: () -> Unit = { },
+    calendarState: UseCaseState,
+    studentViewModel: StudentViewModel,
 ) {
-    LazyColumn(
 
-    ) {
+    LazyColumn{
         item {
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .wrapContentHeight()
                     .padding(vertical = 25.dp),
                 //horizontalArrangement = Arrangement.Start,
                 //verticalAlignment = Alignment.CenterVertically
             ) {
+                val coroutineScope = rememberCoroutineScope()
+                val context = LocalContext.current
 
                 Subtitle("Date")
                 Text(
@@ -208,14 +229,40 @@ fun FreeSessionInfo(
                     modifier = Modifier
                         .padding(16.dp),
                 )
+                Button(
+                    onClick = {
+                        coroutineScope.launch {
+//                            val intent = Intent(Intent.ACTION_SENDTO).apply {
+//                                data = Uri.parse("mailto:${}")
+//                            }
+//                            context.startActivity(intent)
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp,)
+                    ,
+                    shape = RoundedCornerShape(25),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF66B8FF)),
+
+
+                    ) {
+                    Text("Send Email", fontSize = 20.sp)
+                }
 
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.Bottom,
-                    modifier = Modifier.fillMaxWidth().padding(8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
                 ) {
                     Button(
-                        onClick = {/* TODO */ },
+                        onClick = {
+                            calendarState.show()
+                            studentViewModel.isEditing.value = true
+                            Log.d("FreeSessionInfo", "Edit button clicked: ${studentViewModel.isEditing.value}")
+                                  },
                         modifier = Modifier
                             .height(40.dp),
                         shape = RoundedCornerShape(25),

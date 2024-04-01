@@ -90,6 +90,8 @@ type TutoringSession struct {
 	Status            string `json:"tutoring_session_status"`
 	Date              string `json:"date"`
 	TimeBlockIDList   []int  `json:"time_block_id_list"`
+	StudentEmail      string `json:"student_email"`
+	TutorEmail        string `json:"tutor_email"`
 }
 
 /*
@@ -320,6 +322,18 @@ func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringS
 			// Add student ID to session
 			session.StudentID = user.ID
 
+			// Add tutor email to session
+			tutorEmail, err := GetTutorEmailByID(db, session.TutorID)
+			if err != nil {
+				fmt.Println("Error scanning for tutor email: ", err)
+			}
+			session.TutorEmail = tutorEmail
+			// Add student email to session
+			studentEmail, err := GetStudentEmailByID(db, session.StudentID)
+			if err != nil {
+				fmt.Println("Error scanning for student email: ", err)
+			}
+			session.StudentEmail = studentEmail
 			// Append session to list
 			tutoringSessions = append(tutoringSessions, session)
 		}
@@ -433,6 +447,19 @@ func GetTutoringSessionList(db *sql.DB, user User) (tutoringSessions []TutoringS
 
 			// Add tutor id to session
 			session.TutorID = user.ID
+
+			// Add tutor email to session
+			tutorEmail, err := GetTutorEmailByID(db, session.TutorID)
+			if err != nil {
+				fmt.Println("Error scanning for tutor email: ", err)
+			}
+			session.TutorEmail = tutorEmail
+			// Add student email to session
+			studentEmail, err := GetStudentEmailByID(db, session.StudentID)
+			if err != nil {
+				fmt.Println("Error scanning for student email: ", err)
+			}
+			session.StudentEmail = studentEmail
 
 			// Append session to list
 			tutoringSessions = append(tutoringSessions, session)

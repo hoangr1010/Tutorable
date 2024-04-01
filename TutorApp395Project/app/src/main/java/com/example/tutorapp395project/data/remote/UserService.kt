@@ -6,6 +6,8 @@ import com.example.tutorapp395project.data.CreateSessionRequest
 import com.example.tutorapp395project.data.CreateSessionResponse
 import com.example.tutorapp395project.data.DeleteSessionRequest
 import com.example.tutorapp395project.data.DeleteSessionResponse
+import com.example.tutorapp395project.data.EditSessionTimeRequest
+import com.example.tutorapp395project.data.EditSessionTimeResponse
 import com.example.tutorapp395project.data.GetAvailabilityRequest
 import com.example.tutorapp395project.data.GetAvailabilityResponse
 import com.example.tutorapp395project.data.SessionRequest
@@ -35,4 +37,7 @@ interface UserService {
 
     @POST("delete_tutoring_session")
     suspend fun deleteSession(@Body deleteSessionRequest: DeleteSessionRequest): Response<DeleteSessionResponse>
+
+    @POST("edit_tutoring_session")
+    suspend fun editSessionTime(@Body editSessionTimeRequest: EditSessionTimeRequest): Response<EditSessionTimeResponse>
 }

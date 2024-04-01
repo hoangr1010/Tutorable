@@ -778,35 +778,35 @@ func EditTutorSession(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		// Convert time block list to string
-		timeString, err := util.TimeBlockToString(db, session)
-		if err != nil {
-			fmt.Println("Error formating time block to string: ", err)
-			http.Error(w, "Unexpected error", http.StatusInternalServerError) // status code 500
-			return
-		}
-		// Email tutor and student involved
-		subject := fmt.Sprintf("TutorMe: %s Session Change", session.Date)
-		body := fmt.Sprintf("Session ID:%d's date and time have been moved to: %s from %s ", session.TutoringSessionID, session.Date, timeString)
-		tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
-		if err != nil {
-			fmt.Println("Error getting tutor email: ", err)
-			http.Error(w, "Error getting tutor email", http.StatusInternalServerError) // status code 500
-			return
-		}
-		studentEmail, err := util.GetStudentEmailBySessionID(db, session)
-		if err != nil {
-			fmt.Println("Error getting student email: ", err)
-			http.Error(w, "Error getting student email", http.StatusInternalServerError) // status code 500
-			return
-		}
-		recipients := []string{tutorEmail, studentEmail}
-		err = util.SendEmail(recipients, subject, body)
-		if err != nil {
-			fmt.Println("Error sending email: ", err)
-			http.Error(w, "Error sending email", http.StatusInternalServerError) // status code 500
-			return
-		}
+		// // Convert time block list to string
+		// timeString, err := util.TimeBlockToString(db, session)
+		// if err != nil {
+		// 	fmt.Println("Error formating time block to string: ", err)
+		// 	// http.Error(w, "Unexpected error", http.StatusInternalServerError) // status code 500
+		// 	// return
+		// }
+		// // Email tutor and student involved
+		// subject := fmt.Sprintf("TutorMe: %s Session Change", session.Date)
+		// body := fmt.Sprintf("Session ID:%d's date and time have been moved to: %s from %s ", session.TutoringSessionID, session.Date, timeString)
+		// tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
+		// if err != nil {
+		// 	fmt.Println("Error getting tutor email: ", err)
+		// 	// http.Error(w, "Error getting tutor email", http.StatusInternalServerError) // status code 500
+		// 	// return
+		// }
+		// studentEmail, err := util.GetStudentEmailBySessionID(db, session)
+		// if err != nil {
+		// 	fmt.Println("Error getting student email: ", err)
+		// 	// http.Error(w, "Error getting student email", http.StatusInternalServerError) // status code 500
+		// 	// return
+		// }
+		// recipients := []string{tutorEmail, studentEmail}
+		// err = util.SendEmail(recipients, subject, body)
+		// if err != nil {
+		// 	fmt.Println("Error sending email: ", err)
+		// 	// http.Error(w, "Error sending email", http.StatusInternalServerError) // status code 500
+		// 	// return
+		// }
 
 		// Prepare response
 		response := struct {

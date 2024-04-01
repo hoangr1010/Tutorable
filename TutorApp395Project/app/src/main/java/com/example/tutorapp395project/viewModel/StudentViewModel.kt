@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tutorapp395project.data.CreateSessionRequest
 import com.example.tutorapp395project.data.DeleteSessionRequest
+import com.example.tutorapp395project.data.EditSessionTimeRequest
+import com.example.tutorapp395project.data.GetAvailabilityRequest
 import com.example.tutorapp395project.data.SessionRequest
 import com.example.tutorapp395project.data.SessionResponse
 import com.example.tutorapp395project.data.SessionViewState
@@ -21,15 +23,18 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import kotlin.math.abs
 
+@RequiresApi(Build.VERSION_CODES.O)
 class StudentViewModel(
     private val userRepository: UserRepository = UserRepository(),
-    val authViewModel: AuthViewModel
+    val authViewModel: AuthViewModel = AuthViewModel()
 ) : ViewModel() {
 
     // Date and time slot state
     @RequiresApi(Build.VERSION_CODES.O)
+    val timeSlotDialogOpen = mutableStateOf(false)
     val selectedDate = mutableStateOf<LocalDate>(LocalDate.now())
     val selectedTimeSlotIdsSet = mutableStateOf<Set<Int>>(setOf())
+    val disableTimeSlot = mutableStateOf<Set<Int>>(setOf())
 
     // List of sessions state
     val sessionState = mutableStateOf(SessionViewState())
@@ -78,6 +83,10 @@ class StudentViewModel(
 
     // Creating session button state
     val createSessionButtonState = mutableStateOf("")
+
+    // track tutor id for info page
+    val tutorId = mutableStateOf(0)
+    val isEditing = mutableStateOf(false)
 
     fun toggleTimeSlotId(id: Int) {
         val set = selectedTimeSlotIdsSet.value.toMutableSet()
@@ -297,6 +306,63 @@ class StudentViewModel(
             createSessionButtonState.value = ""
             tutorFilterDialogState.value = tutorFilterDialogState.value.copy(isOpen = false)
             sessionFormOpen.value = false
+        }
+    }
+
+    fun getAvailability(id: Int, date: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = userRepository.getAvailability(GetAvailabilityRequest(id, date))
+                Log.d("StudentViewModel", "Response: $response")
+                Log.d("StudentViewModel", "Response body: ${response.body()}")
+
+                if (response.isSuccessful) {
+                    val availabilityResponse = response.body()
+
+                    if (availabilityResponse != null) {
+                        val allTimeSlots = (1..24).toSet()
+                        disableTimeSlot.value = allTimeSlots - (availabilityResponse.time_block_id_list).toSet()
+                        isEditing.value = true
+                    }
+                } else {
+                    Log.d("StudentViewModel", "Error: ${response.errorBody()}")
+                }
+            } catch (e: Exception) {
+                Log.e("StudentViewModel", "Error: $e")
+            }
+        }
+    }
+
+    fun editSessionTime() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = userRepository.editSessionTime(
+                    EditSessionTimeRequest(
+                        tutor_session_id = sessionInfo.value.tutor_session_id,
+                        date = selectedDate.value.toString(),
+                        time_block_id_list = selectedTimeSlotIdsSet.value.toList()
+                    )
+                )
+                Log.d("StudentViewModel", "Response: $response")
+                Log.d("StudentViewModel", "Response body: ${response.body()}")
+
+                if (response.isSuccessful) {
+                    val editSessionTimeResponse = response.body()
+                    if (editSessionTimeResponse != null) {
+                        Log.d("StudentViewModel", "Session time edited: ${editSessionTimeResponse.time_block_id_list}")
+                        getSessionsForStudent(
+                            role = authViewModel.UserState.value.role,
+                            id = authViewModel.UserState.value.id.toInt()
+                        )
+                        selectedTimeSlotIdsSet.value = setOf()
+                        timeSlotDialogOpen.value = false
+                    }
+                } else {
+                    Log.d("StudentViewModel", "Error in Editing Session Time: ${response.errorBody()}")
+                }
+            } catch (e: Exception) {
+                Log.e("StudentViewModel", "Error in Editing Session Time: $e")
+            }
         }
     }
 }

@@ -31,7 +31,7 @@ class AuthViewModel(
     val registerState = mutableStateOf<String>("")
 
     // DEVELOPMENT ONLY
-    val UserState = mutableStateOf(dummyUserTutor)
+    val UserState = mutableStateOf(dummyUserStudent)
     val token = mutableStateOf(dummyToken)
 
     fun onLoginChange(update: (LoginData) -> LoginData) {
