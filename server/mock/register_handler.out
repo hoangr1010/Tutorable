@@ -1,0 +1,19 @@
+mode: set
+github.com/macewanCS/w24MacroHard/server/mock/db_config.go:127.43,137.40 2 0
+github.com/macewanCS/w24MacroHard/server/mock/db_config.go:137.40,139.3 1 0
+github.com/macewanCS/w24MacroHard/server/mock/db_config.go:141.2,141.17 1 0
+github.com/macewanCS/w24MacroHard/server/mock/db_config.go:144.39,150.2 2 0
+github.com/macewanCS/w24MacroHard/server/mock/db_mock.go:17.52,19.16 2 0
+github.com/macewanCS/w24MacroHard/server/mock/db_mock.go:19.16,21.3 1 0
+github.com/macewanCS/w24MacroHard/server/mock/db_mock.go:22.2,22.22 1 0
+github.com/macewanCS/w24MacroHard/server/mock/db_mock.go:26.67,28.2 1 0
+github.com/macewanCS/w24MacroHard/server/mock/db_mock.go:31.65,33.2 1 0
+github.com/macewanCS/w24MacroHard/server/mock/db_mock.go:37.60,40.2 1 0
+github.com/macewanCS/w24MacroHard/server/mock/db_mock.go:43.62,46.2 1 0
+github.com/macewanCS/w24MacroHard/server/mock/db_mock.go:49.70,52.2 1 0
+github.com/macewanCS/w24MacroHard/server/mock/db_mock.go:55.72,58.2 1 0
+github.com/macewanCS/w24MacroHard/server/mock/db_mock.go:61.64,64.2 1 0
+github.com/macewanCS/w24MacroHard/server/mock/db_mock.go:67.68,70.2 1 0
+github.com/macewanCS/w24MacroHard/server/mock/db_mock.go:74.79,77.2 1 0
+github.com/macewanCS/w24MacroHard/server/mock/db_mock.go:80.85,83.2 1 0
+github.com/macewanCS/w24MacroHard/server/mock/db_mock.go:86.77,89.2 1 0

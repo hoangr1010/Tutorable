@@ -1,4 +1,4 @@
-// github.com/macewanCS/w24MacroHard/server/routes
+
 package handlers
 
 import (

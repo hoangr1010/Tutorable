@@ -1,4 +1,3 @@
-// github.com/macewanCS/w24MacroHard/server/middlware
 package middleware
 
 import (
