@@ -1,0 +1,938 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>handlers: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/macewanCS/w24MacroHard/server/handlers/handlers.go (5.3%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">
+package handlers
+
+import (
+        "database/sql"
+        "encoding/json"
+        "fmt"
+        "net/http"
+        "time"
+
+        //"github.com/go-chi/jwtauth"
+        //"github.com/go-chi/jwtauth/v5"
+
+        "github.com/lib/pq"
+        "github.com/macewanCS/w24MacroHard/server/util"
+)
+
+// Add more routes as needed
+func LoginHandler(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                // Read JSON payload
+                var login util.Login
+                err := util.DecodeJSONRequestBody(r, &amp;login)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Invalid JSON:", err)
+                        http.Error(w, "Invalid JSON", http.StatusBadRequest)
+                        return
+                }</span>
+
+                // Check the role
+                <span class="cov0" title="0">if login.Role == "student" </span><span class="cov0" title="0">{
+                        // Check if student password is match
+                        //fmt.Println("Student")
+                        result, err := util.CheckLoginStudent(db, login)
+                        if err != nil </span><span class="cov0" title="0">{
+                                fmt.Println("Error validating login:", err)
+                                // Set the HTTP status code to 401 (Bad Request)
+                                w.WriteHeader(http.StatusUnauthorized)
+                                // Send a response message
+                                w.Write([]byte("Bad Login - Invalid credentials"))
+                        }</span>
+                        <span class="cov0" title="0">if result </span><span class="cov0" title="0">{
+                                fmt.Println("Successful student login!")
+                                // Store student content into JSON object
+                                user, err := util.GetStudentUser(db, login.Email)
+                                if err != nil </span><span class="cov0" title="0">{
+                                        fmt.Println("Error searching student table", err)
+                                }</span>
+                                //fmt.Println(user)
+                                // Create Token
+                                <span class="cov0" title="0">var response util.LoginResponse
+                                response.User = user
+
+                                var userInfo util.UserInfo
+                                userInfo.Role = "student"
+                                userInfo.Email = user.Email
+                                userInfo.ID = user.ID
+                                token, err := util.CreateToken(userInfo)
+                                if err != nil </span><span class="cov0" title="0">{
+                                        fmt.Println("Error creating token", err)
+                                }</span>
+                                //fmt.Println("Token: ", token)
+                                <span class="cov0" title="0">response.Token = token
+                                // Convert response to JSON
+                                Jsonresponse, err := json.Marshal(response)
+                                if err != nil </span><span class="cov0" title="0">{
+                                        http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
+                                        return
+                                }</span>
+                                // Set the HTTP status code to 201 (OK)
+                                <span class="cov0" title="0">w.WriteHeader(http.StatusOK)
+                                // Set the Content-Type header to application/json
+                                w.Header().Set("Content-Type", "application/json")
+                                // Send Json
+                                w.Write(Jsonresponse)</span>
+
+                        }
+                } else<span class="cov0" title="0"> if login.Role == "tutor" </span><span class="cov0" title="0">{
+                        // Check if tutor password is match
+                        //fmt.Println("Tutor")
+                        result, err := util.CheckLoginTutor(db, login)
+                        if err != nil </span><span class="cov0" title="0">{
+                                fmt.Println("Error validating login:", err)
+                                // Set the HTTP status code to 401 (Bad Request)
+                                w.WriteHeader(http.StatusUnauthorized)
+                                // Send a response message
+                                w.Write([]byte("Bad Login - Invalid credentials"))
+                        }</span>
+                        <span class="cov0" title="0">if result </span><span class="cov0" title="0">{
+                                fmt.Println("Successful tutor login!")
+                                // Store student content into JSON object
+                                user, err := util.GetTutorUser(db, login.Email)
+                                if err != nil </span><span class="cov0" title="0">{
+                                        fmt.Println("Error searching student table", err)
+                                }</span>
+                                //fmt.Println(user)
+                                // Store user fields
+                                <span class="cov0" title="0">var response util.LoginResponse
+                                response.User = user
+
+                                // Create userinfo for token
+                                var userInfo util.UserInfo
+                                userInfo.Role = "tutor"
+                                userInfo.Email = user.Email
+                                userInfo.ID = user.ID
+                                // Create token
+                                token, err := util.CreateToken(userInfo)
+                                if err != nil </span><span class="cov0" title="0">{
+                                        fmt.Println("Error creating token", err)
+                                }</span>
+                                //fmt.Println("Token: ", token)
+                                <span class="cov0" title="0">response.Token = token
+                                // Convert response to JSON
+                                Jsonresponse, err := json.Marshal(response)
+                                if err != nil </span><span class="cov0" title="0">{
+                                        http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
+                                        return
+                                }</span>
+                                // Set the HTTP status code to 201 (OK)
+                                <span class="cov0" title="0">w.WriteHeader(http.StatusOK)
+                                // Set the Content-Type header to application/json
+                                w.Header().Set("Content-Type", "application/json")
+                                // Send Json
+                                w.Write(Jsonresponse)</span>
+                        }
+                } else<span class="cov0" title="0"> if login.Role == "administrator" </span><span class="cov0" title="0">{
+                        fmt.Println("Administrator")
+                }</span> else<span class="cov0" title="0"> {
+                        http.Error(w, "Invalid role", http.StatusBadRequest)
+                }</span>
+
+                //fmt.Printf("%+v\n", login)
+        }
+}
+
+func RegisterHandler(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                // Read JSON payload
+                var register util.Register
+                err := util.DecodeJSONRequestBody(r, &amp;register)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Invalid JSON:", err)
+                        return
+                }</span>
+
+                // Hash the password
+                <span class="cov0" title="0">err = util.HashPassword(&amp;register.Password)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Error hashing password:", err)
+                        return
+                }</span>
+
+                //fmt.Println("Hashed Password:", register.Password)
+
+                // Check the role
+                <span class="cov0" title="0">if register.Role == "student" </span><span class="cov0" title="0">{
+                        // Fetch student insert query
+                        fmt.Println("Student")
+                        err := util.InsertStudent(db, register)
+                        // Error in register
+                        if err != nil </span><span class="cov0" title="0">{
+                                // Check if the error is due to a unique constraint violation
+                                pqErr, ok := err.(*pq.Error)
+                                if ok &amp;&amp; pqErr.Code == "23505" </span><span class="cov0" title="0">{ // PostgreSQL error code for unique violation
+                                        // Send response code 400 to front end
+                                        fmt.Println("Insert failed: Unique constraint violation")
+                                        // Set the HTTP status code to 400 (Bad Request)
+                                        w.WriteHeader(http.StatusBadRequest)
+                                        // Send a response message
+                                        w.Write([]byte("Bad Request - Existing email"))
+                                }</span> else<span class="cov0" title="0"> {
+                                        // Handle other types of errors
+                                        // http.Error(w, "Error inserting into database", http.StatusInternalServerError)
+                                        // Handle other types of errors
+                                        errorMessage := fmt.Sprintf("Error inserting into database: %v", err) // This is more specific because it shows postgres errors, you can remove it if you want.
+                                        http.Error(w, errorMessage, http.StatusInternalServerError)
+                                }</span>
+                        } else<span class="cov0" title="0"> {
+                                // Successful register
+                                response := util.RegisterResponse{
+                                        Result: true,
+                                }
+
+                                // Convert response to JSON
+                                jsonResponse, err := json.Marshal(response)
+                                if err != nil </span><span class="cov0" title="0">{
+                                        http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
+                                        return
+                                }</span>
+
+                                // Write the response status code
+                                <span class="cov0" title="0">w.WriteHeader(http.StatusOK)
+
+                                // Set the Content-Type header to application/json
+                                w.Header().Set("Content-Type", "application/json")
+
+                                // Write the JSON response to the client
+                                w.Write(jsonResponse)</span>
+                        }
+                } else<span class="cov0" title="0"> if register.Role == "tutor" </span><span class="cov0" title="0">{
+                        // Insert into student rable
+                        fmt.Println("Tutor")
+                        err := util.InsertTutor(db, register)
+                        // Error in register
+                        if err != nil </span><span class="cov0" title="0">{
+                                // Check if the error is due to a unique constraint violation
+                                pqErr, ok := err.(*pq.Error)
+                                if ok &amp;&amp; pqErr.Code == "23505" </span><span class="cov0" title="0">{ // PostgreSQL error code for unique violation
+                                        // Send response code 400 to front end
+                                        fmt.Println("Insert failed: Unique constraint violation")
+                                        // Set the HTTP status code to 400 (Bad Request)
+                                        w.WriteHeader(http.StatusBadRequest)
+                                        // Send a response message
+                                        w.Write([]byte("Bad Request - Existing email"))
+                                }</span> else<span class="cov0" title="0"> {
+                                        // Handle other types of errors
+                                        fmt.Printf("error: %s\n", err)
+                                        http.Error(w, "Error inserting into database", http.StatusInternalServerError)
+                                }</span>
+                        } else<span class="cov0" title="0"> {
+                                // Successful register
+                                response := util.RegisterResponse{
+                                        Result: true,
+                                }
+
+                                // Convert response to JSON
+                                jsonResponse, err := json.Marshal(response)
+                                if err != nil </span><span class="cov0" title="0">{
+                                        http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
+                                        return
+                                }</span>
+
+                                // Write the response status code
+                                <span class="cov0" title="0">w.WriteHeader(http.StatusOK)
+
+                                // Set the Content-Type header to application/json
+                                w.Header().Set("Content-Type", "application/json")
+
+                                // Write the JSON response to the client
+                                w.Write(jsonResponse)</span>
+                        }
+                } else<span class="cov0" title="0"> if register.Role == "administrator" </span><span class="cov0" title="0">{
+                        fmt.Println("Administrator")
+                }</span>
+
+                <span class="cov0" title="0">fmt.Printf("%+v\n", register)</span>
+        }
+}
+
+/*
+Request Body (JSON):
+{
+  “id”: “string” (required)
+  ‘’date”: “YYYY-MM-DD” (required)
+  “time_block_id_list”: [unique &lt;time_block_id&lt;Int&gt;&gt;]
+}
+*/
+// Add tutor availability
+func AddTutorAvailability(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+                //_, claims, _ := jwtauth.FromContext(r.Context())
+                //w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+
+                // Set response headers
+                w.Header().Set("Content-Type", "application/json")
+
+                // Write the response status code
+                w.WriteHeader(http.StatusOK)
+
+                // Read JSON payload
+                var tutorAvailability util.TutorAvailability
+                err := util.DecodeJSONRequestBody(r, &amp;tutorAvailability)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Invalid JSON:", err)
+                        http.Error(w, "Inavlid JSON", http.StatusBadRequest)
+                        return
+                }</span>
+                // Parse the date
+                <span class="cov8" title="1">date, err := time.Parse("2006-01-02", tutorAvailability.Date)
+                if err != nil </span><span class="cov0" title="0">{
+                        http.Error(w, "Invalid date format", http.StatusBadRequest)
+                        return
+                }</span>
+
+                //dateStr := date.Format("2006-01-02")
+
+                // Check if timeslots exist for that date, delete if exist
+                <span class="cov8" title="1">exists, err := util.PeekAvailabilityDate(db, tutorAvailability)
+                if err != nil </span><span class="cov8" title="1">{
+                        http.Error(w, "WHOOPS!", http.StatusInternalServerError)
+                }</span>
+                // Delete existing entries of tutor on that date
+                <span class="cov8" title="1">if exists </span><span class="cov0" title="0">{
+                        util.DeleteTutorAvailability(db, tutorAvailability.ID, date)
+                }</span>
+                // Add timeslot to database
+                //fmt.Println("Json body: ", TutorAvailability) // line for debug
+                <span class="cov8" title="1">for _, id := range tutorAvailability.TimeBlockIdList </span><span class="cov8" title="1">{
+                        err := util.InsertTutorAvailability(db, tutorAvailability, id)
+                        if err != nil </span><span class="cov8" title="1">{
+                                fmt.Println("Insert failed: ", err)
+                                http.Error(w, "Inavlid JSON", http.StatusInternalServerError)
+                        }</span>
+                }
+                <span class="cov8" title="1">fmt.Println("Insert complete.")
+                // Insert complete -&gt; Send response
+                response := struct {
+                        Date            time.Time `json:"date"`
+                        TimeBlockIdList []int     `json:"time_block_id_list"`
+                }{
+                        Date:            date,
+                        TimeBlockIdList: tutorAvailability.TimeBlockIdList,
+                }
+
+                // Marshal response to JSON
+                jsonResponse, err := json.Marshal(response)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Printf("Error encoding JSON response: %v\n", err)
+                        http.Error(w, "Error encoding JSON response", http.StatusInternalServerError)
+                        return
+                }</span>
+
+                // Write response
+                <span class="cov8" title="1">w.Write(jsonResponse)</span>
+        }
+}
+
+// Get tutor availability
+func GetTutorAvailability(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                // This will store the information from token
+                //_, claims, _ := jwtauth.FromContext(r.Context())
+
+                // Set response headers
+                w.Header().Set("Content-Type", "application/json")
+
+                // Write the response status code
+                w.WriteHeader(http.StatusOK)
+
+                // Write initial response content
+                //w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+
+                var tutorAvailability util.TutorAvailability
+                err := util.DecodeJSONRequestBody(r, &amp;tutorAvailability)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Invalid JSON:", err)
+                        http.Error(w, "Inavlid JSON", http.StatusBadRequest)
+                        return
+                }</span>
+
+                <span class="cov0" title="0">if tutorAvailability.ID == 0 ||
+                        tutorAvailability.Date == "" </span><span class="cov0" title="0">{
+                        http.Error(w, "Required field/s are missing", http.StatusBadRequest)
+                        return
+                }</span>
+
+                // Parse date string
+                <span class="cov0" title="0">date, err := time.Parse("2006-01-02", tutorAvailability.Date)
+                if err != nil </span><span class="cov0" title="0">{
+                        http.Error(w, "Invalid date format", http.StatusBadRequest)
+                        return
+                }</span>
+
+                <span class="cov0" title="0">dateStr := date.Format("2006-01-02")
+
+                // Fetch tutor availability from database
+                timeBlockIDs, err := util.GetAvailability(db, tutorAvailability.ID, dateStr)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Printf("Error fetching tutor availability: %v\n", err)
+                        http.Error(w, "Error fetching tutor availability", http.StatusInternalServerError)
+                        return
+                }</span>
+
+                // Prepare response
+                <span class="cov0" title="0">response := struct {
+                        TimeBlockIDList []int `json:"time_block_id_list"`
+                        //TimeBlockDate   string `json:"date"`
+                }{
+                        TimeBlockIDList: timeBlockIDs,
+                        //TimeBlockDate:   dateStr,
+                }
+
+                // Marshal response to JSON
+                jsonResponse, err := json.Marshal(response)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Printf("Error encoding JSON response: %v\n", err)
+                        http.Error(w, "Error encoding JSON response", http.StatusInternalServerError)
+                        return
+                }</span>
+
+                // Write response
+                <span class="cov0" title="0">w.Write(jsonResponse)</span>
+        }
+}
+
+// fixed
+// SearchTutorAvailability searches all tutor availability for particular time slots.
+func SearchTutorAvailability(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                // Decode request body into TutorAvailability struct
+                var tutorAvailability util.TutorAvailability
+                err := util.DecodeJSONRequestBody(r, &amp;tutorAvailability)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Invalid JSON:", err)
+                        http.Error(w, "Invalid JSON", http.StatusBadRequest)
+                        return
+                }</span>
+
+                // Validate request data
+                <span class="cov0" title="0">if tutorAvailability.Date == "" || len(tutorAvailability.TimeBlockIdList) == 0 </span><span class="cov0" title="0">{
+                        http.Error(w, "Date and time_block_id_list are required", http.StatusBadRequest)
+                        return
+                }</span>
+
+                // Search for tutor availability based on date and time block IDs
+                <span class="cov0" title="0">tutorIDs, err := util.SearchAvailability(db, tutorAvailability.Date, tutorAvailability.TimeBlockIdList)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Error searching tutor availability: ", err)
+                        http.Error(w, "Error searching table", http.StatusInternalServerError)
+                        return
+                }</span>
+
+                // Fetch tutor details based on tutor IDs
+                <span class="cov0" title="0">var tutors []util.User
+                for _, tutorID := range tutorIDs </span><span class="cov0" title="0">{
+                        // Get the tutor's email
+                        tutorEmail, err := util.GetTutorEmailByID(db, tutorID)
+                        if err != nil </span><span class="cov0" title="0">{
+                                fmt.Println("Error fetching tutor email: ", err)
+                                http.Error(w, "Error fetching tutor email", http.StatusInternalServerError)
+                                return
+                        }</span>
+
+                        // Fetch tutor details based on email
+                        <span class="cov0" title="0">tutor, err := util.GetTutorUser(db, tutorEmail)
+                        if err != nil </span><span class="cov0" title="0">{
+                                fmt.Println("Error fetching tutor details: ", err)
+                                http.Error(w, "Error fetching tutor details", http.StatusInternalServerError)
+                                return
+                        }</span>
+                        <span class="cov0" title="0">tutors = append(tutors, tutor)</span>
+                }
+
+                // If tutors is empty redeclare it
+                <span class="cov0" title="0">if len(tutors) == 0 </span><span class="cov0" title="0">{
+                        tutors = []util.User{}
+                }</span>
+                // Prepare response
+                <span class="cov0" title="0">response := struct {
+                        TutorList []util.User `json:"tutor_list"`
+                }{
+                        TutorList: tutors,
+                }
+
+                // Marshal response to JSON
+                jsonResponse, err := json.Marshal(response)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Printf("Error encoding JSON response: %v\n", err)
+                        http.Error(w, "Error encoding JSON response", http.StatusInternalServerError)
+                        return
+                }</span>
+
+                // Write response
+                <span class="cov0" title="0">w.Header().Set("Content-Type", "application/json")
+                w.WriteHeader(http.StatusOK)
+                w.Write(jsonResponse)</span>
+        }
+}
+
+// Add tutoring session
+func AddTutoringSession(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                //_, claims, _ := jwtauth.FromContext(r.Context())
+                //w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+                // Read JSON payload
+                var session util.TutoringSession
+                err := util.DecodeJSONRequestBody(r, &amp;session)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Invalid JSON:", err)
+                        http.Error(w, "Error parsing JSON", http.StatusBadRequest)
+                        return
+                }</span>
+
+                <span class="cov0" title="0">var tutor util.TutorAvailability
+                tutor.ID = session.TutorID
+                // Check if tutor has availability in timeslot
+                for _, id := range session.TimeBlockIDList </span><span class="cov0" title="0">{
+                        exists, err := util.PeekTimeSlot(db, session, id)
+                        if err != nil </span><span class="cov0" title="0">{
+                                fmt.Println("Error checking tutor_availability: ", err)
+                                http.Error(w, "HEEEEEEELP", http.StatusBadRequest)
+                        }</span>
+                        <span class="cov0" title="0">if !exists </span><span class="cov0" title="0">{
+                                http.Error(w, "Tutor is not available", http.StatusUnauthorized) // status code 401
+                                return
+                        }</span>
+                }
+                // Create session if they are available
+                <span class="cov0" title="0">err = util.InsertTutoringSession(db, session)
+                if err != nil </span><span class="cov0" title="0">{
+                        http.Error(w, "Error inserting into tutoring session", http.StatusInternalServerError) // status code 500
+                        return
+                }</span>
+                // Delete all availability shown in time_block_id_list
+                <span class="cov0" title="0">for _, id := range session.TimeBlockIDList </span><span class="cov0" title="0">{
+                        err = util.DeleteSomeTutorAvailability(db, session, id)
+                        if err != nil </span><span class="cov0" title="0">{
+                                http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+                                return
+                        }</span>
+                }
+                // Email tutor and student
+                <span class="cov0" title="0">subject := fmt.Sprintf("TutorMe %s", session.Date)
+                body := fmt.Sprintf("A new session has been made for %s", session.Date) // Maybe add time
+                tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
+                if err != nil </span><span class="cov0" title="0">{
+                        http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+                        return
+                }</span>
+                <span class="cov0" title="0">studentEmail, err := util.GetStudentEmailByID(db, session.StudentID)
+                if err != nil </span><span class="cov0" title="0">{
+                        http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+                        return
+                }</span>
+                <span class="cov0" title="0">recipients := []string{tutorEmail, studentEmail}
+                err = util.SendEmail(recipients, subject, body)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Error sending email: ", err)
+                }</span>
+
+                // Prepare response
+                <span class="cov0" title="0">response := struct {
+                        TimeBlockIDList []int `json:"time_block_id_list"`
+                }{
+                        TimeBlockIDList: session.TimeBlockIDList,
+                }
+
+                // Marshal response to JSON
+                jsonResponse, err := json.Marshal(response)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Printf("Error encoding JSON response: %v\n", err)
+                        http.Error(w, "Error encoding JSON response", http.StatusInternalServerError)
+                        return
+                }</span>
+
+                // Write response
+                <span class="cov0" title="0">w.Header().Set("Content-Type", "application/json")
+                w.WriteHeader(http.StatusOK)
+                w.Write(jsonResponse)</span>
+        }
+}
+
+// should work now
+// Get tutoring session list
+func GetTutoringSessionList(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                // This will store the information from token
+                //_, claims, _ := jwtauth.FromContext(r.Context())
+                //w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+
+                // Pull role and id from JSON body
+                var user util.User
+                err := util.DecodeJSONRequestBody(r, &amp;user)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Invalid JSON:", err)
+                        http.Error(w, "Invalid JSON", http.StatusBadRequest)
+                        return
+                }</span>
+
+                <span class="cov0" title="0">tutoringSessions, err := util.GetTutoringSessionList(db, user)
+
+                if err != nil </span><span class="cov0" title="0">{
+                        http.Error(w, "Whoopsie!", http.StatusInternalServerError)
+                        return
+                }</span>
+
+                // If tutorinSessions is empty redeclare it
+                <span class="cov0" title="0">if len(tutoringSessions) == 0 </span><span class="cov0" title="0">{
+                        tutoringSessions = []util.TutoringSession{}
+                }</span>
+                // Prepare response
+                <span class="cov0" title="0">response := struct {
+                        ID               int                    `json:"id"`
+                        Role             string                 `json:"role"`
+                        TutoringSessions []util.TutoringSession `json:"tutoring_session_list"`
+                }{
+                        ID:               user.ID,
+                        Role:             user.Role,
+                        TutoringSessions: tutoringSessions,
+                }
+
+                // Marshal response to JSON
+                jsonResponse, err := json.Marshal(response)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Printf("Error encoding JSON response: %v\n", err)
+                        http.Error(w, "Error encoding JSON response", http.StatusInternalServerError)
+                        return
+                }</span>
+
+                // Write response
+                <span class="cov0" title="0">w.Header().Set("Content-Type", "application/json")
+                w.WriteHeader(http.StatusOK)
+                w.Write(jsonResponse)</span>
+
+        }
+}
+
+// Deletes tutor session
+func DeleteTutorSession(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                //_, claims, _ := jwtauth.FromContext(r.Context())
+                //w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+                // Read JSON payload
+                type ID struct {
+                        ID int `json:"session_id"`
+                }
+                var sessionID ID
+                err := util.DecodeJSONRequestBody(r, &amp;sessionID)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Invalid JSON:", err)
+                        http.Error(w, "Error parsing JSON", http.StatusBadRequest) // status code 400
+                        return
+                }</span>
+
+                // get tutor session
+                <span class="cov0" title="0">var session util.TutoringSession
+                session, err = util.GetTutorSession(db, sessionID.ID)
+                if err != nil </span><span class="cov0" title="0">{
+                        http.Error(w, "Error fetching tutoring session", http.StatusUnauthorized) // status code 401
+                        return
+                }</span>
+
+                // Delete Session session
+                <span class="cov0" title="0">err = util.DeleteTutoringSession(db, sessionID.ID)
+                if err != nil </span><span class="cov0" title="0">{
+                        http.Error(w, "Error deleting tutoring session", http.StatusUnauthorized) // status code 401
+                        return
+                }</span>
+
+                <span class="cov0" title="0">var tutorAvailability util.TutorAvailability
+                tutorAvailability.ID = session.TutorID
+                tutorAvailability.Date = session.Date
+                tutorAvailability.TimeBlockIdList = session.TimeBlockIDList
+                // Return all availability shown in time_block_id_list
+                for _, id := range tutorAvailability.TimeBlockIdList </span><span class="cov0" title="0">{
+                        err = util.InsertTutorAvailability(db, tutorAvailability, id)
+                        if err != nil </span><span class="cov0" title="0">{
+                                http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+                                return
+                        }</span>
+                }
+
+                // Email tutor and student
+                <span class="cov0" title="0">subject := fmt.Sprintf("TutorMe: %s", session.Date)
+                body := fmt.Sprintf("Session ID:%d has been deleted.", session.TutoringSessionID)
+                tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
+                if err != nil </span><span class="cov0" title="0">{
+                        http.Error(w, "Error getting tutor email", http.StatusInternalServerError) // status code 500
+                        return
+                }</span>
+                <span class="cov0" title="0">studentEmail, err := util.GetStudentEmailByID(db, session.StudentID)
+                if err != nil </span><span class="cov0" title="0">{
+                        http.Error(w, "Error getting student email", http.StatusInternalServerError) // status code 500
+                        return
+                }</span>
+                <span class="cov0" title="0">recipients := []string{tutorEmail, studentEmail}
+                err = util.SendEmail(recipients, subject, body)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Error sending email: ", err)
+                }</span>
+
+                // Prepare response
+                <span class="cov0" title="0">response := struct {
+                        TimeBlockIDList  []int `json:"time_block_id_list"`
+                        SessionIDDeleted int   `json:"session_id_deleted"`
+                }{
+                        TimeBlockIDList:  session.TimeBlockIDList,
+                        SessionIDDeleted: sessionID.ID,
+                }
+
+                // Marshal response to JSON
+                jsonResponse, err := json.Marshal(response)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Printf("Error encoding JSON response: %v\n", err)
+                        http.Error(w, "Error encoding JSON response", http.StatusInternalServerError) // status code 500
+                        return
+                }</span>
+
+                // Write response
+                <span class="cov0" title="0">w.Header().Set("Content-Type", "application/json")
+                w.WriteHeader(http.StatusOK)
+                w.Write(jsonResponse)</span>
+        }
+}
+
+// Updates the tutor session's date and time block id list
+func EditTutorSession(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                //w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
+                // Read JSON payload
+                var session util.TutoringSession
+                err := util.DecodeJSONRequestBody(r, &amp;session)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Invalid JSON:", err)
+                        http.Error(w, "Error parsing JSON", http.StatusBadRequest) // status code 400
+                        return
+                }</span>
+
+                //get tutorID from session
+                <span class="cov0" title="0">session.TutorID, err = util.GetTutorFromSession(db, session)
+                if err != nil </span><span class="cov0" title="0">{
+                        http.Error(w, "Error searching tutoring_session for tutor_id", http.StatusInternalServerError) // status code 500
+                        return
+                }</span>
+
+                //get time_block_id_list from session
+                <span class="cov0" title="0">oldTimeBlockIdList, err := util.GetTimeBlockIdListFromSession(db, session)
+                if err != nil </span><span class="cov0" title="0">{
+                        http.Error(w, "Error searching tutoring_session for time_block_id_list", http.StatusInternalServerError) // status code 500
+                        return
+                }</span>
+
+                // get old date from session
+                <span class="cov0" title="0">oldDate, err := util.GetDateFromSession(db, session)
+                if err != nil </span><span class="cov0" title="0">{
+                        http.Error(w, "Error searching tutoring_session for date", http.StatusInternalServerError) // status code 500
+                        return
+                }</span>
+                // Check if tutor is available on that date and time before updating
+                <span class="cov0" title="0">for _, id := range session.TimeBlockIDList </span><span class="cov0" title="0">{
+                        exists, err := util.PeekTimeSlot(db, session, id)
+                        if err != nil </span><span class="cov0" title="0">{
+                                fmt.Println("Error checking tutor_availability: ", err)
+                                http.Error(w, "HEEEEEEELP", http.StatusInternalServerError) // Code 500
+                        }</span>
+                        <span class="cov0" title="0">if !exists </span><span class="cov0" title="0">{
+                                http.Error(w, "Tutor is not available", http.StatusUnauthorized) // status code 401
+                                return
+                        }</span>
+                }
+
+                // Update tutor session with new date and time_block_list
+                <span class="cov0" title="0">err = util.UpdateTutorSessionDateAndTimeBlockList(db, session)
+                if err != nil </span><span class="cov0" title="0">{
+                        http.Error(w, "Error updating tutoring_session", http.StatusInternalServerError) // status code 500
+                        return
+                }</span>
+
+                // Delete all availability shown in time_block_id_list -- BUG HERE?
+                <span class="cov0" title="0">for _, id := range session.TimeBlockIDList </span><span class="cov0" title="0">{
+                        err = util.DeleteSomeTutorAvailability(db, session, id)
+                        if err != nil </span><span class="cov0" title="0">{
+                                http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+                                return
+                        }</span>
+                }
+
+                // Add old availability shown in oldTimeBlockIdList -- BUG HERE??
+                <span class="cov0" title="0">if oldDate.Before(time.Now()) </span><span class="cov0" title="0">{
+                        var tutorAvailability util.TutorAvailability
+                        tutorAvailability.ID = session.TutorID
+                        tutorAvailability.Date = oldDate.Format("2006-01-02 15:04:05")
+                        for _, id := range oldTimeBlockIdList </span><span class="cov0" title="0">{
+                                // requires old date and tutor id
+                                err = util.InsertTutorAvailability(db, tutorAvailability, id)
+                                if err != nil </span><span class="cov0" title="0">{
+                                        http.Error(w, "Error adding tutor availability", http.StatusInternalServerError) // status code 500
+                                        return
+                                }</span>
+                        }
+                }
+
+                <span class="cov0" title="0">fmt.Println("Row updated successfully!")
+                date, err := util.ParseDate(session.Date)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Error parsing date ;_; ", err)
+                        http.Error(w, "Unexpected error", http.StatusInternalServerError) // status code 500
+                        return
+                }</span>
+
+                // Convert time block list to string
+                <span class="cov0" title="0">timeString, err := util.TimeBlockToString(db, session)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Error formating time block to string: ", err)
+                        http.Error(w, "Unexpected error", http.StatusInternalServerError) // status code 500
+                        return
+                }</span>
+                // Email tutor and student involved
+                <span class="cov0" title="0">subject := fmt.Sprintf("TutorMe: %s Session Change", session.Date)
+                body := fmt.Sprintf("Session ID:%d's date and time have been moved to: %s from %s ", session.TutoringSessionID, session.Date, timeString)
+                tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Error getting tutor email: ", err)
+                        http.Error(w, "Error getting tutor email", http.StatusInternalServerError) // status code 500
+                        return
+                }</span>
+                <span class="cov0" title="0">studentEmail, err := util.GetStudentEmailBySessionID(db, session)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Error getting student email: ", err)
+                        http.Error(w, "Error getting student email", http.StatusInternalServerError) // status code 500
+                        return
+                }</span>
+                <span class="cov0" title="0">recipients := []string{tutorEmail, studentEmail}
+                err = util.SendEmail(recipients, subject, body)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Error sending email: ", err)
+                        http.Error(w, "Error sending email", http.StatusInternalServerError) // status code 500
+                        return
+                }</span>
+
+                // Prepare response
+                <span class="cov0" title="0">response := struct {
+                        TutorSessionID  int
+                        SessionDate     time.Time
+                        TimeBlockIDList []int `json:"time_block_id_list"`
+                }{
+                        TutorSessionID:  session.TutoringSessionID,
+                        SessionDate:     date,
+                        TimeBlockIDList: session.TimeBlockIDList,
+                }
+
+                // Marshal response to JSON
+                jsonResponse, err := json.Marshal(response)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Printf("Error encoding JSON response: %v\n", err)
+                        http.Error(w, "Error encoding JSON response", http.StatusInternalServerError) // status code 500
+                        return
+                }</span>
+
+                // Write response
+                <span class="cov0" title="0">w.Header().Set("Content-Type", "application/json")
+                w.WriteHeader(http.StatusOK)
+                w.Write(jsonResponse)</span>
+        }
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
