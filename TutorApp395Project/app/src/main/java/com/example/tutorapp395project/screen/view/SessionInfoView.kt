@@ -74,7 +74,8 @@ fun FreeSessionInfoCard(
     timeslot: String,
     onDelete: () -> Unit = { },
     calendarState: UseCaseState,
-    studentViewModel: StudentViewModel
+    studentViewModel: StudentViewModel,
+    opponentEmail: String
 ){
     Card(
         modifier = Modifier
@@ -82,7 +83,7 @@ fun FreeSessionInfoCard(
             .wrapContentHeight()
             .padding(3.dp)
     ) {
-        FreeSessionInfo(dateIn, timeslot, onDelete, calendarState, studentViewModel)
+        FreeSessionInfo(dateIn, timeslot, onDelete, calendarState, opponentEmail, studentViewModel)
     }
 }
 
@@ -197,6 +198,7 @@ fun FreeSessionInfo(
     timeslot: String,
     onDelete: () -> Unit = { },
     calendarState: UseCaseState,
+    opponentEmail: String,
     studentViewModel: StudentViewModel,
 ) {
 
@@ -232,10 +234,10 @@ fun FreeSessionInfo(
                 Button(
                     onClick = {
                         coroutineScope.launch {
-//                            val intent = Intent(Intent.ACTION_SENDTO).apply {
-//                                data = Uri.parse("mailto:${}")
-//                            }
-//                            context.startActivity(intent)
+                            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                data = Uri.parse("mailto:${opponentEmail}")
+                            }
+                            context.startActivity(intent)
                         }
                     },
                     modifier = Modifier
