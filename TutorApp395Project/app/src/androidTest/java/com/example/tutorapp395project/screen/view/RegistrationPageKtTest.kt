@@ -32,25 +32,37 @@ class RegistrationPageKtTest {
         }
     }
 
+    /*
+     * Purpose: Test if the registration page header is displayed correctly
+     */
     @Test
     fun testRegistrationText() {
         composeTestRule.onNodeWithText("Choose Your Role").assertIsDisplayed()
     }
 
+    /*
+     * Purpose: Test if the role buttons are displayed correctly
+     */
     @Test
     fun testRoleButton() {
         composeTestRule.onNodeWithText("Student").assertIsDisplayed()
         composeTestRule.onNodeWithText("Tutor").assertIsDisplayed()
     }
 
+    /*
+     * Purpose: Test if the registration fields are displayed correctly
+     */
     @Test
     fun testRegistrationFields() {
         navController.navigate(ScreenGraph.studentGraph.route)
         composeTestRule.onNodeWithText("First Name").assertIsDisplayed()
     }
 
+    /*
+     * Purpose: Test if the registration button is displayed correctly
+     */
     @Test
-    fun testRegistrationPage() {
+    fun testRegistrationButton() {
         composeTestRule.onNodeWithText("Register").assertIsDisplayed()
     }
 }
