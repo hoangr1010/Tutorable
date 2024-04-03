@@ -60,4 +60,47 @@ class TutorListKtTest {
         composeTestRule.onNodeWithText("Roronoa Zoro", useUnmergedTree = false).assertIsDisplayed()
         composeTestRule.onNodeWithText("Geography", useUnmergedTree = false).assertIsDisplayed()
     }
+
+    /*
+     * Purpose: Test the tutor card to ensure that it is displayed properly
+     */
+    @Test
+    fun testTutorCardDisplayedCorrectly() {
+        val name = "Roronoa Zoro"
+        val subject = "Geography"
+
+        composeTestRule.setContent {
+            TutorCard(
+                painter = painterResource(id = R.drawable.image2),
+                name = name,
+                subject = subject,
+                modifier = Modifier,
+                onClick = {}
+            )
+        }
+
+        composeTestRule.onNodeWithText(name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(subject).assertIsDisplayed()
+    }
+
+    /*
+     * Purpose: Test the tutor card to not be displayed when tutorCard is empty
+     */
+    @Test
+    fun testTutorCard_NotDisplayedWhenNameIsEmpty() {
+        val name = ""
+        val subject = "Geography"
+
+        composeTestRule.setContent {
+            TutorCard(
+                painter = painterResource(id = R.drawable.image2),
+                name = name,
+                subject = subject,
+                modifier = Modifier,
+                onClick = {}
+            )
+        }
+
+        composeTestRule.onNodeWithText(name).assertDoesNotExist()
+    }
 }

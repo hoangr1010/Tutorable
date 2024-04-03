@@ -7,6 +7,7 @@ import com.example.tutorapp395project.screen.view.SessionView
 import com.example.tutorapp395project.viewModel.AuthViewModel
 import com.example.tutorapp395project.viewModel.HomeViewModel
 import com.example.tutorapp395project.viewModel.StudentViewModel
+import io.mockk.every
 import org.junit.Rule
 import org.junit.Test
 
@@ -46,9 +47,33 @@ class StudentScheduleKtTest {
         val date = "3:00PM - 4:00PM"
 
         composeTestRule.setContent {
-            SessionView(time = "3:00PM - 4:00PM", date = "January 24th, 2024", subject = "Math",
-                        with = "Tutor", person = "Karen McTutor")
+            SessionView(
+                time = "3:00PM - 4:00PM", date = "January 24th, 2024", subject = "Math",
+                with = "Tutor", person = "Karen McTutor"
+            )
         }
         composeTestRule.onNodeWithText(date).assertExists()
+    }
+
+    /*
+    * Purpose: Test if the StudentAppointmentLayout displays "No appointments scheduled"
+    *          when there are no appointments
+     */
+    @Test
+    fun studentAppointmentLayout_displayNoAppointments() {
+        val expectedText = "No appointments scheduled"
+
+        // Mock the ViewModel to return an empty list of sessions
+        every { studentViewModel.sessionState.value.session_list } returns emptyList()
+
+        composeTestRule.setContent {
+            StudentAppointmentLayout(
+                studentViewModel = studentViewModel,
+                homeViewModel = homeViewModel,
+                modifier = Modifier,
+                authViewModel = authViewModel
+            )
+        }
+        composeTestRule.onNodeWithText(expectedText).assertExists()
     }
 }
