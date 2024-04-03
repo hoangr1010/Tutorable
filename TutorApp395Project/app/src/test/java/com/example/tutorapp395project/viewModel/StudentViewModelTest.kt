@@ -28,6 +28,7 @@ import retrofit2.Response
 @RunWith(MockitoJUnitRunner::class)
 class StudentViewModelTest {
 
+    // Mock StudentViewModel, AuthViewModel, and UserRepository for testing purposes
     @Mock
     private lateinit var studentViewModel: StudentViewModel
     @Mock
@@ -35,6 +36,9 @@ class StudentViewModelTest {
     @Mock
     private lateinit var userRepository: UserRepository
 
+    /*
+
+     */
     @Before
     fun setUp() {
         userRepository = mock(UserRepository::class.java)
@@ -42,12 +46,18 @@ class StudentViewModelTest {
         studentViewModel = StudentViewModel(userRepository, authViewModel)
     }
 
+    /*
+     * Purpose: Test that toggleTimeSlotId adds the id to the set
+     */
     @Test
     fun toggleTimeSlotId_addsIdToSet() {
         studentViewModel.toggleTimeSlotId(1)
         assertEquals(setOf(1), studentViewModel.selectedTimeSlotIdsSet.value)
     }
 
+    /*
+     * Purpose: Test that toggleTimeSlotId removes the id from the set
+     */
     @Test
     fun toggleTimeSlotId_removesIdFromSet() {
         studentViewModel.toggleTimeSlotId(1)
@@ -55,6 +65,9 @@ class StudentViewModelTest {
         assertEquals(setOf<Int>(), studentViewModel.selectedTimeSlotIdsSet.value)
     }
 
+    /*
+     * Purpose: Test that toggleTimeSlotId updates the state of the set
+     */
     @Test
     fun toggleTimeSlotId_updatesState() {
         // Initial state
@@ -69,6 +82,9 @@ class StudentViewModelTest {
         assertEquals(setOf<Int>(), studentViewModel.selectedTimeSlotIdsSet.value)
     }
 
+    /*
+     * Purpose: Test that getSessionsForStudent calls the UserRepository
+     */
     @Test
     fun getSessionsForStudent_callsUserRepository() = runBlockingTest {
         val role = "student"
@@ -85,6 +101,9 @@ class StudentViewModelTest {
         verify(userRepository).getSessionList(sessionRequest)
     }
 
+    /*
+     * Purpose: Test that getSessionsForStudent updates the state
+     */
     @Test
     fun getSessionsForStudent_updatesState() = runBlockingTest {
         val role = "student"
@@ -103,6 +122,10 @@ class StudentViewModelTest {
             studentViewModel.sessionState.value.session_list
         )
     }
+
+    /*
+     * Purpose: Test that deleteSession calls the userRepository
+     */
     @Test
     fun deleteSession_callsUserRepository() = runBlockingTest {
         val sessionId = 1
@@ -118,6 +141,9 @@ class StudentViewModelTest {
         verify(userRepository).deleteSession(deleteSessionRequest)
     }
 
+    /*
+     * Purpose: Test that deleteSession updates the state
+     */
     @Test
     fun deleteSession_updatesState() = runBlockingTest {
         val sessionId = 1
@@ -135,6 +161,9 @@ class StudentViewModelTest {
         )
     }
 
+    /*
+     * Purpose: Test that editSessionTime calls the userRepository
+     */
     @Test
     fun editSessionTime_callsUserRepository() = runBlockingTest {
         val sessionId = 1
@@ -157,6 +186,9 @@ class StudentViewModelTest {
         verify(userRepository).editSessionTime(editSessionTimeRequest)
     }
 
+    /*
+     * Purpose: Test that createNewSession calls the userRepository
+     */
     @Test
     fun createNewSession_callsUserRepository() = runBlockingTest {
         val tutorId = 1
@@ -183,6 +215,9 @@ class StudentViewModelTest {
         verify(userRepository).createSession(createSessionRequest)
     }
 
+    /*
+     * Purpose: Test that tutorFilter calls the userRepository
+     */
     @Test
     fun tutorFilter_callsUserRepository() = runBlockingTest {
         val tutor: Tutor = Tutor(

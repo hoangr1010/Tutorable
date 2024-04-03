@@ -17,19 +17,25 @@ import org.mockito.junit.MockitoJUnitRunner
 @RunWith(MockitoJUnitRunner::class)
 class AuthViewModelTest {
 
+    // Mock the AuthRepository and AuthViewModel for testing purposes
     @Mock
     private lateinit var authRepository: AuthRepository
     private lateinit var authViewModel: AuthViewModel
 
+    /*
+     * Purpose: Set up the AuthRepository and AuthViewModel for testing
+     */
     @Before
     fun setUp() {
         authRepository = Mockito.mock(AuthRepository::class.java)
         authViewModel = AuthViewModel(authRepository)
     }
 
+    /*
+     * Purpose: Test that onLoginChange updates the loginDataState
+     */
     @Test
     fun onLoginChange_updatesLoginDataState() = runBlockingTest {
-        val initialLoginData = LoginData()
         val updatedLoginData = LoginData(email = "test@example.com", password = "password", role = "student")
 
         authViewModel.onLoginChange { updatedLoginData }
@@ -37,9 +43,11 @@ class AuthViewModelTest {
         assertEquals(updatedLoginData, authViewModel.loginDataState.value)
     }
 
+    /*
+     * Purpose: Test that onRegisterChange updates the registerDataState
+     */
     @Test
     fun onRegisterChange_updatesRegisterDataState() = runBlockingTest {
-        val initialRegisterData = RegisterData()
         val updatedRegisterData = RegisterData(email = "test@example.com", password = "password", role = "student")
 
         authViewModel.onRegisterChange { updatedRegisterData }
@@ -47,6 +55,9 @@ class AuthViewModelTest {
         assertEquals(updatedRegisterData, authViewModel.registerDataState.value)
     }
 
+    /*
+     * Purpose: Test that onLogout resets the user state and token
+     */
     @Test
     fun onLogout_resetsUserStateAndToken() = runBlockingTest {
         authViewModel.onLogout()
@@ -54,4 +65,59 @@ class AuthViewModelTest {
         assertEquals("", authViewModel.token.value)
         assertEquals("", authViewModel.UserState.value.role)
     }
+
+
+    /*
+     * Purpose: Test that onLogin calls the login method of AuthRepository with the correct parameters
+     */
+/*    @Test
+    fun onLogin_callsAuthRepositoryLoginForStudent() = runBlockingTest {
+        val loginData = LoginData(email = "test@example.com", password = "password", role = "student")
+        authViewModel.onLoginChange { loginData }
+
+        authViewModel.onLogin()
+
+        verify(authRepository).login(any())
+    }
+
+    *//*
+     * Purpose: Test that onRegister calls the registerAsStudent method of AuthRepository based
+     *          on the role in registerDataState
+     *//*
+    @Test
+    fun onRegister_callsAuthRepositoryRegisterForStudent() = runBlockingTest {
+        val registerData = RegisterData(email = "test@example.com", password = "password", role = "student")
+        authViewModel.onRegisterChange { registerData }
+
+        authViewModel.onRegister()
+
+        verify(authRepository).registerAsStudent(any())
+    }
+
+    *//*
+     * Purpose: Test that onLogin calls the login method of AuthRepository with the correct parameters
+     *//*
+    @Test
+    fun onLogin_callsAuthRepositoryLoginForTutor() = runBlockingTest {
+        val loginData = LoginData(email = "test2@example.com", password = "password", role = "tutor")
+        authViewModel.onLoginChange { loginData }
+
+        authViewModel.onLogin()
+
+        verify(authRepository).login(any())
+    }
+
+    *//*
+     * Purpose: Test that onRegister calls the registerAsStudent method of AuthRepository based
+     *          on the role in registerDataState
+     *//*
+    @Test
+    fun onRegister_callsAuthRepositoryRegisterForTutor() = runBlockingTest {
+        val registerData = RegisterData(email = "test2@example.com", password = "password", role = "tutor")
+        authViewModel.onRegisterChange { registerData }
+
+        authViewModel.onRegister()
+
+        verify(authRepository).registerAsTutor(any())
+    }*/
 }
