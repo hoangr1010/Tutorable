@@ -2,10 +2,10 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="SessionInfoDialogKtTest">
+      <entry key="NavigationKtTest">
         <State />
       </entry>
-      <entry key="SessionViewKtTest">
+      <entry key="Tests in 'com.example.tutorapp395project'">
         <State />
       </entry>
       <entry key="app">
