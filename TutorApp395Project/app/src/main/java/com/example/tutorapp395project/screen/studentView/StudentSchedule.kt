@@ -182,10 +182,6 @@ fun StudentAppointmentLayout(
                 }
             } else {
                 studentViewModel.sessionState.value.session_list?.forEach { session ->
-                    Log.d("StudentAppointmentLayout", "session: $session")
-
-
-
                     item {
                         SessionView(
                             time = getTimeInterval(session.time_block_id_list),
@@ -218,6 +214,7 @@ fun StudentAppointmentLayout(
                                         studentViewModel.sessionInfo.value.tutor_session_id
                                     )
                                 },
+                                opponentEmail = session.tutor_email,
                                 calendarState = calendarState,
                                 studentViewModel = studentViewModel
                             )

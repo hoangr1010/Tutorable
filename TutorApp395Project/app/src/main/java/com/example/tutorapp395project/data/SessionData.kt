@@ -12,7 +12,9 @@ data class TutoringSession(
     val grade: Int,
     val tutoring_session_status: String,
     val date: String,
-    val time_block_id_list: List<Int>
+    val time_block_id_list: List<Int>,
+    val student_email: String,
+    val tutor_email: String
 )
 
 data class SessionRequest(

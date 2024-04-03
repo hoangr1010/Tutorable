@@ -56,7 +56,9 @@ class StudentViewModel(
         grade = 0,
         tutoring_session_status = "",
         date = "",
-        time_block_id_list = listOf()
+        time_block_id_list = listOf(),
+        student_email = "",
+        tutor_email = ""
     ))
 
     // Session form state
