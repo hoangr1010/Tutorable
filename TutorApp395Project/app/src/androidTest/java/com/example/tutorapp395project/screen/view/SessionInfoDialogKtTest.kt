@@ -19,7 +19,8 @@ class SessionInfoDialogKtTest {
                 tutorName = "John Doe",
                 subject = "Math",
                 dateIn = "10/10/2021",
-                timeslot = "3:00-4:00"
+                timeslot = "3:00-4:00",
+                opponentEmail = "opponent@gmail.com"
             )
         }
     }

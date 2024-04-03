@@ -1,5 +1,7 @@
 package com.example.tutorapp395project.viewModel
 
+import com.example.tutorapp395project.data.AddAvailabilityRequest
+import com.example.tutorapp395project.data.AddAvailabilityResponse
 import com.example.tutorapp395project.data.AvailabilityState
 import com.example.tutorapp395project.data.DeleteSessionRequest
 import com.example.tutorapp395project.data.DeleteSessionResponse
@@ -23,7 +25,9 @@ class TutorViewModelTest {
 
     @Mock
     private lateinit var tutorRepository: UserRepository
+    @Mock
     private lateinit var tutorViewModel: TutorViewModel
+    @Mock
     private lateinit var authViewModel: AuthViewModel
 
     @Before
@@ -103,12 +107,69 @@ class TutorViewModelTest {
             time_block_id_list = listOf(1, 2, 3),
             session_id_deleted = sessionId
         )
-        val response = mock(Response::class.java)
-        `when`(response.body()).thenReturn(deleteSessionResponse)
+        val response = Response.success(deleteSessionResponse)
+
+        `when`(tutorRepository.deleteSession(deleteSessionRequest)).thenReturn(response)
 
         tutorViewModel.deleteSession(sessionId)
+
         assertEquals(
             deleteSessionResponse.time_block_id_list,
+            tutorViewModel.availabilityState.value.time_block_id_list
+        )
+    }
+
+    @Test
+    fun saveAvailability_callsUserRepository() = runBlockingTest {
+        val id = "1"
+        val addAvailabilityRequest = AddAvailabilityRequest(
+            id = id.toInt(),
+            date = LocalDate.now().toString(),
+            time_block_id_list = listOf(1, 2, 3)
+        )
+        val addAvailabilityResponse = AddAvailabilityResponse(
+            date = LocalDate.now().toString(),
+            time_block_id_list = listOf(1, 2, 3)
+        )
+        val response = Response.success(addAvailabilityResponse)
+
+        `when`(tutorRepository.addAvailability(addAvailabilityRequest)).thenReturn(response)
+        tutorViewModel.saveAvailability(id)
+        verify(tutorRepository).addAvailability(addAvailabilityRequest)
+    }
+
+    @Test
+    fun getAvailability_updatesState() = runBlockingTest {
+        val id = "1"
+        val addAvailabilityRequest = AddAvailabilityRequest(
+            id = id.toInt(),
+            date = LocalDate.now().toString(),
+            time_block_id_list = listOf(1, 2, 3)
+        )
+        val addAvailabilityResponse = AddAvailabilityResponse(
+            date = LocalDate.now().toString(),
+            time_block_id_list = listOf()
+        )
+        val response = Response.success(addAvailabilityResponse)
+
+        `when`(tutorRepository.addAvailability(addAvailabilityRequest)).thenReturn(response)
+        tutorViewModel.saveAvailability(id)
+
+        assertEquals(
+            addAvailabilityResponse.time_block_id_list,
+            tutorViewModel.availabilityState.value.time_block_id_list
+        )
+    }
+
+    @Test
+    fun toggleTimeSlot_updatesState() {
+        val timeBlockId = 1
+        val timeBlockIdList = listOf(1)
+
+        tutorViewModel.toggleTimeSlotId(timeBlockId)
+
+        assertEquals(
+            timeBlockIdList,
             tutorViewModel.availabilityState.value.time_block_id_list
         )
     }
