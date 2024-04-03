@@ -8,7 +8,6 @@ import androidx.compose.ui.test.onNodeWithText
 import com.example.tutorapp395project.R
 import com.example.tutorapp395project.viewModel.AuthViewModel
 import com.example.tutorapp395project.viewModel.StudentViewModel
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -18,17 +17,20 @@ class TutorListKtTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+    // Initalize ViewModels to be used for testing
     private lateinit var authViewModel: AuthViewModel
-    private lateinit var student: StudentViewModel
+    private lateinit var studentViewModel: StudentViewModel
 
-
+    /*
+     * Purpose: Set up the ViewModel for testing and set up the tutor card to be tested
+     */
     @Before
     fun setUp() {
         authViewModel = AuthViewModel()
-        student = StudentViewModel(authViewModel = authViewModel)
+        studentViewModel = StudentViewModel(authViewModel = authViewModel)
 
         composeTestRule.setContent {
-            TutorList(modifier = Modifier, studentViewModel = student)
+            TutorList(modifier = Modifier, studentViewModel = studentViewModel)
 
             val name = "Roronoa Zoro"
             val subject = "Geography"
@@ -42,15 +44,17 @@ class TutorListKtTest {
         }
     }
 
-    @After
-    fun tearDown() {
-    }
-
+    /*
+     * Purpose: Test the tutor list to ensure that the title is displayed
+     */
     @Test
-    fun testTutorList() {
+    fun testTutorList_TitleDisplayed() {
         composeTestRule.onNodeWithText("Say hi to your tutor").assertIsDisplayed()
     }
 
+    /*
+     * Purpose: Test the tutor card to ensure that the name and subject are displayed
+     */
     @Test
     fun testTutorCard() {
         composeTestRule.onNodeWithText("Roronoa Zoro", useUnmergedTree = false).assertIsDisplayed()

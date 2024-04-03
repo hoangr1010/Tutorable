@@ -8,7 +8,6 @@ import com.example.tutorapp395project.data.User
 import com.example.tutorapp395project.viewModel.AuthViewModel
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -18,13 +17,15 @@ class StudentProfileKtTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+    // Initialize ViewModel and users
     private lateinit var authViewModel: AuthViewModel
     private lateinit var user: User
+
+    /**
+     * Set up the ViewModel and user before each test
+     */
     @Before
     fun setUp() {
-        //val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        //var date: Date? = format.parse("2000-08-29")
-
         authViewModel = mockk(relaxed = true)
         user = User("699", first_name = "John", last_name = "Doe",
             date_of_birth = "2002-02-02T00:00:00Z", grade = 12 , school = "High School",
@@ -32,10 +33,9 @@ class StudentProfileKtTest {
         every { authViewModel.UserState.value } returns user
     }
 
-    @After
-    fun tearDown() {
-    }
-
+    /**
+     * Purpose: Test the StudentProfileColumn to see if it exists
+     */
     @Test
     fun studentProfileColumn() {
         composeTestRule.setContent {
@@ -43,16 +43,14 @@ class StudentProfileKtTest {
                                  modifier = Modifier)
         }
         composeTestRule.onNodeWithText("John Doe", useUnmergedTree = true).assertExists()
-        //composeTestRule.onNodeWithText("2002-02-02", useUnmergedTree = true).assertExists()
         composeTestRule.onNodeWithText("12", useUnmergedTree = true).assertExists()
         composeTestRule.onNodeWithText("High School", useUnmergedTree = true).assertExists()
         composeTestRule.onNodeWithText("johndoe@gmail.com", useUnmergedTree = true).assertExists()
     }
 
-    @Test
-    fun profilePic() {
-    }
-
+    /**
+     * Purpose: Test the ProfileName to see if it exists
+     */
     @Test
     fun profileName() {
         composeTestRule.setContent {
@@ -61,6 +59,9 @@ class StudentProfileKtTest {
         composeTestRule.onNodeWithText("John Doe", useUnmergedTree = true).assertExists()
     }
 
+    /*
+     * Purpose: Test the ProfileField to see if it exists
+     */
     @Test
     fun profileField() {
         composeTestRule.setContent {
