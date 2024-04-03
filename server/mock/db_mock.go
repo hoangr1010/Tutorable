@@ -51,10 +51,18 @@ func (m *MockDB) ExpectTutoringSessionInsert() *sqlmock.ExpectedExec {
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg())
 }
 
-// Expectation for the 'tutor_availability' table
 func (m *MockDB) ExpectTutorAvailabilityInsert() *sqlmock.ExpectedExec {
 	return m.sqlmock.ExpectExec("INSERT INTO tutor_availability").
-		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg())
+		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+}
+
+
+// Expectation for the 'tutor_availability' table existence check
+func (m *MockDB) ExpectTutorAvailabilityExistenceCheck() *sqlmock.ExpectedQuery {
+	return m.sqlmock.ExpectQuery("SELECT EXISTS(SELECT 1 FROM tutor_availability WHERE tutor_id = ? AND date = ?)").
+		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).
+		WillReturnRows(sqlmock.NewRows([]string{"exists"}).AddRow(true))
 }
 
 // Expectation for the 'time_block' table
@@ -94,4 +102,3 @@ func (m *MockDB) ExpectUpdateTutorSessionDateAndTimeBlockList(session TutoringSe
 		WithArgs(session.Date, pq.Array(session.TimeBlockIDList), session.TutorSessionID).
 		WillReturnResult(sqlmock.NewResult(1, 1)) // Assuming one row affected
 }
-
