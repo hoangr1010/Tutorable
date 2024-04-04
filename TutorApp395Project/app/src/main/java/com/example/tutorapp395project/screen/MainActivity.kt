@@ -1,45 +1,30 @@
 package com.example.tutorapp395project.screen
 
+//noinspection UsingMaterialAndMaterial3Libraries
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.AlertDialog
 import androidx.compose.material3.Button
-import com.example.tutorapp395project.classes.Navigation
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.tutorapp395project.viewModel.ChatViewModel
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.models.InitializationState
-import io.getstream.chat.android.models.User
-import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
-import io.getstream.chat.android.state.plugin.config.StatePluginConfig
-import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
+import com.example.tutorapp395project.classes.Navigation
 
 
 class MainActivity : ComponentActivity() {
-
-    val chatViewModel: ChatViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
