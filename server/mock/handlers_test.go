@@ -1,18 +1,21 @@
-package handlers
+package mock
 
 import (
 	"bytes"
-	//"database/sql"
 	"encoding/json"
-	//"fmt"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"time"
 
-	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/macewanCS/w24MacroHard/server/mock"
+	sqlmock "github.com/DATA-DOG/go-sqlmock"
+	"github.com/lib/pq"
+
+	"github.com/macewanCS/w24MacroHard/server/handlers"
+
+	//"github.com/macewanCS/w24MacroHard/server/mock"
 	"github.com/macewanCS/w24MacroHard/server/util"
 	"github.com/stretchr/testify/assert"
 )
@@ -33,8 +36,8 @@ const (
 //
 
 // RUNNING TESTS:
-// 1. use "go test -coverprofile="register_handler.out" ./..." | this will run the test and output an out file of results
-// 2. use "go tool cover -html="register_handler.out" -o ./reports/register_handler.html"
+// 1. use "go test -coverprofile="coverage.out" ./..." | this will run the test and output an out file of results
+// 2. use "go tool cover -html="coverage.out" -o ./reports/coverage.html"
 // Step 2 will convert the out file to a detailed coverage report in html format the name of file is important
 // because if you run the same command again then it will replace the old test reports (we want them as test logs)
 // so naming scheme should follow: ie. "2024-03-04-handlers.out" and "2024-03-04-handlers.html"
@@ -234,14 +237,14 @@ const (
 // go tool cover -html="addavail_handler.out" -o ./reports/addavail_handler.html
 func TestAddTutorAvailability(t *testing.T) {
 	// Create mock DB
-	mockDB, mock, err := mock.NewMockDB()
+	mockDB, mock, err := NewMockDB()
 	if err != nil {
 		t.Fatalf("Failed to create mock DB: %v", err)
 	}
 	defer mockDB.Close()
 
 	// Create a test handler
-	handler := AddTutorAvailability(mockDB)
+	handler := handlers.AddTutorAvailability(mockDB)
 
 	// Mock the request body
 	tutorAvailability := util.TutorAvailability{
@@ -302,3 +305,88 @@ func TestAddTutorAvailability(t *testing.T) {
 		t.Errorf("Unfulfilled expectations: %s", err)
 	}
 }
+
+// Testing Edit Tutor Session:
+func TestEditSession(t *testing.T) {
+	// Construct connection string
+	//connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", DBHost, DBPort, DBUser, DBPassword, DBName)
+
+	// Open database connection
+	db, mock, err := NewMockDB()
+	if err != nil {
+		t.Fatalf("Failed to create mock database: %v", err)
+	}
+	defer db.Close()
+
+	fmt.Println("")
+	fmt.Println("Testing EditTutorSession")
+	fmt.Println("")
+
+	type EditSessionRequest struct {
+		TutorSessionID  int    `json:"tutor_session_id"`
+		Date            string `json:"date"`
+		TimeBlockIDList []int  `json:"time_block_id_list"`
+	}
+
+	type EditSessionResponse struct {
+		TutorSessionID     int    `json:"tutor_session_id"`
+		NewDate            string `json:"new_date"`
+		NewTimeBlockIDList []int  `json:"new_time_block_id_list"`
+	}
+
+	request := EditSessionRequest{
+		TutorSessionID:  28,
+		Date:            "2024-03-30",
+		TimeBlockIDList: []int{8, 9},
+	}
+
+	response := EditSessionResponse{
+		TutorSessionID:     request.TutorSessionID,
+		NewDate:            "2024-03-30",
+		NewTimeBlockIDList: []int{10, 11}, // Assuming the new time block IDs
+	}
+
+	requestJSON, err := json.Marshal(request)
+	assert.NoError(t, err, "Failed to marshal session JSON")
+
+	// // Mock the database expectations
+	// mock.ExpectUpdateTutorSessionDateAndTimeBlockList(util.TutoringSession{
+	// 	TutorSessionID:  28,
+	// 	Date:            "2024-03-30",
+	// 	TimeBlockIDList: []int{8, 9},
+	// }).WillReturnResult(sqlmock.NewResult(1, 1)) // Assuming one row affected
+
+	// Mock the database expectations
+	mock.ExpectExec("UPDATE tutoring_session SET date = \\?, time_block_id_list = \\? WHERE tutor_session_id = \\?").
+		WithArgs("2024-03-30", pq.Array([]int{8, 9}), 28).
+		WillReturnResult(sqlmock.NewResult(1, 1)) // Assuming one row affected
+
+	reqEdit := httptest.NewRequest(http.MethodPost, "/edit_tutoring_session", bytes.NewBuffer(requestJSON))
+	reqEdit.Header.Set("Content-Type", "application/json")
+
+	rrEdit := httptest.NewRecorder()
+
+	handlers.EditTutorSession(db)(rrEdit, reqEdit)
+
+	assert.Equal(t, http.StatusOK, rrEdit.Code, "Expected 200 OK Response")
+
+	// Attempt to parse the response body as JSON
+	var responseBody EditSessionResponse
+	err = json.Unmarshal(rrEdit.Body.Bytes(), &responseBody)
+	if err != nil {
+		fmt.Println("Failed to unmarshal response JSON:", err)
+		fmt.Println("Response Body:", rrEdit.Body.String())
+		t.Fatalf("Failed to unmarshal response JSON: %s", rrEdit.Body.String())
+		return // Exit the function to prevent further processing
+	}
+
+	// Validate the response
+	assert.Equal(t, response.TutorSessionID, responseBody.TutorSessionID, "Mismatch in tutor session ID")
+	assert.Equal(t, response.NewDate, responseBody.NewDate, "Mismatch in new date")
+	assert.ElementsMatch(t, response.NewTimeBlockIDList, responseBody.NewTimeBlockIDList, "Mismatch in new time block ID list")
+
+	fmt.Println("")
+	fmt.Println("Testing EditTutorSession Complete")
+	fmt.Println("")
+}
+
