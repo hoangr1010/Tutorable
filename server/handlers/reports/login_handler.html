@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/macewanCS/w24MacroHard/server/handlers/handlers.go (49.7%)</option>
+				<option value="file0">github.com/macewanCS/w24MacroHard/server/handlers/handlers.go (6.2%)</option>
 				
 				</select>
 			</div>
@@ -92,7 +92,7 @@ func LoginHandler(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
                 // Read JSON payload
                 var login util.Login
                 err := util.DecodeJSONRequestBody(r, &amp;login)
-                if err != nil </span><span class="cov8" title="1">{
+                if err != nil </span><span class="cov0" title="0">{
                         fmt.Println("Invalid JSON:", err)
                         http.Error(w, "Invalid JSON", http.StatusBadRequest)
                         return
@@ -103,7 +103,7 @@ func LoginHandler(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
                         // Check if student password is match
                         //fmt.Println("Student")
                         result, err := util.CheckLoginStudent(db, login)
-                        if err != nil </span><span class="cov8" title="1">{
+                        if err != nil </span><span class="cov0" title="0">{
                                 fmt.Println("Error validating login:", err)
                                 // Set the HTTP status code to 401 (Bad Request)
                                 w.WriteHeader(http.StatusUnauthorized)
@@ -114,7 +114,7 @@ func LoginHandler(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
                                 fmt.Println("Successful student login!")
                                 // Store student content into JSON object
                                 user, err := util.GetStudentUser(db, login.Email)
-                                if err != nil </span><span class="cov0" title="0">{
+                                if err != nil </span><span class="cov8" title="1">{
                                         fmt.Println("Error searching student table", err)
                                 }</span>
                                 //fmt.Println(user)
@@ -146,18 +146,18 @@ func LoginHandler(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
                                 w.Write(Jsonresponse)</span>
 
                         }
-                } else<span class="cov8" title="1"> if login.Role == "tutor" </span><span class="cov8" title="1">{
+                } else<span class="cov0" title="0"> if login.Role == "tutor" </span><span class="cov0" title="0">{
                         // Check if tutor password is match
                         //fmt.Println("Tutor")
                         result, err := util.CheckLoginTutor(db, login)
-                        if err != nil </span><span class="cov8" title="1">{
+                        if err != nil </span><span class="cov0" title="0">{
                                 fmt.Println("Error validating login:", err)
                                 // Set the HTTP status code to 401 (Bad Request)
                                 w.WriteHeader(http.StatusUnauthorized)
                                 // Send a response message
                                 w.Write([]byte("Bad Login - Invalid credentials"))
                         }</span>
-                        <span class="cov8" title="1">if result </span><span class="cov8" title="1">{
+                        <span class="cov0" title="0">if result </span><span class="cov0" title="0">{
                                 fmt.Println("Successful tutor login!")
                                 // Store student content into JSON object
                                 user, err := util.GetTutorUser(db, login.Email)
@@ -166,7 +166,7 @@ func LoginHandler(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
                                 }</span>
                                 //fmt.Println(user)
                                 // Store user fields
-                                <span class="cov8" title="1">var response util.LoginResponse
+                                <span class="cov0" title="0">var response util.LoginResponse
                                 response.User = user
 
                                 // Create userinfo for token
@@ -180,7 +180,7 @@ func LoginHandler(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
                                         fmt.Println("Error creating token", err)
                                 }</span>
                                 //fmt.Println("Token: ", token)
-                                <span class="cov8" title="1">response.Token = token
+                                <span class="cov0" title="0">response.Token = token
                                 // Convert response to JSON
                                 Jsonresponse, err := json.Marshal(response)
                                 if err != nil </span><span class="cov0" title="0">{
@@ -188,15 +188,15 @@ func LoginHandler(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
                                         return
                                 }</span>
                                 // Set the HTTP status code to 201 (OK)
-                                <span class="cov8" title="1">w.WriteHeader(http.StatusOK)
+                                <span class="cov0" title="0">w.WriteHeader(http.StatusOK)
                                 // Set the Content-Type header to application/json
                                 w.Header().Set("Content-Type", "application/json")
                                 // Send Json
                                 w.Write(Jsonresponse)</span>
                         }
-                } else<span class="cov8" title="1"> if login.Role == "administrator" </span><span class="cov0" title="0">{
+                } else<span class="cov0" title="0"> if login.Role == "administrator" </span><span class="cov0" title="0">{
                         fmt.Println("Administrator")
-                }</span> else<span class="cov8" title="1"> {
+                }</span> else<span class="cov0" title="0"> {
                         http.Error(w, "Invalid role", http.StatusBadRequest)
                 }</span>
 
@@ -204,8 +204,8 @@ func LoginHandler(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
         }
 }
 
-func RegisterHandler(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
-        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+func RegisterHandler(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
                 // Read JSON payload
                 var register util.Register
                 err := util.DecodeJSONRequestBody(r, &amp;register)
@@ -215,7 +215,7 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
                 }</span>
 
                 // Hash the password
-                <span class="cov8" title="1">err = util.HashPassword(&amp;register.Password)
+                <span class="cov0" title="0">err = util.HashPassword(&amp;register.Password)
                 if err != nil </span><span class="cov0" title="0">{
                         fmt.Println("Error hashing password:", err)
                         return
@@ -224,15 +224,15 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
                 //fmt.Println("Hashed Password:", register.Password)
 
                 // Check the role
-                <span class="cov8" title="1">if register.Role == "student" </span><span class="cov8" title="1">{
+                <span class="cov0" title="0">if register.Role == "student" </span><span class="cov0" title="0">{
                         // Fetch student insert query
                         fmt.Println("Student")
                         err := util.InsertStudent(db, register)
                         // Error in register
-                        if err != nil </span><span class="cov8" title="1">{
+                        if err != nil </span><span class="cov0" title="0">{
                                 // Check if the error is due to a unique constraint violation
                                 pqErr, ok := err.(*pq.Error)
-                                if ok &amp;&amp; pqErr.Code == "23505" </span><span class="cov8" title="1">{ // PostgreSQL error code for unique violation
+                                if ok &amp;&amp; pqErr.Code == "23505" </span><span class="cov0" title="0">{ // PostgreSQL error code for unique violation
                                         // Send response code 400 to front end
                                         fmt.Println("Insert failed: Unique constraint violation")
                                         // Set the HTTP status code to 400 (Bad Request)
@@ -314,7 +314,7 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
                         fmt.Println("Administrator")
                 }</span>
 
-                <span class="cov8" title="1">fmt.Printf("%+v\n", register)</span>
+                <span class="cov0" title="0">fmt.Printf("%+v\n", register)</span>
         }
 }
 
@@ -327,8 +327,8 @@ Request Body (JSON):
 }
 */
 // Add tutor availability
-func AddTutorAvailability(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
-        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+func AddTutorAvailability(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
                 //_, claims, _ := jwtauth.FromContext(r.Context())
                 //w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
 
@@ -341,13 +341,13 @@ func AddTutorAvailability(db *sql.DB) http.HandlerFunc <span class="cov8" title=
                 // Read JSON payload
                 var tutorAvailability util.TutorAvailability
                 err := util.DecodeJSONRequestBody(r, &amp;tutorAvailability)
-                if err != nil </span><span class="cov8" title="1">{
+                if err != nil </span><span class="cov0" title="0">{
                         fmt.Println("Invalid JSON:", err)
                         http.Error(w, "Inavlid JSON", http.StatusBadRequest)
                         return
                 }</span>
                 // Parse the date
-                <span class="cov8" title="1">date, err := time.Parse("2006-01-02", tutorAvailability.Date)
+                <span class="cov0" title="0">date, err := time.Parse("2006-01-02", tutorAvailability.Date)
                 if err != nil </span><span class="cov0" title="0">{
                         http.Error(w, "Invalid date format", http.StatusBadRequest)
                         return
@@ -356,24 +356,24 @@ func AddTutorAvailability(db *sql.DB) http.HandlerFunc <span class="cov8" title=
                 //dateStr := date.Format("2006-01-02")
 
                 // Check if timeslots exist for that date, delete if exist
-                <span class="cov8" title="1">exists, err := util.PeekAvailabilityDate(db, tutorAvailability)
+                <span class="cov0" title="0">exists, err := util.PeekAvailabilityDate(db, tutorAvailability)
                 if err != nil </span><span class="cov0" title="0">{
                         http.Error(w, "WHOOPS!", http.StatusInternalServerError)
                 }</span>
                 // Delete existing entries of tutor on that date
-                <span class="cov8" title="1">if exists </span><span class="cov8" title="1">{
+                <span class="cov0" title="0">if exists </span><span class="cov0" title="0">{
                         util.DeleteTutorAvailability(db, tutorAvailability.ID, date)
                 }</span>
                 // Add timeslot to database
                 //fmt.Println("Json body: ", TutorAvailability) // line for debug
-                <span class="cov8" title="1">for _, id := range tutorAvailability.TimeBlockIdList </span><span class="cov8" title="1">{
+                <span class="cov0" title="0">for _, id := range tutorAvailability.TimeBlockIdList </span><span class="cov0" title="0">{
                         err := util.InsertTutorAvailability(db, tutorAvailability, id)
                         if err != nil </span><span class="cov0" title="0">{
                                 fmt.Println("Insert failed: ", err)
                                 http.Error(w, "Inavlid JSON", http.StatusInternalServerError)
                         }</span>
                 }
-                <span class="cov8" title="1">fmt.Println("Insert complete.")
+                <span class="cov0" title="0">fmt.Println("Insert complete.")
                 // Insert complete -&gt; Send response
                 response := struct {
                         Date            time.Time `json:"date"`
@@ -392,13 +392,13 @@ func AddTutorAvailability(db *sql.DB) http.HandlerFunc <span class="cov8" title=
                 }</span>
 
                 // Write response
-                <span class="cov8" title="1">w.Write(jsonResponse)</span>
+                <span class="cov0" title="0">w.Write(jsonResponse)</span>
         }
 }
 
 // Get tutor availability
-func GetTutorAvailability(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
-        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+func GetTutorAvailability(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
                 // This will store the information from token
                 //_, claims, _ := jwtauth.FromContext(r.Context())
 
@@ -413,26 +413,26 @@ func GetTutorAvailability(db *sql.DB) http.HandlerFunc <span class="cov8" title=
 
                 var tutorAvailability util.TutorAvailability
                 err := util.DecodeJSONRequestBody(r, &amp;tutorAvailability)
-                if err != nil </span><span class="cov8" title="1">{
+                if err != nil </span><span class="cov0" title="0">{
                         fmt.Println("Invalid JSON:", err)
                         http.Error(w, "Inavlid JSON", http.StatusBadRequest)
                         return
                 }</span>
 
-                <span class="cov8" title="1">if tutorAvailability.ID == 0 ||
+                <span class="cov0" title="0">if tutorAvailability.ID == 0 ||
                         tutorAvailability.Date == "" </span><span class="cov0" title="0">{
                         http.Error(w, "Required field/s are missing", http.StatusBadRequest)
                         return
                 }</span>
 
                 // Parse date string
-                <span class="cov8" title="1">date, err := time.Parse("2006-01-02", tutorAvailability.Date)
+                <span class="cov0" title="0">date, err := time.Parse("2006-01-02", tutorAvailability.Date)
                 if err != nil </span><span class="cov0" title="0">{
                         http.Error(w, "Invalid date format", http.StatusBadRequest)
                         return
                 }</span>
 
-                <span class="cov8" title="1">dateStr := date.Format("2006-01-02")
+                <span class="cov0" title="0">dateStr := date.Format("2006-01-02")
 
                 // Fetch tutor availability from database
                 timeBlockIDs, err := util.GetAvailability(db, tutorAvailability.ID, dateStr)
@@ -443,7 +443,7 @@ func GetTutorAvailability(db *sql.DB) http.HandlerFunc <span class="cov8" title=
                 }</span>
 
                 // Prepare response
-                <span class="cov8" title="1">response := struct {
+                <span class="cov0" title="0">response := struct {
                         TimeBlockIDList []int `json:"time_block_id_list"`
                         //TimeBlockDate   string `json:"date"`
                 }{
@@ -460,14 +460,14 @@ func GetTutorAvailability(db *sql.DB) http.HandlerFunc <span class="cov8" title=
                 }</span>
 
                 // Write response
-                <span class="cov8" title="1">w.Write(jsonResponse)</span>
+                <span class="cov0" title="0">w.Write(jsonResponse)</span>
         }
 }
 
 // fixed
 // SearchTutorAvailability searches all tutor availability for particular time slots.
-func SearchTutorAvailability(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
-        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+func SearchTutorAvailability(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
                 // Decode request body into TutorAvailability struct
                 var tutorAvailability util.TutorAvailability
                 err := util.DecodeJSONRequestBody(r, &amp;tutorAvailability)
@@ -478,13 +478,13 @@ func SearchTutorAvailability(db *sql.DB) http.HandlerFunc <span class="cov8" tit
                 }</span>
 
                 // Validate request data
-                <span class="cov8" title="1">if tutorAvailability.Date == "" || len(tutorAvailability.TimeBlockIdList) == 0 </span><span class="cov0" title="0">{
+                <span class="cov0" title="0">if tutorAvailability.Date == "" || len(tutorAvailability.TimeBlockIdList) == 0 </span><span class="cov0" title="0">{
                         http.Error(w, "Date and time_block_id_list are required", http.StatusBadRequest)
                         return
                 }</span>
 
                 // Search for tutor availability based on date and time block IDs
-                <span class="cov8" title="1">tutorIDs, err := util.SearchAvailability(db, tutorAvailability.Date, tutorAvailability.TimeBlockIdList)
+                <span class="cov0" title="0">tutorIDs, err := util.SearchAvailability(db, tutorAvailability.Date, tutorAvailability.TimeBlockIdList)
                 if err != nil </span><span class="cov0" title="0">{
                         fmt.Println("Error searching tutor availability: ", err)
                         http.Error(w, "Error searching table", http.StatusInternalServerError)
@@ -492,8 +492,8 @@ func SearchTutorAvailability(db *sql.DB) http.HandlerFunc <span class="cov8" tit
                 }</span>
 
                 // Fetch tutor details based on tutor IDs
-                <span class="cov8" title="1">var tutors []util.User
-                for _, tutorID := range tutorIDs </span><span class="cov8" title="1">{
+                <span class="cov0" title="0">var tutors []util.User
+                for _, tutorID := range tutorIDs </span><span class="cov0" title="0">{
                         // Get the tutor's email
                         tutorEmail, err := util.GetTutorEmailByID(db, tutorID)
                         if err != nil </span><span class="cov0" title="0">{
@@ -503,21 +503,21 @@ func SearchTutorAvailability(db *sql.DB) http.HandlerFunc <span class="cov8" tit
                         }</span>
 
                         // Fetch tutor details based on email
-                        <span class="cov8" title="1">tutor, err := util.GetTutorUser(db, tutorEmail)
+                        <span class="cov0" title="0">tutor, err := util.GetTutorUser(db, tutorEmail)
                         if err != nil </span><span class="cov0" title="0">{
                                 fmt.Println("Error fetching tutor details: ", err)
                                 http.Error(w, "Error fetching tutor details", http.StatusInternalServerError)
                                 return
                         }</span>
-                        <span class="cov8" title="1">tutors = append(tutors, tutor)</span>
+                        <span class="cov0" title="0">tutors = append(tutors, tutor)</span>
                 }
 
                 // If tutors is empty redeclare it
-                <span class="cov8" title="1">if len(tutors) == 0 </span><span class="cov0" title="0">{
+                <span class="cov0" title="0">if len(tutors) == 0 </span><span class="cov0" title="0">{
                         tutors = []util.User{}
                 }</span>
                 // Prepare response
-                <span class="cov8" title="1">response := struct {
+                <span class="cov0" title="0">response := struct {
                         TutorList []util.User `json:"tutor_list"`
                 }{
                         TutorList: tutors,
@@ -532,15 +532,15 @@ func SearchTutorAvailability(db *sql.DB) http.HandlerFunc <span class="cov8" tit
                 }</span>
 
                 // Write response
-                <span class="cov8" title="1">w.Header().Set("Content-Type", "application/json")
+                <span class="cov0" title="0">w.Header().Set("Content-Type", "application/json")
                 w.WriteHeader(http.StatusOK)
                 w.Write(jsonResponse)</span>
         }
 }
 
 // Add tutoring session
-func AddTutoringSession(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
-        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+func AddTutoringSession(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
                 //_, claims, _ := jwtauth.FromContext(r.Context())
                 //w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
                 // Read JSON payload
@@ -552,23 +552,23 @@ func AddTutoringSession(db *sql.DB) http.HandlerFunc <span class="cov8" title="1
                         return
                 }</span>
 
-                <span class="cov8" title="1">var tutor util.TutorAvailability
+                <span class="cov0" title="0">var tutor util.TutorAvailability
                 tutor.ID = session.TutorID
                 // Check if tutor has availability in timeslot
-                for _, id := range session.TimeBlockIDList </span><span class="cov8" title="1">{
+                for _, id := range session.TimeBlockIDList </span><span class="cov0" title="0">{
                         exists, err := util.PeekTimeSlot(db, session, id)
-                        if err != nil </span><span class="cov8" title="1">{
+                        if err != nil </span><span class="cov0" title="0">{
                                 fmt.Println("Error checking tutor_availability: ", err)
                                 http.Error(w, "HEEEEEEELP", http.StatusBadRequest)
                         }</span>
-                        <span class="cov8" title="1">if !exists </span><span class="cov8" title="1">{
+                        <span class="cov0" title="0">if !exists </span><span class="cov0" title="0">{
                                 http.Error(w, "Tutor is not available", http.StatusUnauthorized) // status code 401
                                 return
                         }</span>
                 }
                 // Create session if they are available
-                <span class="cov8" title="1">err = util.InsertTutoringSession(db, session)
-                if err != nil </span><span class="cov8" title="1">{
+                <span class="cov0" title="0">err = util.InsertTutoringSession(db, session)
+                if err != nil </span><span class="cov0" title="0">{
                         http.Error(w, "Error inserting into tutoring session", http.StatusInternalServerError) // status code 500
                         return
                 }</span>
@@ -623,8 +623,8 @@ func AddTutoringSession(db *sql.DB) http.HandlerFunc <span class="cov8" title="1
 
 // should work now
 // Get tutoring session list
-func GetTutoringSessionList(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
-        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+func GetTutoringSessionList(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
                 // This will store the information from token
                 //_, claims, _ := jwtauth.FromContext(r.Context())
                 //w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
@@ -632,13 +632,13 @@ func GetTutoringSessionList(db *sql.DB) http.HandlerFunc <span class="cov8" titl
                 // Pull role and id from JSON body
                 var user util.User
                 err := util.DecodeJSONRequestBody(r, &amp;user)
-                if err != nil </span><span class="cov8" title="1">{
+                if err != nil </span><span class="cov0" title="0">{
                         fmt.Println("Invalid JSON:", err)
                         http.Error(w, "Invalid JSON", http.StatusBadRequest)
                         return
                 }</span>
 
-                <span class="cov8" title="1">tutoringSessions, err := util.GetTutoringSessionList(db, user)
+                <span class="cov0" title="0">tutoringSessions, err := util.GetTutoringSessionList(db, user)
 
                 if err != nil </span><span class="cov0" title="0">{
                         http.Error(w, "Whoopsie!", http.StatusInternalServerError)
@@ -646,11 +646,11 @@ func GetTutoringSessionList(db *sql.DB) http.HandlerFunc <span class="cov8" titl
                 }</span>
 
                 // If tutorinSessions is empty redeclare it
-                <span class="cov8" title="1">if len(tutoringSessions) == 0 </span><span class="cov8" title="1">{
+                <span class="cov0" title="0">if len(tutoringSessions) == 0 </span><span class="cov0" title="0">{
                         tutoringSessions = []util.TutoringSession{}
                 }</span>
                 // Prepare response
-                <span class="cov8" title="1">response := struct {
+                <span class="cov0" title="0">response := struct {
                         ID               int                    `json:"id"`
                         Role             string                 `json:"role"`
                         TutoringSessions []util.TutoringSession `json:"tutoring_session_list"`
@@ -669,7 +669,7 @@ func GetTutoringSessionList(db *sql.DB) http.HandlerFunc <span class="cov8" titl
                 }</span>
 
                 // Write response
-                <span class="cov8" title="1">w.Header().Set("Content-Type", "application/json")
+                <span class="cov0" title="0">w.Header().Set("Content-Type", "application/json")
                 w.WriteHeader(http.StatusOK)
                 w.Write(jsonResponse)</span>
 
@@ -677,8 +677,8 @@ func GetTutoringSessionList(db *sql.DB) http.HandlerFunc <span class="cov8" titl
 }
 
 // Deletes tutor session
-func DeleteTutorSession(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
-        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+func DeleteTutorSession(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
                 //_, claims, _ := jwtauth.FromContext(r.Context())
                 //w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
                 // Read JSON payload
@@ -694,9 +694,9 @@ func DeleteTutorSession(db *sql.DB) http.HandlerFunc <span class="cov8" title="1
                 }</span>
 
                 // get tutor session
-                <span class="cov8" title="1">var session util.TutoringSession
+                <span class="cov0" title="0">var session util.TutoringSession
                 session, err = util.GetTutorSession(db, sessionID.ID)
-                if err != nil </span><span class="cov8" title="1">{
+                if err != nil </span><span class="cov0" title="0">{
                         http.Error(w, "Error fetching tutoring session", http.StatusUnauthorized) // status code 401
                         return
                 }</span>
@@ -765,8 +765,8 @@ func DeleteTutorSession(db *sql.DB) http.HandlerFunc <span class="cov8" title="1
 }
 
 // Updates the tutor session's date and time block id list
-func EditTutorSession(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
-        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+func EditTutorSession(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
                 //w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
                 // Read JSON payload
                 var session util.TutoringSession
@@ -778,33 +778,33 @@ func EditTutorSession(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">
                 }</span>
 
                 //get tutorID from session
-                <span class="cov8" title="1">session.TutorID, err = util.GetTutorFromSession(db, session)
+                <span class="cov0" title="0">session.TutorID, err = util.GetTutorFromSession(db, session)
                 if err != nil </span><span class="cov0" title="0">{
                         http.Error(w, "Error searching tutoring_session for tutor_id", http.StatusInternalServerError) // status code 500
                         return
                 }</span>
 
                 //get time_block_id_list from session
-                <span class="cov8" title="1">oldTimeBlockIdList, err := util.GetTimeBlockIdListFromSession(db, session)
+                <span class="cov0" title="0">oldTimeBlockIdList, err := util.GetTimeBlockIdListFromSession(db, session)
                 if err != nil </span><span class="cov0" title="0">{
                         http.Error(w, "Error searching tutoring_session for time_block_id_list", http.StatusInternalServerError) // status code 500
                         return
                 }</span>
 
                 // get old date from session
-                <span class="cov8" title="1">oldDate, err := util.GetDateFromSession(db, session)
+                <span class="cov0" title="0">oldDate, err := util.GetDateFromSession(db, session)
                 if err != nil </span><span class="cov0" title="0">{
                         http.Error(w, "Error searching tutoring_session for date", http.StatusInternalServerError) // status code 500
                         return
                 }</span>
                 // Check if tutor is available on that date and time before updating
-                <span class="cov8" title="1">for _, id := range session.TimeBlockIDList </span><span class="cov8" title="1">{
+                <span class="cov0" title="0">for _, id := range session.TimeBlockIDList </span><span class="cov0" title="0">{
                         exists, err := util.PeekTimeSlot(db, session, id)
                         if err != nil </span><span class="cov0" title="0">{
                                 fmt.Println("Error checking tutor_availability: ", err)
                                 http.Error(w, "HEEEEEEELP", http.StatusInternalServerError) // Code 500
                         }</span>
-                        <span class="cov8" title="1">if !exists </span><span class="cov8" title="1">{
+                        <span class="cov0" title="0">if !exists </span><span class="cov0" title="0">{
                                 http.Error(w, "Tutor is not available", http.StatusUnauthorized) // status code 401
                                 return
                         }</span>
@@ -849,35 +849,35 @@ func EditTutorSession(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">
                         return
                 }</span>
 
-                // // Convert time block list to string
-                // timeString, err := util.TimeBlockToString(db, session)
-                // if err != nil {
-                //         fmt.Println("Error formating time block to string: ", err)
-                //         // http.Error(w, "Unexpected error", http.StatusInternalServerError) // status code 500
-                //         // return
-                // }
-                // // Email tutor and student involved
-                // subject := fmt.Sprintf("TutorMe: %s Session Change", session.Date)
-                // body := fmt.Sprintf("Session ID:%d's date and time have been moved to: %s from %s ", session.TutoringSessionID, session.Date, timeString)
-                // tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
-                // if err != nil {
-                //         fmt.Println("Error getting tutor email: ", err)
-                //         // http.Error(w, "Error getting tutor email", http.StatusInternalServerError) // status code 500
-                //         // return
-                // }
-                // studentEmail, err := util.GetStudentEmailBySessionID(db, session)
-                // if err != nil {
-                //         fmt.Println("Error getting student email: ", err)
-                //         // http.Error(w, "Error getting student email", http.StatusInternalServerError) // status code 500
-                //         // return
-                // }
-                // recipients := []string{tutorEmail, studentEmail}
-                // err = util.SendEmail(recipients, subject, body)
-                // if err != nil {
-                //         fmt.Println("Error sending email: ", err)
-                //         // http.Error(w, "Error sending email", http.StatusInternalServerError) // status code 500
-                //         // return
-                // }
+                // Convert time block list to string
+                <span class="cov0" title="0">timeString, err := util.TimeBlockToString(db, session)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Error formating time block to string: ", err)
+                        http.Error(w, "Unexpected error", http.StatusInternalServerError) // status code 500
+                        return
+                }</span>
+                // Email tutor and student involved
+                <span class="cov0" title="0">subject := fmt.Sprintf("TutorMe: %s Session Change", session.Date)
+                body := fmt.Sprintf("Session ID:%d's date and time have been moved to: %s from %s ", session.TutoringSessionID, session.Date, timeString)
+                tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Error getting tutor email: ", err)
+                        http.Error(w, "Error getting tutor email", http.StatusInternalServerError) // status code 500
+                        return
+                }</span>
+                <span class="cov0" title="0">studentEmail, err := util.GetStudentEmailBySessionID(db, session)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Error getting student email: ", err)
+                        http.Error(w, "Error getting student email", http.StatusInternalServerError) // status code 500
+                        return
+                }</span>
+                <span class="cov0" title="0">recipients := []string{tutorEmail, studentEmail}
+                err = util.SendEmail(recipients, subject, body)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Error sending email: ", err)
+                        http.Error(w, "Error sending email", http.StatusInternalServerError) // status code 500
+                        return
+                }</span>
 
                 // Prepare response
                 <span class="cov0" title="0">response := struct {

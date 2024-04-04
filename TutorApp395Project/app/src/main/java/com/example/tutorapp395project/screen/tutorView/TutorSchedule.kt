@@ -127,6 +127,8 @@ fun TutorAppointmentLayout(
                                         tutorViewModel.sessionInfo.value.tutor_session_id
                                     )
                                 },
+
+                                opponentEmail = session.student_email
                             )
                         }
                     }

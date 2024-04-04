@@ -20,6 +20,7 @@ fun SessionInfoDialog(
     onDismiss: () -> Unit = { },
     onDelete: () -> Unit = { },
     calendarState: UseCaseState = UseCaseState(),
+    opponentEmail: String,
     studentViewModel: StudentViewModel = StudentViewModel()
 ) {
     Dialog(onDismissRequest = { onDismiss() }) {
@@ -35,6 +36,7 @@ fun SessionInfoDialog(
                 timeslot = timeslot,
                 onDelete = onDelete,
                 calendarState = calendarState,
+                opponentEmail = opponentEmail,
                 studentViewModel = studentViewModel
             )
         }

@@ -16,9 +16,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// READ THIS PLEASE:
+//
+// I MOVED THIS HERE TO TEST THE MOCK, THESE TESTS ARE STILL USABLE BUT YOU CAN KEEP USING THE MOCK INSTEAD IF YOU WANT
+//
+//
+//
+
 // RUNNING TESTS:
-// 1. use "go test -coverprofile="delete_session.out" ./..." | this will run the test and output an out file of results
-// 2. use "go tool cover -html="delete_session.out" -o ./reports/delete_session.html"
+// 1. use "go test -coverprofile="coverage.out" ./..." | this will run the test and output an out file of results
+// 2. use "go tool cover -html="coverage.out" -o ./reports/coverage.html"
 // Step 2 will convert the out file to a detailed coverage report in html format the name of file is important
 // because if you run the same command again then it will replace the old test reports (we want them as test logs)
 // so naming scheme should follow: ie. "2024-03-04-handlers.out" and "2024-03-04-handlers.html"
@@ -340,7 +347,7 @@ func TestRegistrationAndLoginHandler(t *testing.T) {
 }
 
 // Test: Checks if Add availability handlers works
-func TestAddTutorAvailabilityHandler(t *testing.T) {
+func TestAddTutorAvailability(t *testing.T) {
 	// Construct connection string
 	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", DBHost, DBPort, DBUser, DBPassword, DBName)
 
@@ -458,34 +465,55 @@ func TestGetTutorAvailabilityHandler(t *testing.T) {
 	}
 	defer db.Close()
 
-	// Call the GetTutorAvailability handler with the tutor ID and date
-	tutorID := 1
-	date := "2024-03-04"
-	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/get_tutor_availability?tutor_id=%d&date=%s", tutorID, date), nil)
+	// Test case 1: Get Tutor Availability with valid input
+	fmt.Println("Test case 1: Get Tutor Availability with valid input")
+
+	// Define a mock tutor availability
+	tutorAvailability := util.TutorAvailability{
+		ID:   1,
+		Date: "2024-03-04",
+	}
+	// Marshal tutor availability to JSON
+	reqBody, err := json.Marshal(tutorAvailability)
+	assert.NoError(t, err, "Failed to marshal JSON request body")
+
+	// Create a new HTTP request with the mock payload
+	req := httptest.NewRequest(http.MethodPost, "/get_tutor_availability", bytes.NewBuffer(reqBody))
+	req.Header.Set("Content-Type", "application/json")
+
+	// Create a new recorder to record the response
 	rr := httptest.NewRecorder()
 
+	// Call the handler function with the recorder and request
 	handler := handlers.GetTutorAvailability(db)
 	handler(rr, req)
 
 	// Check the response status code
-	if rr.Code != http.StatusOK {
-		t.Errorf("Handler returned wrong status code: got %v want %v", rr.Code, http.StatusOK)
-	}
+	assert.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code for valid input")
 
 	// Parse the JSON response
 	var response struct {
 		TimeBlockIDList []int `json:"time_block_id_list"`
 	}
 	err = json.NewDecoder(rr.Body).Decode(&response)
-	if err != nil {
-		t.Fatalf("Failed to decode JSON response: %v", err)
-	}
+	assert.NoError(t, err, "Failed to decode JSON response")
 
-	// Check if the response contains time block IDs
-	if len(response.TimeBlockIDList) == 0 {
-		t.Errorf("Handler returned empty time block IDs")
-	}
+	// Test case 2: Get Tutor Availability with invalid JSON
+	fmt.Println("")
+	fmt.Println("Test case 2: Get Tutor Availability with invalid JSON")
 
+	// Create a new HTTP request with invalid JSON payload
+	reqInvalid := httptest.NewRequest(http.MethodPost, "/get_tutor_availability", bytes.NewBufferString("{"))
+	reqInvalid.Header.Set("Content-Type", "application/json")
+
+	// Create a new recorder to record the response
+	rrInvalid := httptest.NewRecorder()
+
+	// Call the handler function with the recorder and request
+	handler(rrInvalid, reqInvalid)
+
+	// Check the response status code
+	assert.Equal(t, http.StatusBadRequest, rrInvalid.Code, "Handler returned wrong status code for invalid JSON")
 }
 
 // Test: Test all availability handlers as a component
@@ -658,8 +686,8 @@ func TestDeleteTutorSession(t *testing.T) {
 // go test -coverprofile="add_session.out" ./...
 // go tool cover -html="add_session.out" -o ./reports/add_session.html
 func TestAddTutoringSession(t *testing.T) {
-	// Construct connection string for the test database
-	connStr := "host=localhost port=5432 user=testuser password=testpassword dbname=testdb sslmode=disable"
+	// Construct connection string
+	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", DBHost, DBPort, DBUser, DBPassword, DBName)
 
 	// Open database connection
 	db, err := sql.Open("postgres", connStr)
@@ -788,4 +816,68 @@ func TestEditSession(t *testing.T) {
 	fmt.Println("")
 	fmt.Println("Testing EditTutorSession Complete")
 	fmt.Println("")
+}
+
+func TestGetTutoringSessionListHandler(t *testing.T) {
+	// Construct connection string
+	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", DBHost, DBPort, DBUser, DBPassword, DBName)
+
+	// Open database connection
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer db.Close()
+
+	// Test case 1: Get Tutoring Session List with valid input
+	fmt.Println("Test case 1: Get Tutoring Session List with valid input")
+
+	// Define a mock user
+	user := util.User{
+		ID:   1,
+		Role: "tutor",
+	}
+	// Marshal user to JSON
+	reqBody, err := json.Marshal(user)
+	assert.NoError(t, err, "Failed to marshal JSON request body")
+
+	// Create a new HTTP request with the mock payload
+	req := httptest.NewRequest(http.MethodPost, "/get_tutoring_session_list", bytes.NewBuffer(reqBody))
+	req.Header.Set("Content-Type", "application/json")
+
+	// Create a new recorder to record the response
+	rr := httptest.NewRecorder()
+
+	// Call the handler function with the recorder and request
+	handler := handlers.GetTutoringSessionList(db)
+	handler(rr, req)
+
+	// Check the response status code
+	assert.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code for valid input")
+
+	// Parse the JSON response
+	var response struct {
+		ID               int                    `json:"id"`
+		Role             string                 `json:"role"`
+		TutoringSessions []util.TutoringSession `json:"tutoring_session_list"`
+	}
+	err = json.NewDecoder(rr.Body).Decode(&response)
+	assert.NoError(t, err, "Failed to decode JSON response")
+
+	// Test case 2: Get Tutoring Session List with invalid JSON
+	fmt.Println("")
+	fmt.Println("Test case 2: Get Tutoring Session List with invalid JSON")
+
+	// Create a new HTTP request with invalid JSON payload
+	reqInvalid := httptest.NewRequest(http.MethodPost, "/get_tutoring_session_list", bytes.NewBuffer([]byte("{")))
+	reqInvalid.Header.Set("Content-Type", "application/json")
+
+	// Create a new recorder to record the response
+	rrInvalid := httptest.NewRecorder()
+
+	// Call the handler function with the recorder and request
+	handler(rrInvalid, reqInvalid)
+
+	// Check the response status code
+	assert.Equal(t, http.StatusBadRequest, rrInvalid.Code, "Handler returned wrong status code for invalid JSON")
 }
