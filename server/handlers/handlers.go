@@ -756,7 +756,7 @@ func EditTutorSession(db *sql.DB) http.HandlerFunc {
 		}
 
 		// Add old availability shown in oldTimeBlockIdList -- BUG HERE??
-		if oldDate.Before(time.Now()) {
+		if !(oldDate.Before(time.Now())) {
 			var tutorAvailability util.TutorAvailability
 			tutorAvailability.ID = session.TutorID
 			tutorAvailability.Date = oldDate.Format("2006-01-02 15:04:05")
@@ -778,35 +778,35 @@ func EditTutorSession(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		// // Convert time block list to string
-		// timeString, err := util.TimeBlockToString(db, session)
-		// if err != nil {
-		// 	fmt.Println("Error formating time block to string: ", err)
-		// 	// http.Error(w, "Unexpected error", http.StatusInternalServerError) // status code 500
-		// 	// return
-		// }
-		// // Email tutor and student involved
-		// subject := fmt.Sprintf("TutorMe: %s Session Change", session.Date)
-		// body := fmt.Sprintf("Session ID:%d's date and time have been moved to: %s from %s ", session.TutoringSessionID, session.Date, timeString)
-		// tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
-		// if err != nil {
-		// 	fmt.Println("Error getting tutor email: ", err)
-		// 	// http.Error(w, "Error getting tutor email", http.StatusInternalServerError) // status code 500
-		// 	// return
-		// }
-		// studentEmail, err := util.GetStudentEmailBySessionID(db, session)
-		// if err != nil {
-		// 	fmt.Println("Error getting student email: ", err)
-		// 	// http.Error(w, "Error getting student email", http.StatusInternalServerError) // status code 500
-		// 	// return
-		// }
-		// recipients := []string{tutorEmail, studentEmail}
-		// err = util.SendEmail(recipients, subject, body)
-		// if err != nil {
-		// 	fmt.Println("Error sending email: ", err)
-		// 	// http.Error(w, "Error sending email", http.StatusInternalServerError) // status code 500
-		// 	// return
-		// }
+		// Convert time block list to string
+		timeString, err := util.TimeBlockToString(db, session)
+		if err != nil {
+			fmt.Println("Error formating time block to string: ", err)
+		}
+		// Email tutor and student involved
+		subject := fmt.Sprintf("TutorMe: %s Session Change", session.Date)
+		body := fmt.Sprintf("Session ID:%d's date and time have been moved to: %s from %s ", session.TutoringSessionID, session.Date, timeString)
+		tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
+		if err != nil {
+			fmt.Println("Error getting tutor email: ", err)
+		}
+		studentEmail, err := util.GetStudentEmailBySessionID(db, session)
+		if err != nil {
+			fmt.Println("Error getting student email: ", err)
+		}
+		// Send email
+		recipient := []string{tutorEmail}
+		err = util.SendEmail(recipient, subject, body)
+		if err != nil {
+			fmt.Println("Error sending email: ", err)
+		}
+
+		// Send email
+		recipient = []string{studentEmail}
+		err = util.SendEmail(recipient, subject, body)
+		if err != nil {
+			fmt.Println("Error sending email: ", err)
+		}
 
 		// Prepare response
 		response := struct {
@@ -831,5 +831,42 @@ func EditTutorSession(db *sql.DB) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		w.Write(jsonResponse)
+	}
+}
+
+// should work now
+// Get tutoring session list
+func GetMasterSchedule(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Read JSON from payload
+		var payload util.Login
+		err := util.DecodeJSONRequestBody(r, &payload)
+		if err != nil {
+			fmt.Println("Invalid JSON:", err)
+			http.Error(w, "Error parsing JSON", http.StatusBadRequest) // status code 400
+			return
+		}
+
+		buf, err := util.CreateMasterSchedule(db)
+		if err != nil {
+			fmt.Println("Error creating buffer:", err)
+			http.Error(w, "Error creating buffer", http.StatusBadRequest) // status code 400
+			return
+		}
+		recipient := []string{payload.Email}
+		subject := "Macrohard Master Schedule"
+		body := "Attached is the master schedule"
+		// Get the current date and time for creating a unique filename
+		currentTime := time.Now().Format("2006-01-02_15-04-05")
+		filename := fmt.Sprintf("tutoring_session_export_%s.pdf", currentTime)
+		err = util.SendEmailWithAttachment(recipient, subject, body, filename, buf.Bytes())
+		if err != nil {
+			fmt.Println("Error sending email:", err)
+			http.Error(w, "Error sending email", http.StatusBadRequest) // status code 400
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		// Write the response body
+		fmt.Fprintf(w, "Success! This is a 200 OK response.")
 	}
 }

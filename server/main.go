@@ -94,6 +94,7 @@ func router() http.Handler {
 		r.Post("/add_tutoring_session", handlers.AddTutoringSession(db))
 		r.Post("/delete_tutoring_session", handlers.DeleteTutorSession(db))
 		r.Post("/edit_tutoring_session", handlers.EditTutorSession(db))
+		r.Post("/get_master_schedule", handlers.GetMasterSchedule(db))
 
 	})
 
