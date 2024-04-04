@@ -4,8 +4,8 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
-import com.example.tutorapp395project.viewModel.AuthViewModel
 import com.example.tutorapp395project.viewModel.StudentViewModel
 import com.maxkeppeker.sheets.core.models.base.UseCaseState
 
@@ -25,7 +25,7 @@ fun SessionInfoDialog(
 ) {
     Dialog(onDismissRequest = { onDismiss() }) {
         Column(
-        ){
+        ) {
             FixedSessionInfoCard(
                 sessionId = sessionId,
                 tutorName = tutorName,
@@ -42,3 +42,20 @@ fun SessionInfoDialog(
         }
     }
 }
+    @RequiresApi(Build.VERSION_CODES.O)
+    @Preview
+    @Composable
+    fun SessionInfoDialogPreview() {
+        SessionInfoDialog(
+            sessionId = 1,
+            tutorName = "Tutor Name",
+            subject = "Math",
+            dateIn = "2024/04/01",
+            timeslot = "Timeslot",
+            opponentEmail = "email@gmail.com",
+            onDelete = { },
+            onDismiss = { },
+            calendarState = UseCaseState()
+        )
+    }
+

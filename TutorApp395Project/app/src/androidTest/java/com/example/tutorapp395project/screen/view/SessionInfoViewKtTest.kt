@@ -1,7 +1,11 @@
 package com.example.tutorapp395project.screen.view
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.tutorapp395project.viewModel.StudentViewModel
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
@@ -19,7 +23,7 @@ class SessionInfoViewKtTest {
      * Purpose: Test if the FixedSessionInfoCard composable is displayed correctly
      */
     @Test
-     fun fixedSessionInfoCard() {
+     fun fixedSessionInfoCard_Exists() {
          composeTestRule.setContent {
              FixedSessionInfoCard(
                     sessionId = 1,
@@ -34,7 +38,7 @@ class SessionInfoViewKtTest {
      * Purpose: Test if the FreeSessionInfoCard composable is displayed correctly
      */
     @Test
-    fun freeSessionInfoCard() {
+    fun freeSessionInfoCard_Exists() {
         composeTestRule.setContent {
             FreeSessionInfoCard(
                 dateIn = "2024/04/04",
@@ -52,7 +56,7 @@ class SessionInfoViewKtTest {
      * Purpose: Test if the title is displayed correctly
      */
     @Test
-    fun title() {
+    fun title_Exists() {
         val titleText = "Test Title"
 
         composeTestRule.setContent {
@@ -65,7 +69,7 @@ class SessionInfoViewKtTest {
      * Purpose: Test if the subtitle is displayed correctly
      */
     @Test
-    fun subtitle() {
+    fun subtitle_Exists() {
         val subtitleText = "Test Subtitle"
 
         composeTestRule.setContent {
@@ -78,7 +82,7 @@ class SessionInfoViewKtTest {
      * Purpose: Test if the fixed session info text displayed correctly
      */
     @Test
-    fun fixedSessionInfo() {
+    fun fixedSessionInfo_Exists() {
         val sessionID = 123456
         val tutorName = "Pikachu"
         val subject = "Maths"
@@ -96,7 +100,7 @@ class SessionInfoViewKtTest {
      * Purpose: Test if the free session info text displayed correctly
      */
     @Test
-    fun freeSessionInfo() {
+    fun freeSessionInfo_Exists() {
         val date = "2024/04/04"
         val time = "14:00-15:00"
         val opponentEmail = "opponent@gmail.com"
@@ -108,5 +112,44 @@ class SessionInfoViewKtTest {
 
         composeTestRule.onNodeWithText(date).assertExists()
         composeTestRule.onNodeWithText(time).assertExists()
+    }
+
+    /*
+     * Purpose: Test if the send email button is displayed correctly
+     */
+    @Test
+    fun freeSessionInfo_SendEmailButtonExists() {
+        composeTestRule.onNodeWithText("Send Email").assertExists()
+    }
+
+    /*
+     * Purpose: Test if the email intent is correctly created
+     */
+    @Test
+    fun freeSessionInfo_EmailIntentCorrectlyCreated() {
+        Intents.init()
+        val date = "2024/04/04"
+        val time = "14:00-15:00"
+        val opponentEmail = "opponent@gmail.com"
+        val studentViewModel = StudentViewModel()
+
+        // Create the FreeSessionInfo composable
+        composeTestRule.setContent {
+            FreeSessionInfo(
+                dateIn=date,
+                timeslot = time,
+                onDelete = { },
+                calendarState = rememberUseCaseState(),
+                opponentEmail = opponentEmail,
+                studentViewModel = studentViewModel
+            )
+        }
+
+        try {
+            Intents.intended(IntentMatchers.hasAction(Intent.ACTION_SENDTO))
+            Intents.intended(IntentMatchers.hasData(Uri.parse("mailto:${opponentEmail}")))
+        } finally {
+            Intents.release()
+        }
     }
 }
