@@ -18,6 +18,7 @@ import (
 	"github.com/jung-kurt/gofpdf"
 	"github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
+	"gopkg.in/gomail.v2"
 )
 
 type Login struct {
@@ -1068,37 +1069,45 @@ func GetStudentEmailBySessionID(db *sql.DB, session TutoringSession) (string, er
 	return email, nil
 }
 
-func CreateMasterSchedule(db *sql.DB) (buf bytes.Buffer, err error) {
+func CreateMasterSchedule(db *sql.DB) (filename string, err error) {
 	// Query the database to retrieve the data
-	rows, err := db.Query("SELECT * FROM tutoring_session")
+	query := `
+		SELECT *
+		FROM tutoring_session
+		WHERE date >= DATE_TRUNC('month', CURRENT_DATE) 
+		AND date < DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '2 months'
+	`
+	rows, err := db.Query(query)
 	if err != nil {
 		fmt.Println("Error with tutoring_session query")
-		return buf, err
+		return filename, err
 	}
-
 	// Create a new PDF document
 	pdf := gofpdf.New("P", "mm", "A4", "")
+
+	// Add a page
 	pdf.AddPage()
 
-	// Add table headers
-	pdf.SetFont("Arial", "B", 12)
-	pdf.CellFormat(70, 7, "Session ID", "1", 0, "C", false, 0, "")
-	pdf.CellFormat(70, 7, "Tutor ID", "1", 0, "C", false, 0, "")
-	pdf.CellFormat(70, 7, "Student ID", "1", 0, "C", false, 0, "")
-	pdf.CellFormat(70, 7, "Name", "1", 1, "C", false, 0, "")
-	pdf.CellFormat(70, 7, "Description", "1", 0, "C", false, 0, "")
-	pdf.CellFormat(50, 7, "Subject", "1", 0, "C", false, 0, "")
-	pdf.CellFormat(50, 7, "Grade", "1", 0, "C", false, 0, "")
-	pdf.CellFormat(70, 7, "Status", "1", 1, "C", false, 0, "")
-	pdf.CellFormat(50, 7, "Date", "1", 0, "C", false, 0, "")
-	pdf.CellFormat(40, 7, "Time", "1", 1, "C", false, 0, "")
+	// Set font for the table
+	pdf.SetFont("Arial", "", 6)
 
-	// Set font for table cells
-	pdf.SetFont("Arial", "", 12)
+	// Add the title to the PDF
+	pdf.CellFormat(0, 10, "Master Schedule", "", 1, "C", false, 0, "")
 
-	var session TutoringSession
+	// Define column widths
+	colWidths := []float64{15, 15, 15, 30, 30, 20, 15, 20, 20, 15}
+
+	//Define column headers
+	headers := []string{"sessionID", "tutorID", "studentID", "name", "description", "subject", "grade", "status", "date", "time"}
+	// Create table header
+	for i, header := range headers {
+		pdf.CellFormat(colWidths[i], 10, header, "1", 0, "C", false, 0, "")
+	}
+	pdf.Ln(10)
+
 	// Iterate over the rows and write data to the buffer
 	for rows.Next() {
+		var session TutoringSession
 		var int64Array pq.Int64Array
 		err := rows.Scan(
 			&session.TutoringSessionID,
@@ -1110,63 +1119,81 @@ func CreateMasterSchedule(db *sql.DB) (buf bytes.Buffer, err error) {
 			&session.Grade,
 			&session.Status,
 			&session.Date,
-			(&int64Array))
+			&int64Array)
 		if err != nil {
 			fmt.Println("Error scanning tutoring_session: ", err)
-			return buf, err
+			return filename, err
 		}
+		//fmt.Println("Row: ", session)
 		// Convert int64 array into int slices
 		for _, i := range int64Array {
 			session.TimeBlockIDList = append(session.TimeBlockIDList, int(i))
 		}
+		//fmt.Println("Row: ", session)
+
 		timeBlockIDListString, err := TimeBlockToString(db, session)
 		if err != nil {
 			fmt.Println("Error with time_block query")
-			return buf, err
+			return filename, err
+
 		}
-		pdf.CellFormat(70, 7, fmt.Sprintf("%d", session.TutoringSessionID), "1", 0, "C", false, 0, "")
-		pdf.CellFormat(70, 7, fmt.Sprintf("%d", session.TutorID), "1", 0, "C", false, 0, "")
-		pdf.CellFormat(70, 7, fmt.Sprintf("%d", session.StudentID), "1", 0, "C", false, 0, "")
-		pdf.CellFormat(70, 7, session.Name, "1", 1, "C", false, 0, "")
-		pdf.CellFormat(70, 7, session.Description, "1", 0, "C", false, 0, "")
-		pdf.CellFormat(50, 7, session.Subject, "1", 0, "C", false, 0, "")
-		pdf.CellFormat(50, 7, fmt.Sprintf("%d", session.Grade), "1", 0, "C", false, 0, "")
-		pdf.CellFormat(70, 7, session.Status, "1", 1, "C", false, 0, "")
-		pdf.CellFormat(50, 7, session.Date, "1", 0, "C", false, 0, "")
-		pdf.CellFormat(40, 7, timeBlockIDListString, "1", 1, "C", false, 0, "")
+
+		// Parse the date string into a time.Time object
+		date, err := time.Parse(time.RFC3339, session.Date)
+		if err != nil {
+			fmt.Println("Error parsing date:", err)
+			return filename, err
+		}
+
+		// Format the date into a human-readable layout
+		formattedDate := date.Format("January 2, 2006") // Example format: "March 2, 2024
+
+		pdf.CellFormat(colWidths[0], 10, fmt.Sprintf("%d", session.TutoringSessionID), "1", 0, "C", false, 0, "")
+		pdf.CellFormat(colWidths[1], 10, fmt.Sprintf("%d", session.TutorID), "1", 0, "C", false, 0, "")
+		pdf.CellFormat(colWidths[2], 10, fmt.Sprintf("%d", session.StudentID), "1", 0, "C", false, 0, "")
+		pdf.CellFormat(colWidths[3], 10, session.Name, "1", 0, "C", false, 0, "")
+		pdf.CellFormat(colWidths[4], 10, session.Description, "1", 0, "C", false, 0, "")
+		pdf.CellFormat(colWidths[5], 10, session.Subject, "1", 0, "C", false, 0, "")
+		pdf.CellFormat(colWidths[6], 10, fmt.Sprintf("%d", session.Grade), "1", 0, "C", false, 0, "")
+		pdf.CellFormat(colWidths[7], 10, session.Status, "1", 0, "C", false, 0, "")
+		pdf.CellFormat(colWidths[8], 10, formattedDate, "1", 0, "C", false, 0, "")
+		pdf.CellFormat(colWidths[9], 10, timeBlockIDListString, "1", 0, "C", false, 0, "")
+		pdf.Ln(10)
 	}
-	err = pdf.Output(&buf)
-	if err != nil {
-		fmt.Println("Error buffering PDF")
-		return buf, err
+
+	// Get the current date and time for creating a unique filename
+	currentTime := time.Now().Format("2006-01-02_15-04-05")
+	filename = fmt.Sprintf("tutoring_session_export_%s.pdf", currentTime)
+	// Save the PDF content to the file
+	if err := pdf.OutputFileAndClose(filename); err != nil {
+		return filename, fmt.Errorf("error saving PDF content to file: %v", err)
 	}
-	return buf, err
+	return filename, err
 }
 
-func SendEmailWithAttachment(recipient []string, subject string, body string, filename string, attachment []byte) error {
+func SendEmailWithAttachment(recipient []string, subject string, body string, filename string) error {
 	// Set up authentication credentials
 	smtpUsername := "macrohard2024@gmail.com"
 	smtpPassword := "tvpo evlv syou zllf"
 	smtpServer := "smtp.gmail.com"
-	smtpPort := "587"
+	smtpPort := 587
 
+	// Compose the email message using gomail
+	message := gomail.NewMessage()
+	message.SetHeader("From", smtpUsername)
+	message.SetHeader("To", recipient...)
+	message.SetHeader("Subject", subject)
+	message.SetBody("text/plain", body)
+	message.Attach(filename)
 	// Set up the SMTP client
-	auth := smtp.PlainAuth("", smtpUsername, smtpPassword, smtpServer)
-	smtpAddr := smtpServer + ":" + smtpPort
+	d := gomail.NewDialer(smtpServer, smtpPort, smtpUsername, smtpPassword)
 
-	// Compose the email message
-	message := []byte("To: " + recipient[0] + "\r\n" +
-		"Subject: " + subject + "\r\n" +
-		"MIME-version: 1.0;\nContent-Type: application/pdf;\r\n" +
-		"Content-Disposition: attachment; filename=\"" + filename + "\"\r\n" +
-		"\r\n")
-	message = append(message, attachment...)
 	// Send the email
-	err := smtp.SendMail(smtpAddr, auth, smtpUsername, recipient, message)
-	if err != nil {
+	if err := d.DialAndSend(message); err != nil {
 		fmt.Println("Error sending email: ", err)
 		return err
 	}
+
 	fmt.Println("Email sent successfully!")
-	return err
+	return nil
 }
