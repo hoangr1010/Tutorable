@@ -1,4 +1,3 @@
-
 package handlers
 
 import (
@@ -514,15 +513,22 @@ func AddTutoringSession(db *sql.DB) http.HandlerFunc {
 		body := fmt.Sprintf("A new session has been made for %s", session.Date) // Maybe add time
 		tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
 		if err != nil {
-			http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+			fmt.Println("Error querying for tutor email")
 			return
 		}
 		studentEmail, err := util.GetStudentEmailByID(db, session.StudentID)
 		if err != nil {
-			http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+			fmt.Println("Error querying for student email")
 			return
 		}
-		recipients := []string{tutorEmail, studentEmail}
+		// Send tutor email
+		recipients := []string{tutorEmail}
+		err = util.SendEmail(recipients, subject, body)
+		if err != nil {
+			fmt.Println("Error sending email: ", err)
+		}
+		// Send student email
+		recipients = []string{studentEmail}
 		err = util.SendEmail(recipients, subject, body)
 		if err != nil {
 			fmt.Println("Error sending email: ", err)
@@ -834,8 +840,7 @@ func EditTutorSession(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-// should work now
-// Get tutoring session list
+// Creates pdf file and converts it to bytes before emailing
 func GetMasterSchedule(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Read JSON from payload
@@ -847,24 +852,24 @@ func GetMasterSchedule(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		buf, err := util.CreateMasterSchedule(db)
+		filename, err := util.CreateMasterSchedule(db)
 		if err != nil {
 			fmt.Println("Error creating buffer:", err)
 			http.Error(w, "Error creating buffer", http.StatusBadRequest) // status code 400
 			return
 		}
+		_ = filename
+
 		recipient := []string{payload.Email}
 		subject := "Macrohard Master Schedule"
 		body := "Attached is the master schedule"
-		// Get the current date and time for creating a unique filename
-		currentTime := time.Now().Format("2006-01-02_15-04-05")
-		filename := fmt.Sprintf("tutoring_session_export_%s.pdf", currentTime)
-		err = util.SendEmailWithAttachment(recipient, subject, body, filename, buf.Bytes())
+		err = util.SendEmailWithAttachment(recipient, subject, body, filename)
 		if err != nil {
 			fmt.Println("Error sending email:", err)
 			http.Error(w, "Error sending email", http.StatusBadRequest) // status code 400
 			return
 		}
+
 		w.WriteHeader(http.StatusOK)
 		// Write the response body
 		fmt.Fprintf(w, "Success! This is a 200 OK response.")
