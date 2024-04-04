@@ -40,130 +40,6 @@ const (
 	Key        = "codingiscool"
 )
 
-// TestLoginHandler tests the login handler functionality.
-func TestLoginHandler(t *testing.T) {
-	// Construct connection string
-	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", DBHost, DBPort, DBUser, DBPassword, DBName)
-
-	// Open database connection
-	db, err := sql.Open("postgres", connStr)
-	if err != nil {
-		t.Fatalf("Failed to connect to database: %v", err)
-	}
-	defer db.Close()
-
-	fmt.Println("")
-	fmt.Println("Testing LoginHandler")
-	fmt.Println("")
-
-	// Test case 1: Invalid email
-	fmt.Println("Test 1: Invalid email")
-	login := util.Login{
-		Email:    "invalidemail@example.com",
-		Password: "passwd",
-		Role:     "tutor",
-	}
-	loginJSON, err := json.Marshal(login)
-	assert.NoError(t, err, "Failed to marshal login JSON")
-
-	req := httptest.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(loginJSON))
-	req.Header.Set("Content-Type", "application/json")
-
-	rr := httptest.NewRecorder()
-	handlers.LoginHandler(db)(rr, req)
-
-	assert.Equal(t, http.StatusUnauthorized, rr.Code, "Handler returned wrong status code for invalid email")
-
-	// Test case 2: Incorrect password
-	fmt.Println("")
-	fmt.Println("Test 2: Incorrect password")
-	login = util.Login{
-		Email:    "tutorjoe@COOLCODE.com",
-		Password: "incorrectpassword",
-		Role:     "tutor",
-	}
-	loginJSON, err = json.Marshal(login)
-	assert.NoError(t, err, "Failed to marshal login JSON")
-
-	req = httptest.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(loginJSON))
-	req.Header.Set("Content-Type", "application/json")
-
-	rr = httptest.NewRecorder()
-	handlers.LoginHandler(db)(rr, req)
-
-	assert.Equal(t, http.StatusUnauthorized, rr.Code, "Handler returned wrong status code for incorrect password")
-
-	// Test case 3: Missing role
-	fmt.Println("")
-	fmt.Println("Test 3: Missing role")
-	login = util.Login{
-		Email:    "tutorjoe@COOLCODE.com",
-		Password: "passwd",
-	}
-	loginJSON, err = json.Marshal(login)
-	assert.NoError(t, err, "Failed to marshal login JSON")
-
-	req = httptest.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(loginJSON))
-	req.Header.Set("Content-Type", "application/json")
-
-	rr = httptest.NewRecorder()
-	handlers.LoginHandler(db)(rr, req)
-
-	assert.Equal(t, http.StatusBadRequest, rr.Code, "Handler returned wrong status code for missing role")
-
-	// Test case 4: Empty request body
-	fmt.Println("")
-	fmt.Println("Test 4: Empty request body")
-	req = httptest.NewRequest(http.MethodPost, "/login", nil)
-
-	rr = httptest.NewRecorder()
-	handlers.LoginHandler(db)(rr, req)
-
-	assert.Equal(t, http.StatusBadRequest, rr.Code, "Handler returned wrong status code for empty request body")
-
-	// Test case 4.1: Error validation
-	fmt.Println("")
-	fmt.Println("Test 4.1: Invalid login")
-	login = util.Login{
-		Email:    "demotest@COOLCODE.com",
-		Password: "passwd",
-		Role:     "student",
-	}
-	loginJSON, err = json.Marshal(login)
-	assert.NoError(t, err, "Failed to marsal login JSON")
-
-	req = httptest.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(loginJSON))
-	req.Header.Set("Content-type", "application/json")
-
-	rr = httptest.NewRecorder()
-	handlers.LoginHandler(db)(rr, req)
-
-	assert.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code for valid login")
-
-	// Test case 5: Valid login
-	fmt.Println("")
-	fmt.Println("Test 5: Valid login")
-	login = util.Login{
-		Email:    "tutorjoe@COOLCODE.com",
-		Password: "passwd",
-		Role:     "tutor",
-	}
-	loginJSON, err = json.Marshal(login)
-	assert.NoError(t, err, "Failed to marshal login JSON")
-
-	req = httptest.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(loginJSON))
-	req.Header.Set("Content-Type", "application/json")
-
-	rr = httptest.NewRecorder()
-	handlers.LoginHandler(db)(rr, req)
-
-	assert.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code for valid login")
-
-	fmt.Println("")
-	fmt.Println("LoginHandler test complete")
-	fmt.Println("")
-}
-
 // Test: Checks if the register handler works
 func TestRegisterHandler(t *testing.T) {
 	// Construct connection string
@@ -609,7 +485,7 @@ func TestAvailabilityHandlers(t *testing.T) {
 
 // go test -coverprofile="delete_session.out" ./...
 // go tool cover -html="delete_session.out" -o ./reports/delete_session.html
-func TestDeleteTutorSession(t *testing.T) {
+func TestDeleteandAddTutorSession(t *testing.T) {
 	// Construct connection string
 	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", DBHost, DBPort, DBUser, DBPassword, DBName)
 
@@ -621,15 +497,14 @@ func TestDeleteTutorSession(t *testing.T) {
 	defer db.Close()
 
 	fmt.Println("")
-	fmt.Println("Testing DeleteTutorSession")
-	fmt.Println("")
+	fmt.Println("DeleteTutorSession and AddTutoring test")
 
 	type SessionID struct {
 		SessionID int `json:"tutor_session_id"`
 	}
 
 	session := SessionID{
-		SessionID: 2,
+		SessionID: 1,
 	}
 
 	// Marshal session to JSON
@@ -662,7 +537,114 @@ func TestDeleteTutorSession(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rrDel.Code, "Expected 200 OK response")
 
 	fmt.Println("")
+	fmt.Println("DeleteTutorSession and AddTutoring test complete")
+	fmt.Println("")
+}
+
+func TestDeleteTutorSession(t *testing.T) {
+	// Construct connection string
+	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", DBHost, DBPort, DBUser, DBPassword, DBName)
+
+	// Open database connection
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer db.Close()
+
+	fmt.Println("")
+	fmt.Println("Testing DeleteTutorSession")
+	fmt.Println("")
+
+	type SessionID struct {
+		SessionID int `json:"tutor_session_id"`
+	}
+
+	session := SessionID{
+		SessionID: 1,
+	}
+
+	// Marshal session to JSON
+	sessionJSON, err := json.Marshal(session)
+	assert.NoError(t, err, "Failed to marshal session JSON")
+
+	reqDel := httptest.NewRequest(http.MethodPost, "/delete_tutoring_session", bytes.NewBuffer(sessionJSON))
+	reqDel.Header.Set("Content-Type", "application/json")
+
+	rrDel := httptest.NewRecorder()
+
+	// Call DeleteTutorSession handler function
+	handlers.DeleteTutorSession(db)(rrDel, reqDel)
+
+	// Check if the response status code is 200 OK
+	assert.Equal(t, http.StatusOK, rrDel.Code, "Expected 200 OK response")
+
+	fmt.Println("")
 	fmt.Println("DeleteTutorSession test complete")
+	fmt.Println("")
+}
+
+func TestDeleteTutorSession2(t *testing.T) {
+	// Construct connection string
+	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", DBHost, DBPort, DBUser, DBPassword, DBName)
+
+	// Open database connection
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer db.Close()
+
+	fmt.Println("")
+	fmt.Println("Testing DeleteTutorSession")
+	fmt.Println("")
+
+	// Create a tutoring session to delete
+	session := util.TutoringSession{
+		TutoringSessionID: 29,
+		TutorID:           1,
+		StudentID:         2,
+		Date:              "2024-04-01",
+		TimeBlockIDList:   []int{10, 11},
+	}
+
+	// Insert the session into the database
+	err = util.InsertTutoringSession(db, session)
+	assert.NoError(t, err, "Failed to insert tutoring session")
+
+	// Create JSON payload for deletion
+	payload := map[string]int{
+		"session_id": 29,
+	}
+
+	payloadJSON, err := json.Marshal(payload)
+	assert.NoError(t, err, "Failed to marshal payload JSON")
+
+	reqDelete := httptest.NewRequest(http.MethodPost, "/delete_tutoring_session", bytes.NewBuffer(payloadJSON))
+	reqDelete.Header.Set("Content-Type", "application/json")
+
+	rrDelete := httptest.NewRecorder()
+
+	// Call the handler
+	handlers.DeleteTutorSession(db)(rrDelete, reqDelete)
+
+	// Check the response status code
+	assert.Equal(t, http.StatusOK, rrDelete.Code, "Expected 200 OK Response")
+
+	// Unmarshal the response JSON
+	var response struct {
+		SessionIDDeleted int   `json:"session_id_deleted"`
+		TimeBlockIDList  []int `json:"time_block_id_list"`
+	}
+	err = json.Unmarshal(rrDelete.Body.Bytes(), &response)
+	assert.NoError(t, err, "Failed to unmarshal response JSON")
+
+	// Check the deleted session ID and time block IDs
+	assert.Equal(t, 29, response.SessionIDDeleted, "Unexpected deleted session ID")
+	assert.ElementsMatch(t, []int{10, 11}, response.TimeBlockIDList, "Unexpected time block IDs")
+
+	fmt.Println("")
+	fmt.Println("Testing DeleteTutorSession Complete")
 	fmt.Println("")
 }
 
@@ -703,13 +685,13 @@ func TestAddTutoringSession(t *testing.T) {
 	// Define a sample tutoring session payload
 	tutoringSession := util.TutoringSession{
 		TutorID:         1,
-		StudentID:       1,
-		Name:            "Sample Session",
+		StudentID:       10,
+		Name:            "Stupid session",
 		Description:     "Sample Description",
 		Subject:         "computer science",
 		Grade:           11,
-		Date:            "2024-03-25",
-		TimeBlockIDList: []int{12, 13},
+		Date:            "2024-04-06",
+		TimeBlockIDList: []int{1, 2},
 	}
 
 	// Marshal tutoring session to JSON
@@ -880,4 +862,128 @@ func TestGetTutoringSessionListHandler(t *testing.T) {
 
 	// Check the response status code
 	assert.Equal(t, http.StatusBadRequest, rrInvalid.Code, "Handler returned wrong status code for invalid JSON")
+}
+
+// TestLoginHandler tests the login handler functionality.
+func TestLoginHandler(t *testing.T) {
+	// Construct connection string
+	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", DBHost, DBPort, DBUser, DBPassword, DBName)
+
+	// Open database connection
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		t.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer db.Close()
+
+	fmt.Println("")
+	fmt.Println("Testing LoginHandler")
+	fmt.Println("")
+
+	// Test case 1: Invalid email
+	fmt.Println("Test 1: Invalid email")
+	login := util.Login{
+		Email:    "invalidemail@example.com",
+		Password: "passwd",
+		Role:     "tutor",
+	}
+	loginJSON, err := json.Marshal(login)
+	assert.NoError(t, err, "Failed to marshal login JSON")
+
+	req := httptest.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(loginJSON))
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+	handlers.LoginHandler(db)(rr, req)
+
+	assert.Equal(t, http.StatusUnauthorized, rr.Code, "Handler returned wrong status code for invalid email")
+
+	// Test case 2: Incorrect password
+	fmt.Println("")
+	fmt.Println("Test 2: Incorrect password")
+	login = util.Login{
+		Email:    "tutorjoe@COOLCODE.com",
+		Password: "incorrectpassword",
+		Role:     "tutor",
+	}
+	loginJSON, err = json.Marshal(login)
+	assert.NoError(t, err, "Failed to marshal login JSON")
+
+	req = httptest.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(loginJSON))
+	req.Header.Set("Content-Type", "application/json")
+
+	rr = httptest.NewRecorder()
+	handlers.LoginHandler(db)(rr, req)
+
+	assert.Equal(t, http.StatusUnauthorized, rr.Code, "Handler returned wrong status code for incorrect password")
+
+	// Test case 3: Missing role
+	fmt.Println("")
+	fmt.Println("Test 3: Missing role")
+	login = util.Login{
+		Email:    "tutorjoe@COOLCODE.com",
+		Password: "passwd",
+	}
+	loginJSON, err = json.Marshal(login)
+	assert.NoError(t, err, "Failed to marshal login JSON")
+
+	req = httptest.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(loginJSON))
+	req.Header.Set("Content-Type", "application/json")
+
+	rr = httptest.NewRecorder()
+	handlers.LoginHandler(db)(rr, req)
+
+	assert.Equal(t, http.StatusBadRequest, rr.Code, "Handler returned wrong status code for missing role")
+
+	// Test case 4: Empty request body
+	fmt.Println("")
+	fmt.Println("Test 4: Empty request body")
+	req = httptest.NewRequest(http.MethodPost, "/login", nil)
+
+	rr = httptest.NewRecorder()
+	handlers.LoginHandler(db)(rr, req)
+
+	assert.Equal(t, http.StatusBadRequest, rr.Code, "Handler returned wrong status code for empty request body")
+
+	// Test case 4.1: Error validation
+	fmt.Println("")
+	fmt.Println("Test 4.1: Invalid login")
+	login = util.Login{
+		Email:    "demotest@COOLCODE.com",
+		Password: "passwd",
+		Role:     "student",
+	}
+	loginJSON, err = json.Marshal(login)
+	assert.NoError(t, err, "Failed to marsal login JSON")
+
+	req = httptest.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(loginJSON))
+	req.Header.Set("Content-type", "application/json")
+
+	rr = httptest.NewRecorder()
+	handlers.LoginHandler(db)(rr, req)
+
+	assert.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code for valid login")
+
+	// Test case 5: Valid login
+	fmt.Println("")
+	fmt.Println("Test 5: Valid login")
+	login = util.Login{
+		Email:    "tutorjoe@COOLCODE.com",
+		Password: "passwd",
+		Role:     "tutor",
+	}
+	loginJSON, err = json.Marshal(login)
+	assert.NoError(t, err, "Failed to marshal login JSON")
+
+	req = httptest.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(loginJSON))
+	req.Header.Set("Content-Type", "application/json")
+
+	rr = httptest.NewRecorder()
+	handlers.LoginHandler(db)(rr, req)
+
+	assert.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code for valid login")
+
+	fmt.Println("")
+	fmt.Println("LoginHandler test complete")
+	fmt.Println("")
 }

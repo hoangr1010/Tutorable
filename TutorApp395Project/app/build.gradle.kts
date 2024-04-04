@@ -20,9 +20,15 @@ android {
         }
         testOptions {
             reportDir = file("${buildDir}/test_reports").toString()
-
         }
+
+
     }
+
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
+
 
     buildTypes {
         release {

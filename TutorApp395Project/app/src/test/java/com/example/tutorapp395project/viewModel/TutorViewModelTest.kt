@@ -1,5 +1,7 @@
 package com.example.tutorapp395project.viewModel
 
+import com.example.tutorapp395project.data.AddAvailabilityRequest
+import com.example.tutorapp395project.data.AddAvailabilityResponse
 import com.example.tutorapp395project.data.AvailabilityState
 import com.example.tutorapp395project.data.DeleteSessionRequest
 import com.example.tutorapp395project.data.DeleteSessionResponse
@@ -21,17 +23,26 @@ import java.time.LocalDate
 @RunWith(MockitoJUnitRunner::class)
 class TutorViewModelTest {
 
+    // Initalize the UserRepository, TutorViewModel, and AuthViewModel for testing purposes
     @Mock
     private lateinit var tutorRepository: UserRepository
+    @Mock
     private lateinit var tutorViewModel: TutorViewModel
+    @Mock
     private lateinit var authViewModel: AuthViewModel
 
+    /*
+     * Purpose: Set up the TutorViewModel and AuthViewModel for testing
+     */
     @Before
     fun setUp() {
         authViewModel = AuthViewModel()
         tutorViewModel = TutorViewModel(tutorRepository, authViewModel)
     }
 
+    /*
+     * Purpose: Test that getSessionsForTutor updates state
+     */
     @Test
     fun getSessionsForTutor_updatesState() = runBlockingTest {
         val role = "tutor"
@@ -46,12 +57,18 @@ class TutorViewModelTest {
         )
     }
 
+    /*
+     * Purpose: Test that the inital state of selectedDate is the current date
+     */
     @Test
     fun selectedDate_initialState() {
         // Check initial state
         assertEquals(LocalDate.now(), tutorViewModel.selectedDate.value)
     }
 
+    /*
+     * Purpose: Test that selectedDate updates the state when changed
+     */
     @Test
     fun selectedDate_updatesState() {
         // Check initial state
@@ -65,6 +82,9 @@ class TutorViewModelTest {
         assertEquals(newDate, tutorViewModel.selectedDate.value)
     }
 
+    /*
+     * Purpose: Test that resetAvailability resets the state
+     */
     @Test
     fun resetAvailability_State() {
         // Set initial state
@@ -80,6 +100,9 @@ class TutorViewModelTest {
         assertEquals(AvailabilityState(), tutorViewModel.availabilityState.value)
     }
 
+    /*
+     * Purpose: Test that deleteSession calls the userRepository
+     */
     @Test
     fun deleteSession_callsUserRepository() = runBlockingTest {
         val sessionId = 1
@@ -95,6 +118,9 @@ class TutorViewModelTest {
         verify(tutorRepository).deleteSession(deleteSessionRequest)
     }
 
+    /*
+     * Purpose: Test that deleteSession updates the state when session is deleted
+     */
     @Test
     fun deleteSession_updatesState() = runBlockingTest {
         val sessionId = 1
@@ -103,19 +129,79 @@ class TutorViewModelTest {
             time_block_id_list = listOf(1, 2, 3),
             session_id_deleted = sessionId
         )
-        val response = mock(Response::class.java)
-        `when`(response.body()).thenReturn(deleteSessionResponse)
+        val response = Response.success(deleteSessionResponse)
+
+        `when`(tutorRepository.deleteSession(deleteSessionRequest)).thenReturn(response)
 
         tutorViewModel.deleteSession(sessionId)
+
         assertEquals(
             deleteSessionResponse.time_block_id_list,
             tutorViewModel.availabilityState.value.time_block_id_list
         )
     }
 
+    /*
+     * Purpose: Test that saveAvailability calls the userRepository
+     */
+    @Test
+    fun saveAvailability_callsUserRepository() = runBlockingTest {
+        val id = "1"
+        val addAvailabilityRequest = AddAvailabilityRequest(
+            id = id.toInt(),
+            date = LocalDate.now().toString(),
+            time_block_id_list = listOf(1, 2, 3)
+        )
+        val addAvailabilityResponse = AddAvailabilityResponse(
+            date = LocalDate.now().toString(),
+            time_block_id_list = listOf(1, 2, 3)
+        )
+        val response = Response.success(addAvailabilityResponse)
 
+        `when`(tutorRepository.addAvailability(addAvailabilityRequest)).thenReturn(response)
+        tutorViewModel.saveAvailability(id)
+        verify(tutorRepository).addAvailability(addAvailabilityRequest)
+    }
 
+    /*
+     * Purpose: Test that getAvailability updates the state when changed
+     */
+    @Test
+    fun getAvailability_updatesState() = runBlockingTest {
+        val id = "1"
+        val addAvailabilityRequest = AddAvailabilityRequest(
+            id = id.toInt(),
+            date = LocalDate.now().toString(),
+            time_block_id_list = listOf(1, 2, 3)
+        )
+        val addAvailabilityResponse = AddAvailabilityResponse(
+            date = LocalDate.now().toString(),
+            time_block_id_list = listOf()
+        )
+        val response = Response.success(addAvailabilityResponse)
 
+        `when`(tutorRepository.addAvailability(addAvailabilityRequest)).thenReturn(response)
+        tutorViewModel.saveAvailability(id)
 
+        assertEquals(
+            addAvailabilityResponse.time_block_id_list,
+            tutorViewModel.availabilityState.value.time_block_id_list
+        )
+    }
 
+    /*
+     * Purpose: Test that toggleTimeSlot updates the state
+     */
+    @Test
+    fun toggleTimeSlot_updatesState() {
+        val timeBlockId = 1
+        val timeBlockIdList = listOf(1)
+
+        tutorViewModel.toggleTimeSlotId(timeBlockId)
+
+        assertEquals(
+            timeBlockIdList,
+            tutorViewModel.availabilityState.value.time_block_id_list
+        )
+    }
 }

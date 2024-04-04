@@ -1,0 +1,361 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>mock: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/macewanCS/w24MacroHard/server/mock/db_config.go (0.0%)</option>
+				
+				<option value="file1">github.com/macewanCS/w24MacroHard/server/mock/db_mock.go (17.6%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package mock
+
+import (
+        "os"
+)
+
+// Enum types
+type Grade string
+
+const (
+        Grade1  Grade = "1"
+        Grade2  Grade = "2"
+        Grade3  Grade = "3"
+        Grade4  Grade = "4"
+        Grade5  Grade = "5"
+        Grade6  Grade = "6"
+        Grade7  Grade = "7"
+        Grade8  Grade = "8"
+        Grade9  Grade = "9"
+        Grade10 Grade = "10"
+        Grade11 Grade = "11"
+        Grade12 Grade = "12"
+)
+
+type TutorLevel string
+
+const (
+        Fresher TutorLevel = "fresher"
+        Junior  TutorLevel = "junior"
+        Senior  TutorLevel = "senior"
+)
+
+type TutoringSessionStatus string
+
+const (
+        Scheduled TutoringSessionStatus = "scheduled"
+        Cancelled TutoringSessionStatus = "cancelled"
+        Completed TutoringSessionStatus = "completed"
+)
+
+type TutoringSubject string
+
+const (
+        Mathematics     TutoringSubject = "mathematics"
+        English         TutoringSubject = "english"
+        Physics         TutoringSubject = "physics"
+        Chemistry       TutoringSubject = "chemistry"
+        Biology         TutoringSubject = "biology"
+        History         TutoringSubject = "history"
+        Geography       TutoringSubject = "geography"
+        BusinessStudies TutoringSubject = "business studies"
+        ComputerScience TutoringSubject = "computer science"
+        Literature      TutoringSubject = "literature"
+)
+
+// Table structures
+type Tutor struct {
+        TutorID        int
+        Name           string
+        Email          string
+        Password       string
+        Expertise      []TutoringSubject
+        Experience     TutorLevel
+        VerifiedStatus bool
+        Description    string
+        Degree         []string
+        DateOfBirth    string
+}
+
+type Student struct {
+        StudentID   int
+        Name        string
+        DateOfBirth string
+        GradeLevel  Grade
+        School      string
+        Email       string
+        Password    string
+}
+
+type TutoringSession struct {
+        TutorSessionID  int
+        TutorID         int
+        StudentID       int
+        Name            string
+        Description     string
+        Subject         TutoringSubject
+        Grade           Grade
+        Date            string
+        TimeBlockIDList []int
+        Status          TutoringSessionStatus
+}
+
+type TutorAvailability struct {
+        AvailabilityID int
+        TutorID        int
+        Date           string
+        TimeBlockID    int
+}
+
+type TimeBlock struct {
+        TimeBlockID int
+        StartTime   string
+        EndTime     string
+}
+
+type Administrator struct {
+        AdminID  int
+        Name     string
+        Role     string
+        Email    string
+        Password string
+}
+
+type DatabaseConfig struct {
+        Host     string
+        Port     string
+        User     string
+        Password string
+        Name     string
+        UseMock  bool
+}
+
+type MockDBConfig struct {
+        UseMock bool
+}
+
+func LoadDatabaseConfig() *DatabaseConfig <span class="cov0" title="0">{
+        dbConfig := &amp;DatabaseConfig{
+                Host:     os.Getenv("DB_HOST"),
+                Port:     os.Getenv("DB_PORT"),
+                User:     os.Getenv("DB_USER"),
+                Password: os.Getenv("DB_PASSWORD"),
+                Name:     os.Getenv("DB_NAME"),
+                UseMock:  false, // Default to false
+        }
+
+        if os.Getenv("USE_MOCK_DB") == "true" </span><span class="cov0" title="0">{
+                dbConfig.UseMock = true
+        }</span>
+
+        <span class="cov0" title="0">return dbConfig</span>
+}
+
+func LoadMockDBConfig() *MockDBConfig <span class="cov0" title="0">{
+        useMock := os.Getenv("USE_MOCK_DB") == "true"
+
+        return &amp;MockDBConfig{
+                UseMock: useMock,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package mock
+
+import (
+        "database/sql"
+        "fmt"
+
+        "github.com/DATA-DOG/go-sqlmock"
+        "github.com/lib/pq"
+)
+
+// Create a go structure to store the mock
+type MockDB struct {
+        sqlmock sqlmock.Sqlmock
+}
+
+// Use the MockDB structure to make the real mock
+func NewMockDB() (*sql.DB, sqlmock.Sqlmock, error) <span class="cov8" title="1">{
+        db, mock, err := sqlmock.New()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, nil, err
+        }</span>
+        <span class="cov8" title="1">return db, mock, nil</span>
+}
+
+// set Expectations for query and returns the query expected as an object
+func (m *MockDB) ExpectQuery(query string) *sqlmock.ExpectedQuery <span class="cov0" title="0">{
+        return m.sqlmock.ExpectQuery(query)
+}</span>
+
+// Expect Execution
+func (m *MockDB) ExpectExec(query string) *sqlmock.ExpectedExec <span class="cov0" title="0">{
+        return m.sqlmock.ExpectExec(query)
+}</span>
+
+// Expectations for New Tables
+// Expectation for the 'tutor' table
+func (m *MockDB) ExpectTutorInsert() *sqlmock.ExpectedExec <span class="cov0" title="0">{
+        return m.sqlmock.ExpectExec("INSERT INTO tutor").
+                WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg())
+}</span>
+
+// Expectation for the 'student' table
+func (m *MockDB) ExpectStudentInsert() *sqlmock.ExpectedExec <span class="cov0" title="0">{
+        return m.sqlmock.ExpectExec("INSERT INTO student").
+                WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg())
+}</span>
+
+// Expectation for the 'tutoring_session' table
+func (m *MockDB) ExpectTutoringSessionInsert() *sqlmock.ExpectedExec <span class="cov0" title="0">{
+        return m.sqlmock.ExpectExec("INSERT INTO tutoring_session").
+                WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg())
+}</span>
+
+func (m *MockDB) ExpectTutorAvailabilityInsert() *sqlmock.ExpectedExec <span class="cov0" title="0">{
+        return m.sqlmock.ExpectExec("INSERT INTO tutor_availability").
+                WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
+                WillReturnResult(sqlmock.NewResult(1, 1))
+}</span>
+
+
+// Expectation for the 'tutor_availability' table existence check
+func (m *MockDB) ExpectTutorAvailabilityExistenceCheck() *sqlmock.ExpectedQuery <span class="cov0" title="0">{
+        return m.sqlmock.ExpectQuery("SELECT EXISTS(SELECT 1 FROM tutor_availability WHERE tutor_id = ? AND date = ?)").
+                WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).
+                WillReturnRows(sqlmock.NewRows([]string{"exists"}).AddRow(true))
+}</span>
+
+// Expectation for the 'time_block' table
+func (m *MockDB) ExpectTimeBlockInsert() *sqlmock.ExpectedExec <span class="cov0" title="0">{
+        return m.sqlmock.ExpectExec("INSERT INTO time_block").
+                WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg())
+}</span>
+
+// Expectation for the 'administrator' table
+func (m *MockDB) ExpectAdministratorInsert() *sqlmock.ExpectedExec <span class="cov0" title="0">{
+        return m.sqlmock.ExpectExec("INSERT INTO administrator").
+                WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg())
+}</span>
+
+// Expectations with Constraints
+// Expectation for the check_time_block_id_list_constraint
+func (m *MockDB) ExpectCheckTimeBlockIdListConstraint() *sqlmock.ExpectedExec <span class="cov0" title="0">{
+        return m.sqlmock.ExpectExec("CHECK time_block_id_list").
+                WillReturnError(fmt.Errorf("constraint violation: time_block_id_list should be from 1 to 24"))
+}</span>
+
+// Expectation for the check_time_block_id_list_length_constraint
+func (m *MockDB) ExpectCheckTimeBlockIdListLengthConstraint() *sqlmock.ExpectedExec <span class="cov0" title="0">{
+        return m.sqlmock.ExpectExec("CHECK ARRAY_LENGTH(time_block_id_list, 1) &lt;= 2").
+                WillReturnError(fmt.Errorf("constraint violation: length of array must be 1 or 2"))
+}</span>
+
+// Expectation for the unique_availability constraint
+func (m *MockDB) ExpectUniqueAvailabilityConstraint() *sqlmock.ExpectedExec <span class="cov0" title="0">{
+        return m.sqlmock.ExpectExec("UNIQUE (tutor_id, date, time_block_id)").
+                WillReturnError(fmt.Errorf("constraint violation: duplicate availability for tutor_id, date, time_block_id"))
+}</span>
+
+// Set up the expectation for UpdateTutorSessionDateAndTimeBlockList
+func (m *MockDB) ExpectUpdateTutorSessionDateAndTimeBlockList(session TutoringSession) *sqlmock.ExpectedExec <span class="cov0" title="0">{
+        return m.sqlmock.ExpectExec("UPDATE tutoring_session SET date = \\?, time_block_id_list = \\? WHERE tutor_session_id = \\?").
+                WithArgs(session.Date, pq.Array(session.TimeBlockIDList), session.TutorSessionID).
+                WillReturnResult(sqlmock.NewResult(1, 1)) // Assuming one row affected
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
