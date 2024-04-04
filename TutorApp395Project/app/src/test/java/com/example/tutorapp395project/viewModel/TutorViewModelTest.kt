@@ -126,7 +126,7 @@ class TutorViewModelTest {
         val sessionId = 1
         val deleteSessionRequest = DeleteSessionRequest(session_id = sessionId)
         val deleteSessionResponse = DeleteSessionResponse(
-            time_block_id_list = listOf(1, 2, 3),
+            time_block_id_list = listOf(),
             session_id_deleted = sessionId
         )
         val response = Response.success(deleteSessionResponse)
@@ -154,7 +154,7 @@ class TutorViewModelTest {
         )
         val addAvailabilityResponse = AddAvailabilityResponse(
             date = LocalDate.now().toString(),
-            time_block_id_list = listOf(1, 2, 3)
+            time_block_id_list = listOf()
         )
         val response = Response.success(addAvailabilityResponse)
 
