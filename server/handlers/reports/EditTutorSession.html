@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/macewanCS/w24MacroHard/server/handlers/handlers.go (6.2%)</option>
+				<option value="file0">github.com/macewanCS/w24MacroHard/server/handlers/handlers.go (2.3%)</option>
 				
 				</select>
 			</div>
@@ -69,8 +69,7 @@
 		</div>
 		<div id="content">
 		
-		<pre class="file" id="file0" style="display: none">
-package handlers
+		<pre class="file" id="file0" style="display: none">package handlers
 
 import (
         "database/sql"
@@ -87,8 +86,8 @@ import (
 )
 
 // Add more routes as needed
-func LoginHandler(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
-        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
+func LoginHandler(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
                 // Read JSON payload
                 var login util.Login
                 err := util.DecodeJSONRequestBody(r, &amp;login)
@@ -99,7 +98,7 @@ func LoginHandler(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
                 }</span>
 
                 // Check the role
-                <span class="cov8" title="1">if login.Role == "student" </span><span class="cov8" title="1">{
+                <span class="cov0" title="0">if login.Role == "student" </span><span class="cov0" title="0">{
                         // Check if student password is match
                         //fmt.Println("Student")
                         result, err := util.CheckLoginStudent(db, login)
@@ -110,16 +109,16 @@ func LoginHandler(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
                                 // Send a response message
                                 w.Write([]byte("Bad Login - Invalid credentials"))
                         }</span>
-                        <span class="cov8" title="1">if result </span><span class="cov8" title="1">{
+                        <span class="cov0" title="0">if result </span><span class="cov0" title="0">{
                                 fmt.Println("Successful student login!")
                                 // Store student content into JSON object
                                 user, err := util.GetStudentUser(db, login.Email)
-                                if err != nil </span><span class="cov8" title="1">{
+                                if err != nil </span><span class="cov0" title="0">{
                                         fmt.Println("Error searching student table", err)
                                 }</span>
                                 //fmt.Println(user)
                                 // Create Token
-                                <span class="cov8" title="1">var response util.LoginResponse
+                                <span class="cov0" title="0">var response util.LoginResponse
                                 response.User = user
 
                                 var userInfo util.UserInfo
@@ -131,7 +130,7 @@ func LoginHandler(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
                                         fmt.Println("Error creating token", err)
                                 }</span>
                                 //fmt.Println("Token: ", token)
-                                <span class="cov8" title="1">response.Token = token
+                                <span class="cov0" title="0">response.Token = token
                                 // Convert response to JSON
                                 Jsonresponse, err := json.Marshal(response)
                                 if err != nil </span><span class="cov0" title="0">{
@@ -139,7 +138,7 @@ func LoginHandler(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
                                         return
                                 }</span>
                                 // Set the HTTP status code to 201 (OK)
-                                <span class="cov8" title="1">w.WriteHeader(http.StatusOK)
+                                <span class="cov0" title="0">w.WriteHeader(http.StatusOK)
                                 // Set the Content-Type header to application/json
                                 w.Header().Set("Content-Type", "application/json")
                                 // Send Json
@@ -585,15 +584,22 @@ func AddTutoringSession(db *sql.DB) http.HandlerFunc <span class="cov0" title="0
                 body := fmt.Sprintf("A new session has been made for %s", session.Date) // Maybe add time
                 tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
                 if err != nil </span><span class="cov0" title="0">{
-                        http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+                        fmt.Println("Error querying for tutor email")
                         return
                 }</span>
                 <span class="cov0" title="0">studentEmail, err := util.GetStudentEmailByID(db, session.StudentID)
                 if err != nil </span><span class="cov0" title="0">{
-                        http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
+                        fmt.Println("Error querying for student email")
                         return
                 }</span>
-                <span class="cov0" title="0">recipients := []string{tutorEmail, studentEmail}
+                // Send tutor email
+                <span class="cov0" title="0">recipients := []string{tutorEmail}
+                err = util.SendEmail(recipients, subject, body)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Error sending email: ", err)
+                }</span>
+                // Send student email
+                <span class="cov0" title="0">recipients = []string{studentEmail}
                 err = util.SendEmail(recipients, subject, body)
                 if err != nil </span><span class="cov0" title="0">{
                         fmt.Println("Error sending email: ", err)
@@ -765,8 +771,8 @@ func DeleteTutorSession(db *sql.DB) http.HandlerFunc <span class="cov0" title="0
 }
 
 // Updates the tutor session's date and time block id list
-func EditTutorSession(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">{
-        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+func EditTutorSession(db *sql.DB) http.HandlerFunc <span class="cov8" title="1">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="1">{
                 //w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user"])))
                 // Read JSON payload
                 var session util.TutoringSession
@@ -778,15 +784,15 @@ func EditTutorSession(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">
                 }</span>
 
                 //get tutorID from session
-                <span class="cov0" title="0">session.TutorID, err = util.GetTutorFromSession(db, session)
+                <span class="cov8" title="1">session.TutorID, err = util.GetTutorFromSession(db, session)
                 if err != nil </span><span class="cov0" title="0">{
                         http.Error(w, "Error searching tutoring_session for tutor_id", http.StatusInternalServerError) // status code 500
                         return
                 }</span>
 
                 //get time_block_id_list from session
-                <span class="cov0" title="0">oldTimeBlockIdList, err := util.GetTimeBlockIdListFromSession(db, session)
-                if err != nil </span><span class="cov0" title="0">{
+                <span class="cov8" title="1">oldTimeBlockIdList, err := util.GetTimeBlockIdListFromSession(db, session)
+                if err != nil </span><span class="cov8" title="1">{
                         http.Error(w, "Error searching tutoring_session for time_block_id_list", http.StatusInternalServerError) // status code 500
                         return
                 }</span>
@@ -827,7 +833,7 @@ func EditTutorSession(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">
                 }
 
                 // Add old availability shown in oldTimeBlockIdList -- BUG HERE??
-                <span class="cov0" title="0">if oldDate.Before(time.Now()) </span><span class="cov0" title="0">{
+                <span class="cov0" title="0">if !(oldDate.Before(time.Now())) </span><span class="cov0" title="0">{
                         var tutorAvailability util.TutorAvailability
                         tutorAvailability.ID = session.TutorID
                         tutorAvailability.Date = oldDate.Format("2006-01-02 15:04:05")
@@ -853,8 +859,6 @@ func EditTutorSession(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">
                 <span class="cov0" title="0">timeString, err := util.TimeBlockToString(db, session)
                 if err != nil </span><span class="cov0" title="0">{
                         fmt.Println("Error formating time block to string: ", err)
-                        http.Error(w, "Unexpected error", http.StatusInternalServerError) // status code 500
-                        return
                 }</span>
                 // Email tutor and student involved
                 <span class="cov0" title="0">subject := fmt.Sprintf("TutorMe: %s Session Change", session.Date)
@@ -862,21 +866,23 @@ func EditTutorSession(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">
                 tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
                 if err != nil </span><span class="cov0" title="0">{
                         fmt.Println("Error getting tutor email: ", err)
-                        http.Error(w, "Error getting tutor email", http.StatusInternalServerError) // status code 500
-                        return
                 }</span>
                 <span class="cov0" title="0">studentEmail, err := util.GetStudentEmailBySessionID(db, session)
                 if err != nil </span><span class="cov0" title="0">{
                         fmt.Println("Error getting student email: ", err)
-                        http.Error(w, "Error getting student email", http.StatusInternalServerError) // status code 500
-                        return
                 }</span>
-                <span class="cov0" title="0">recipients := []string{tutorEmail, studentEmail}
-                err = util.SendEmail(recipients, subject, body)
+                // Send email
+                <span class="cov0" title="0">recipient := []string{tutorEmail}
+                err = util.SendEmail(recipient, subject, body)
                 if err != nil </span><span class="cov0" title="0">{
                         fmt.Println("Error sending email: ", err)
-                        http.Error(w, "Error sending email", http.StatusInternalServerError) // status code 500
-                        return
+                }</span>
+
+                // Send email
+                <span class="cov0" title="0">recipient = []string{studentEmail}
+                err = util.SendEmail(recipient, subject, body)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Error sending email: ", err)
                 }</span>
 
                 // Prepare response
@@ -902,6 +908,42 @@ func EditTutorSession(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">
                 <span class="cov0" title="0">w.Header().Set("Content-Type", "application/json")
                 w.WriteHeader(http.StatusOK)
                 w.Write(jsonResponse)</span>
+        }
+}
+
+// Creates pdf file and converts it to bytes before emailing
+func GetMasterSchedule(db *sql.DB) http.HandlerFunc <span class="cov0" title="0">{
+        return func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                // Read JSON from payload
+                var payload util.Login
+                err := util.DecodeJSONRequestBody(r, &amp;payload)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Invalid JSON:", err)
+                        http.Error(w, "Error parsing JSON", http.StatusBadRequest) // status code 400
+                        return
+                }</span>
+
+                <span class="cov0" title="0">filename, err := util.CreateMasterSchedule(db)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Error creating buffer:", err)
+                        http.Error(w, "Error creating buffer", http.StatusBadRequest) // status code 400
+                        return
+                }</span>
+                <span class="cov0" title="0">_ = filename
+
+                recipient := []string{payload.Email}
+                subject := "Macrohard Master Schedule"
+                body := "Attached is the master schedule"
+                err = util.SendEmailWithAttachment(recipient, subject, body, filename)
+                if err != nil </span><span class="cov0" title="0">{
+                        fmt.Println("Error sending email:", err)
+                        http.Error(w, "Error sending email", http.StatusBadRequest) // status code 400
+                        return
+                }</span>
+
+                <span class="cov0" title="0">w.WriteHeader(http.StatusOK)
+                // Write the response body
+                fmt.Fprintf(w, "Success! This is a 200 OK response.")</span>
         }
 }
 </pre>
