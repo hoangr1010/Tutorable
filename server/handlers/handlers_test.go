@@ -31,14 +31,14 @@ import (
 // so naming scheme should follow: ie. "2024-03-04-handlers.out" and "2024-03-04-handlers.html"
 
 // Define constants for database connection
-const (
-	DBHost     = "macrohard-onlytutor.cj0646k6g181.us-east-2.rds.amazonaws.com"
-	DBPort     = 5432
-	DBUser     = "MacroHard"
-	DBPassword = "chopperiscute"
-	DBName     = "postgres"
-	Key        = "codingiscool"
-)
+// const (
+// 	DBHost     = "macrohard-onlytutor.cj0646k6g181.us-east-2.rds.amazonaws.com"
+// 	DBPort     = 5432
+// 	DBUser     = "MacroHard"
+// 	DBPassword = "chopperiscute"
+// 	DBName     = "postgres"
+// 	Key        = "codingiscool"
+// )
 
 // Test: Checks if the register handler works
 func TestRegisterHandler(t *testing.T) {
