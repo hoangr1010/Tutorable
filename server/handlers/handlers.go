@@ -770,6 +770,7 @@ func EditTutorSession(db *sql.DB) http.HandlerFunc {
 				// requires old date and tutor id
 				err = util.InsertTutorAvailability(db, tutorAvailability, id)
 				if err != nil {
+					fmt.Println("Error inserting tutor availability: ", err)
 					http.Error(w, "Error adding tutor availability", http.StatusInternalServerError) // status code 500
 					return
 				}
