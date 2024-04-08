@@ -805,37 +805,35 @@ func EditTutorSession(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		/*
-			// Convert time block list to string
-			timeString, err := util.TimeBlockToString(db, session)
-			if err != nil {
-				fmt.Println("Error formating time block to string: ", err)
-			}
-			// Email tutor and student involved
-			subject := fmt.Sprintf("TutorMe: %s Session Change", session.Date)
-			body := fmt.Sprintf("Session ID:%d's date and time have been moved to: %s from %s ", session.TutoringSessionID, session.Date, timeString)
-			tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
-			if err != nil {
-				fmt.Println("Error getting tutor email: ", err)
-			}
-			studentEmail, err := util.GetStudentEmailBySessionID(db, session)
-			if err != nil {
-				fmt.Println("Error getting student email: ", err)
-			}
-			// Send email
-			recipient := []string{tutorEmail}
-			err = util.SendEmail(recipient, subject, body)
-			if err != nil {
-				fmt.Println("Error sending email: ", err)
-			}
+		// Convert time block list to string
+		timeString, err := util.TimeBlockToString(db, session)
+		if err != nil {
+			fmt.Println("Error formating time block to string: ", err)
+		}
+		// Email tutor and student involved
+		subject := fmt.Sprintf("TutorMe: %s Session Change", session.Date)
+		body := fmt.Sprintf("Session ID:%d's date and time have been moved to: %s from %s ", session.TutoringSessionID, session.Date, timeString)
+		tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
+		if err != nil {
+			fmt.Println("Error getting tutor email: ", err)
+		}
+		studentEmail, err := util.GetStudentEmailBySessionID(db, session)
+		if err != nil {
+			fmt.Println("Error getting student email: ", err)
+		}
+		// Send email
+		recipient := []string{tutorEmail}
+		err = util.SendEmail(recipient, subject, body)
+		if err != nil {
+			fmt.Println("Error sending email: ", err)
+		}
 
-			// Send email
-			recipient = []string{studentEmail}
-			err = util.SendEmail(recipient, subject, body)
-			if err != nil {
-				fmt.Println("Error sending email: ", err)
-			}
-		*/
+		// Send email
+		recipient = []string{studentEmail}
+		err = util.SendEmail(recipient, subject, body)
+		if err != nil {
+			fmt.Println("Error sending email: ", err)
+		}
 
 		// Prepare response
 		response := struct {
