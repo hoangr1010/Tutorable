@@ -961,18 +961,17 @@ func GetTimeBlockIdListFromSession(db *sql.DB, session TutoringSession) (time_bl
 	`
 	// Execute sql query
 	row := db.QueryRow(query, session.TutoringSessionID)
-	var uint8Array []uint8
-	err = row.Scan(&uint8Array)
+	var int64Array pq.Int64Array
+	err = row.Scan(&int64Array)
 	if err != nil {
 		fmt.Println("Error searching tutoring session for time_block_id_list: ", err)
 		return time_block_id_list, err
 	}
-	time_block_id_list = make([]int, len(uint8Array))
-	//Convert uint8Array into intArray
-	for i, v := range uint8Array {
-		time_block_id_list[i] = int(v)
-	}
 
+	// Convert int64 array into int slices
+	for _, i := range int64Array {
+		time_block_id_list = append(time_block_id_list, int(i))
+	}
 	return time_block_id_list, err
 }
 

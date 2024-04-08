@@ -277,6 +277,7 @@ func AddTutorAvailability(db *sql.DB) http.HandlerFunc {
 		// Parse the date
 		date, err := time.Parse("2006-01-02", tutorAvailability.Date)
 		if err != nil {
+			fmt.Println("Error parsing date: ", err)
 			http.Error(w, "Invalid date format", http.StatusBadRequest)
 			return
 		}
@@ -286,6 +287,7 @@ func AddTutorAvailability(db *sql.DB) http.HandlerFunc {
 		// Check if timeslots exist for that date, delete if exist
 		exists, err := util.PeekAvailabilityDate(db, tutorAvailability)
 		if err != nil {
+			fmt.Println("Error peeking timeslots for that date: ", err)
 			http.Error(w, "WHOOPS!", http.StatusInternalServerError)
 		}
 		// Delete existing entries of tutor on that date
@@ -725,6 +727,7 @@ func EditTutorSession(db *sql.DB) http.HandlerFunc {
 			http.Error(w, "Error searching tutoring_session for time_block_id_list", http.StatusInternalServerError) // status code 500
 			return
 		}
+		//fmt.Println("Old time block list: ", oldTimeBlockIdList)
 
 		// get old date from session
 		oldDate, err := util.GetDateFromSession(db, session)
@@ -751,11 +754,14 @@ func EditTutorSession(db *sql.DB) http.HandlerFunc {
 			http.Error(w, "Error updating tutoring_session", http.StatusInternalServerError) // status code 500
 			return
 		}
+		// Print success message
+		fmt.Printf("Successful edit made from %s %v to %s %v\n", oldDate.Format("2006-01-02"), oldTimeBlockIdList, session.Date, session.TimeBlockIDList)
 
 		// Delete all availability shown in time_block_id_list -- BUG HERE?
 		for _, id := range session.TimeBlockIDList {
 			err = util.DeleteSomeTutorAvailability(db, session, id)
 			if err != nil {
+				fmt.Println("Error deleting tutor availability: ", err)
 				http.Error(w, "Error deleting tutor availability", http.StatusInternalServerError) // status code 500
 				return
 			}
@@ -765,14 +771,28 @@ func EditTutorSession(db *sql.DB) http.HandlerFunc {
 		if !(oldDate.Before(time.Now())) {
 			var tutorAvailability util.TutorAvailability
 			tutorAvailability.ID = session.TutorID
-			tutorAvailability.Date = oldDate.Format("2006-01-02 15:04:05")
+			tutorAvailability.Date = oldDate.Format("2006-01-02")
+
+			var oldSession util.TutoringSession
+			oldSession.TutorID = session.TutorID
+			oldSession.Date = oldDate.Format("2006-01-02")
+
+			//fmt.Println("Date: ", tutorAvailability.Date)
 			for _, id := range oldTimeBlockIdList {
 				// requires old date and tutor id
-				err = util.InsertTutorAvailability(db, tutorAvailability, id)
+				exists, err := util.PeekTimeSlot(db, session, id)
 				if err != nil {
-					fmt.Println("Error inserting tutor availability: ", err)
-					http.Error(w, "Error adding tutor availability", http.StatusInternalServerError) // status code 500
+					fmt.Println("Error peeking timeslot of tutor: ", err)
+					http.Error(w, "Error peeking tutor timeslot", http.StatusInternalServerError) // status code 500
 					return
+				}
+				if !exists {
+					err = util.InsertTutorAvailability(db, tutorAvailability, id)
+					if err != nil {
+						fmt.Println("Error inserting tutor availability: ", err)
+						http.Error(w, "Error adding tutor availability", http.StatusInternalServerError) // status code 500
+						return
+					}
 				}
 			}
 		}
@@ -785,44 +805,46 @@ func EditTutorSession(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		// Convert time block list to string
-		timeString, err := util.TimeBlockToString(db, session)
-		if err != nil {
-			fmt.Println("Error formating time block to string: ", err)
-		}
-		// Email tutor and student involved
-		subject := fmt.Sprintf("TutorMe: %s Session Change", session.Date)
-		body := fmt.Sprintf("Session ID:%d's date and time have been moved to: %s from %s ", session.TutoringSessionID, session.Date, timeString)
-		tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
-		if err != nil {
-			fmt.Println("Error getting tutor email: ", err)
-		}
-		studentEmail, err := util.GetStudentEmailBySessionID(db, session)
-		if err != nil {
-			fmt.Println("Error getting student email: ", err)
-		}
-		// Send email
-		recipient := []string{tutorEmail}
-		err = util.SendEmail(recipient, subject, body)
-		if err != nil {
-			fmt.Println("Error sending email: ", err)
-		}
+		/*
+			// Convert time block list to string
+			timeString, err := util.TimeBlockToString(db, session)
+			if err != nil {
+				fmt.Println("Error formating time block to string: ", err)
+			}
+			// Email tutor and student involved
+			subject := fmt.Sprintf("TutorMe: %s Session Change", session.Date)
+			body := fmt.Sprintf("Session ID:%d's date and time have been moved to: %s from %s ", session.TutoringSessionID, session.Date, timeString)
+			tutorEmail, err := util.GetTutorEmailByID(db, session.TutorID)
+			if err != nil {
+				fmt.Println("Error getting tutor email: ", err)
+			}
+			studentEmail, err := util.GetStudentEmailBySessionID(db, session)
+			if err != nil {
+				fmt.Println("Error getting student email: ", err)
+			}
+			// Send email
+			recipient := []string{tutorEmail}
+			err = util.SendEmail(recipient, subject, body)
+			if err != nil {
+				fmt.Println("Error sending email: ", err)
+			}
 
-		// Send email
-		recipient = []string{studentEmail}
-		err = util.SendEmail(recipient, subject, body)
-		if err != nil {
-			fmt.Println("Error sending email: ", err)
-		}
+			// Send email
+			recipient = []string{studentEmail}
+			err = util.SendEmail(recipient, subject, body)
+			if err != nil {
+				fmt.Println("Error sending email: ", err)
+			}
+		*/
 
 		// Prepare response
 		response := struct {
 			TutorSessionID  int
-			SessionDate     time.Time
+			SessionDate     string
 			TimeBlockIDList []int `json:"time_block_id_list"`
 		}{
 			TutorSessionID:  session.TutoringSessionID,
-			SessionDate:     date,
+			SessionDate:     date.Format("2006-01-02"),
 			TimeBlockIDList: session.TimeBlockIDList,
 		}
 
