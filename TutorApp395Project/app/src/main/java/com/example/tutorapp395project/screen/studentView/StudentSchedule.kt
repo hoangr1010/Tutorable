@@ -3,7 +3,6 @@
 package com.example.tutorapp395project.screen.studentView
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,13 +22,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -41,7 +37,6 @@ import com.example.tutorapp395project.utils.stringToReadableDate
 import com.example.tutorapp395project.viewModel.AuthViewModel
 import com.example.tutorapp395project.viewModel.HomeViewModel
 import com.example.tutorapp395project.viewModel.StudentViewModel
-import com.example.tutorapp395project.viewModel.TutorViewModel
 import com.maxkeppeker.sheets.core.models.base.Header
 import com.maxkeppeker.sheets.core.models.base.UseCaseState
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
@@ -268,15 +263,17 @@ fun BackgroundNoLogo(modifier: Modifier = Modifier) {
 }
 
 
-//@Preview
-//@Composable
-//fun PreviewStudentSchedule() {
-//    BackgroundNoLogo()
-//    StudentAppointmentLayout(
-//        studentViewModel = StudentViewModel(authViewModel = AuthViewModel()),
-//        authViewModel = AuthViewModel(),
-//        homeViewModel = HomeViewModel()
-//    )
-////    Appointment("3:00PM", "024/02/21","math","Karen McTutor", "Nami" )
-//
-//}
+/*
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview
+@Composable
+fun PreviewStudentSchedule() {
+    BackgroundNoLogo()
+    StudentAppointmentLayout(
+        studentViewModel = StudentViewModel(authViewModel = AuthViewModel()),
+        authViewModel = AuthViewModel(),
+        homeViewModel = HomeViewModel()
+   )
+    //Appointment("3:00PM", "024/02/21","math","Karen McTutor", "Nami" )
+
+}*/
