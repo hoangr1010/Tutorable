@@ -54,12 +54,12 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 				userInfo.Role = "student"
 				userInfo.Email = user.Email
 				userInfo.ID = user.ID
-				token, err := util.CreateToken(userInfo)
+				//token, err := util.CreateToken(userInfo)
 				if err != nil {
 					fmt.Println("Error creating token", err)
 				}
 				//fmt.Println("Token: ", token)
-				response.Token = token
+				//response.Token = token
 				// Convert response to JSON
 				Jsonresponse, err := json.Marshal(response)
 				if err != nil {
@@ -103,12 +103,12 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 				userInfo.Email = user.Email
 				userInfo.ID = user.ID
 				// Create token
-				token, err := util.CreateToken(userInfo)
+				//token, err := util.CreateToken(userInfo)
 				if err != nil {
 					fmt.Println("Error creating token", err)
 				}
 				//fmt.Println("Token: ", token)
-				response.Token = token
+				//response.Token = token
 				// Convert response to JSON
 				Jsonresponse, err := json.Marshal(response)
 				if err != nil {

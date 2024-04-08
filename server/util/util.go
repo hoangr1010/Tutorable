@@ -11,10 +11,8 @@ import (
 	"net/smtp"
 	"sort"
 
-	"os"
 	"time"
 
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/jung-kurt/gofpdf"
 	"github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
@@ -102,11 +100,13 @@ role,
 email,
 tableID
 */
+/*
 type LoginClaim struct {
 	jwt.RegisteredClaims
 	TokenType string
 	UserInfo
 }
+*/
 
 // Peeks into tutor availability table and returns true if tutor has timeslots on that date
 func PeekAvailabilityDate(db *sql.DB, tutor TutorAvailability) (bool, error) {
@@ -824,6 +824,7 @@ func CheckLoginTutor(db *sql.DB, tutor Login) (bool, error) {
 	return false, err
 }
 
+/*
 func CreateToken(userInfo UserInfo) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user": userInfo,
@@ -833,6 +834,7 @@ func CreateToken(userInfo UserInfo) (string, error) {
 	signKey := []byte(os.Getenv("KEY"))
 	return token.SignedString(signKey)
 }
+*/
 
 // parseDate takes a date string in the format "yyyy-mm-dd" and returns a time.Time object
 func ParseDate(dateString string) (time.Time, error) {
