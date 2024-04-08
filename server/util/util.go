@@ -11,10 +11,8 @@ import (
 	"net/smtp"
 	"sort"
 
-	"os"
 	"time"
 
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/jung-kurt/gofpdf"
 	"github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
@@ -102,11 +100,13 @@ role,
 email,
 tableID
 */
+/*
 type LoginClaim struct {
 	jwt.RegisteredClaims
 	TokenType string
 	UserInfo
 }
+*/
 
 // Peeks into tutor availability table and returns true if tutor has timeslots on that date
 func PeekAvailabilityDate(db *sql.DB, tutor TutorAvailability) (bool, error) {
@@ -824,6 +824,7 @@ func CheckLoginTutor(db *sql.DB, tutor Login) (bool, error) {
 	return false, err
 }
 
+/*
 func CreateToken(userInfo UserInfo) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user": userInfo,
@@ -833,6 +834,7 @@ func CreateToken(userInfo UserInfo) (string, error) {
 	signKey := []byte(os.Getenv("KEY"))
 	return token.SignedString(signKey)
 }
+*/
 
 // parseDate takes a date string in the format "yyyy-mm-dd" and returns a time.Time object
 func ParseDate(dateString string) (time.Time, error) {
@@ -969,18 +971,17 @@ func GetTimeBlockIdListFromSession(db *sql.DB, session TutoringSession) (time_bl
 	`
 	// Execute sql query
 	row := db.QueryRow(query, session.TutoringSessionID)
-	var uint8Array []uint8
-	err = row.Scan(&uint8Array)
+	var int64Array pq.Int64Array
+	err = row.Scan(&int64Array)
 	if err != nil {
 		fmt.Println("Error searching tutoring session for time_block_id_list: ", err)
 		return time_block_id_list, err
 	}
-	time_block_id_list = make([]int, len(uint8Array))
-	//Convert uint8Array into intArray
-	for i, v := range uint8Array {
-		time_block_id_list[i] = int(v)
-	}
 
+	// Convert int64 array into int slices
+	for _, i := range int64Array {
+		time_block_id_list = append(time_block_id_list, int(i))
+	}
 	return time_block_id_list, err
 }
 
@@ -1099,14 +1100,20 @@ func CreateMasterSchedule(db *sql.DB) (filename string, err error) {
 	// Set font for the table
 	pdf.SetFont("Arial", "", 6)
 
-	// Add the title to the PDF
-	pdf.CellFormat(0, 10, "Master Schedule", "", 1, "C", false, 0, "")
+	// Get the current month
+	currentMonth := time.Now().Month()
+	// Get the next month
+	nextMonth := time.Now().AddDate(0, 1, 0).Month()
+	// Combine currentMonth and nextMonth
+	title := fmt.Sprintf("Master SChedule for %s - %s", currentMonth, nextMonth)
+	pdf.CellFormat(0, 10, title, "", 1, "C", false, 0, "")
 
 	// Define column widths
-	colWidths := []float64{15, 15, 15, 30, 30, 20, 15, 20, 20, 15}
+	// sessionID, Tutor Name, Student Name, Title, subject, grade, status, date, time
+	colWidths := []float64{15, 20, 20, 30, 30, 20, 15, 20, 20, 15}
 
 	//Define column headers
-	headers := []string{"sessionID", "tutorID", "studentID", "name", "description", "subject", "grade", "status", "date", "time"}
+	headers := []string{"Session", "Tutor Name", "Student Name", "Title", "subject", "grade", "status", "date", "time"}
 	// Create table header
 	for i, header := range headers {
 		pdf.CellFormat(colWidths[i], 10, header, "1", 0, "C", false, 0, "")
@@ -1114,7 +1121,9 @@ func CreateMasterSchedule(db *sql.DB) (filename string, err error) {
 	pdf.Ln(10)
 
 	// Iterate over the rows and write data to the buffer
+	var count int = 0
 	for rows.Next() {
+		count += 1
 		var session TutoringSession
 		var int64Array pq.Int64Array
 		err := rows.Scan(
@@ -1156,16 +1165,61 @@ func CreateMasterSchedule(db *sql.DB) (filename string, err error) {
 		// Format the date into a human-readable layout
 		formattedDate := date.Format("January 2, 2006") // Example format: "March 2, 2024
 
-		pdf.CellFormat(colWidths[0], 10, fmt.Sprintf("%d", session.TutoringSessionID), "1", 0, "C", false, 0, "")
-		pdf.CellFormat(colWidths[1], 10, fmt.Sprintf("%d", session.TutorID), "1", 0, "C", false, 0, "")
-		pdf.CellFormat(colWidths[2], 10, fmt.Sprintf("%d", session.StudentID), "1", 0, "C", false, 0, "")
+		var student User
+		// Make query for student name
+		studentQuery := `
+			SELECT
+			first_name,
+			last_name
+			FROM student
+			WHERE student_id = $1
+		`
+		// Execute the SQL query for student
+		studentRow := db.QueryRow(studentQuery, session.StudentID)
+
+		// Scan student first name and student last name
+		err = studentRow.Scan(
+			&student.FirstName,
+			&student.LastName)
+
+		if err != nil {
+			fmt.Println("Error scanning student: ", err)
+		}
+		// Concatenate first name and last name into one string
+		studentName := student.FirstName + " " + student.LastName
+
+		var tutor User
+		// Make query for tutor name
+		tutorQuery := `
+			SELECT
+			first_name,
+			last_name
+			FROM tutor
+			WHERE tutor_id = $1
+		`
+		// Execute the SQL query for tutor
+		tutorRow := db.QueryRow(tutorQuery, session.TutorID)
+
+		// Scan tutor first name and tutor last name
+		err = tutorRow.Scan(
+			&tutor.FirstName,
+			&tutor.LastName)
+
+		if err != nil {
+			fmt.Println("Error scanning tutor: ", err)
+		}
+		// Concatenate first name and last name into one string
+		tutorName := tutor.FirstName + " " + tutor.LastName
+
+		pdf.CellFormat(colWidths[0], 10, fmt.Sprintf("%d", count), "1", 0, "C", false, 0, "")
+		pdf.CellFormat(colWidths[1], 10, tutorName, "1", 0, "C", false, 0, "")
+		pdf.CellFormat(colWidths[2], 10, studentName, "1", 0, "C", false, 0, "")
 		pdf.CellFormat(colWidths[3], 10, session.Name, "1", 0, "C", false, 0, "")
-		pdf.CellFormat(colWidths[4], 10, session.Description, "1", 0, "C", false, 0, "")
-		pdf.CellFormat(colWidths[5], 10, session.Subject, "1", 0, "C", false, 0, "")
-		pdf.CellFormat(colWidths[6], 10, fmt.Sprintf("%d", session.Grade), "1", 0, "C", false, 0, "")
-		pdf.CellFormat(colWidths[7], 10, session.Status, "1", 0, "C", false, 0, "")
-		pdf.CellFormat(colWidths[8], 10, formattedDate, "1", 0, "C", false, 0, "")
-		pdf.CellFormat(colWidths[9], 10, timeBlockIDListString, "1", 0, "C", false, 0, "")
+		pdf.CellFormat(colWidths[4], 10, session.Subject, "1", 0, "C", false, 0, "")
+		pdf.CellFormat(colWidths[5], 10, fmt.Sprintf("%d", session.Grade), "1", 0, "C", false, 0, "")
+		pdf.CellFormat(colWidths[6], 10, session.Status, "1", 0, "C", false, 0, "")
+		pdf.CellFormat(colWidths[7], 10, formattedDate, "1", 0, "C", false, 0, "")
+		pdf.CellFormat(colWidths[8], 10, timeBlockIDListString, "1", 0, "C", false, 0, "")
 		pdf.Ln(10)
 	}
 

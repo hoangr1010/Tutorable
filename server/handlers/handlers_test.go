@@ -778,9 +778,9 @@ func TestEditSession(t *testing.T) {
 	}
 
 	session := EditSession{
-		TutoringSessionID: 28,
-		Date:              "2024-03-30",
-		TimeBlockIDList:   []int{8, 9},
+		TutoringSessionID: 58,
+		Date:              "2024-04-08",
+		TimeBlockIDList:   []int{1, 9},
 	}
 
 	sessionJSON, err := json.Marshal(session)

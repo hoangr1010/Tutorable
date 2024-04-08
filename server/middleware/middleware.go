@@ -1,5 +1,6 @@
 package middleware
 
+/*
 import (
 	"fmt"
 	"net/http"
@@ -36,3 +37,4 @@ func AuthorizeToken(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
+*/
