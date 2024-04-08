@@ -125,6 +125,14 @@ func PeekAvailabilityDate(db *sql.DB, tutor TutorAvailability) (bool, error) {
 // Peeks into tutor availability table and checks if tutor's timeslot is taken
 func PeekTimeSlot(db *sql.DB, session TutoringSession, timeBlockId int) (bool, error) {
 	var exists bool
+
+	query := "SELECT EXISTS(SELECT 1 FROM tutor_availability WHERE tutor_id =$1 AND date = $2 AND time_block_id = $3)"
+	fmt.Println("")
+	fmt.Println("")
+	fmt.Printf("Executing query: %s with args: %d, %s, %d\n", query, session.TutorID, session.Date, timeBlockId)
+	fmt.Println("")
+	fmt.Println("")
+
 	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM tutor_availability WHERE tutor_id =$1 AND date = $2 AND time_block_id = $3)", session.TutorID, session.Date, timeBlockId).Scan(&exists)
 	if err != nil {
 		fmt.Println("Error checking tutor_availability: ", err)
