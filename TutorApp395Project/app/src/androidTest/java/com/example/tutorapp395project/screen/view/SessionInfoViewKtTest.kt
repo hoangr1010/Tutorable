@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -115,14 +116,6 @@ class SessionInfoViewKtTest {
     }
 
     /*
-     * Purpose: Test if the send email button is displayed correctly
-     */
-    @Test
-    fun freeSessionInfo_SendEmailButtonExists() {
-        composeTestRule.onNodeWithText("Send Email").assertExists()
-    }
-
-    /*
      * Purpose: Test if the email intent is correctly created
      */
     @Test
@@ -146,6 +139,7 @@ class SessionInfoViewKtTest {
         }
 
         try {
+            composeTestRule.onNodeWithText("Send Email").performClick() // Click the send email button
             Intents.intended(IntentMatchers.hasAction(Intent.ACTION_SENDTO))
             Intents.intended(IntentMatchers.hasData(Uri.parse("mailto:${opponentEmail}")))
         } finally {

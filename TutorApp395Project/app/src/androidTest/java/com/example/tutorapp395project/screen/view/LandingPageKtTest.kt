@@ -12,6 +12,7 @@ class LandingPageKtTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+
     /*
      * Purpose: Test if the LandingPage composable is displayed correctly
      */

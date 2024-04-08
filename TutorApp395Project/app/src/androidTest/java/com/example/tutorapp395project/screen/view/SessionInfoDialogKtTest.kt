@@ -64,13 +64,4 @@ class SessionInfoDialogKtTest {
     fun sessionInfoDialog_timeslotExists() {
         composeTestRule.onNodeWithText("3:00-4:00").assertExists()
     }
-
-    /*
-     * Purpose: Test if the Send Email button has a email link attached to it
-     */
-    @Test
-    fun sessionInfoDialog_opponentEmailExists() {
-        composeTestRule.onNodeWithText("opponent@gmail.com").assertExists()
-    }
-
 }

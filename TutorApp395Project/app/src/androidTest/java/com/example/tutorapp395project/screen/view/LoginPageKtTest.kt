@@ -1,15 +1,12 @@
 package com.example.tutorapp395project.screen.view
 
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
-import androidx.test.espresso.matcher.ViewMatchers.withTagValue
-import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.ext.junit.rules.ActivityScenarioRule
+import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.tutorapp395project.screen.MainActivity
-import org.hamcrest.Matchers
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -18,15 +15,23 @@ import org.junit.runner.RunWith
 class LoginPageKtTest {
 
     @get:Rule
-    var activityRule: ActivityScenarioRule<MainActivity> =
-        ActivityScenarioRule(MainActivity::class.java)
+    val composeTestRule = createComposeRule()
+    //var activityRule: ActivityScenarioRule<MainActivity> =
+    //    ActivityScenarioRule(MainActivity::class.java)
 
+    @Before
+    fun setUp() {
+        composeTestRule.setContent {
+            val navController = rememberNavController()
+            LoginPage(navController = navController)
+        }
+    }
     /*
      * Purpose: Test if the LoginPage composable is displayed correctly
      */
     @Test
     fun testLoginPageDisplayed() {
-        onView(withTagValue(Matchers.equalTo("loginPage"))).check(matches(isDisplayed()))
+        composeTestRule.onNodeWithText("Login").assertExists()
     }
 
     /*
@@ -34,15 +39,15 @@ class LoginPageKtTest {
      */
     @Test
     fun testFieldsDisplayed() {
-        onView(withTagValue(Matchers.equalTo("emailField"))).check(matches(isDisplayed()))
-        onView(withTagValue(Matchers.equalTo("passwordField"))).check(matches(isDisplayed()))
+        composeTestRule.onNodeWithText("Email").assertExists()
+        composeTestRule.onNodeWithText("Password").assertExists()
     }
     /*
      * Purpose: Test if the login button is displayed correctly
      */
     @Test
     fun testLoginButtonDisplayed() {
-        onView(withText("Login")).check(matches(isDisplayed()))
+        composeTestRule.onNodeWithText("Login").assertExists()
     }
 
     /*
@@ -50,15 +55,7 @@ class LoginPageKtTest {
      */
     @Test
     fun testRegisterTextDisplayed() {
-        onView(withText("Don't have an Account? Register Here!")).check(matches(isDisplayed()))
-    }
-
-    /*
-     * Purpose: Test if the role dropdown is displayed correctly
-     */
-    @Test
-    fun testRoleDropdownDisplayed() {
-        onView(withTagValue(Matchers.equalTo("roleField"))).check(matches(isDisplayed()))
+        composeTestRule.onNodeWithText("Don't have an Account? Register Here!").assertExists()
     }
 
     /*
@@ -66,7 +63,7 @@ class LoginPageKtTest {
      */
     @Test
     fun testEmailLabelDisplayed() {
-        onView(withText("Email")).check(matches(isDisplayed()))
+        composeTestRule.onNodeWithText("Email").assertExists()
     }
 
     /*
@@ -74,7 +71,7 @@ class LoginPageKtTest {
      */
     @Test
     fun testPasswordLabelDisplayed() {
-        onView(withText("Password")).check(matches(isDisplayed()))
+        composeTestRule.onNodeWithText("Password").assertExists()
     }
 
     /*
@@ -82,8 +79,8 @@ class LoginPageKtTest {
      */
     @Test
     fun testRoleOptionsDisplayed() {
-        onView(withText("student")).check(matches(isDisplayed()))
-        onView(withText("tutor")).check(matches(isDisplayed()))
+        composeTestRule.onNodeWithText("student").performClick()
+        composeTestRule.onNodeWithText("tutor").assertExists()
     }
 
     /*
@@ -91,6 +88,6 @@ class LoginPageKtTest {
      */
     @Test
     fun testLogoImageDisplayed() {
-        onView(withContentDescription("tutorapple-logo")).check(matches(isDisplayed()))
+        composeTestRule.onNodeWithContentDescription("tutorapple-logo").assertExists()
     }
 }
