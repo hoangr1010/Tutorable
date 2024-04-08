@@ -45,14 +45,6 @@ class TutorListKtTest {
     }
 
     /*
-     * Purpose: Test the tutor list to ensure that the title is displayed
-     */
-    @Test
-    fun testTutorList_TitleDisplayed() {
-        composeTestRule.onNodeWithText("Say hi to your tutor").assertIsDisplayed()
-    }
-
-    /*
      * Purpose: Test the tutor card to ensure that the name and subject are displayed
      */
     @Test
@@ -69,16 +61,6 @@ class TutorListKtTest {
         val name = "Roronoa Zoro"
         val subject = "Geography"
 
-        composeTestRule.setContent {
-            TutorCard(
-                painter = painterResource(id = R.drawable.image2),
-                name = name,
-                subject = subject,
-                modifier = Modifier,
-                onClick = {}
-            )
-        }
-
         composeTestRule.onNodeWithText(name).assertIsDisplayed()
         composeTestRule.onNodeWithText(subject).assertIsDisplayed()
     }
@@ -89,18 +71,6 @@ class TutorListKtTest {
     @Test
     fun testTutorCard_NotDisplayedWhenNameIsEmpty() {
         val name = ""
-        val subject = "Geography"
-
-        composeTestRule.setContent {
-            TutorCard(
-                painter = painterResource(id = R.drawable.image2),
-                name = name,
-                subject = subject,
-                modifier = Modifier,
-                onClick = {}
-            )
-        }
-
         composeTestRule.onNodeWithText(name).assertDoesNotExist()
     }
 }

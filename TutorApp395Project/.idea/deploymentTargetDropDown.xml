@@ -5,7 +5,13 @@
       <entry key="NavigationKtTest">
         <State />
       </entry>
-      <entry key="SessionInfoViewKtTest">
+      <entry key="StudentScheduleKtTest">
+        <State />
+      </entry>
+      <entry key="Tests in 'com.example.tutorapp395project'">
+        <State />
+      </entry>
+      <entry key="TutorListKtTest">
         <State />
       </entry>
       <entry key="app">
@@ -23,6 +29,9 @@
           </targetSelectedWithDropDown>
           <timeTargetWasSelectedWithDropDown value="2024-03-23T02:22:39.318087900Z" />
         </State>
+      </entry>
+      <entry key="previewTutorList">
+        <State />
       </entry>
     </value>
   </component>

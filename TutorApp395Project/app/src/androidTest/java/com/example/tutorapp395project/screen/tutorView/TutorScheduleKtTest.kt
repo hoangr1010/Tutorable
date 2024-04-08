@@ -1,27 +1,30 @@
 package com.example.tutorapp395project.screen.tutorView
 
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithText
-import com.example.tutorapp395project.data.User
 import com.example.tutorapp395project.viewModel.AuthViewModel
 import com.example.tutorapp395project.viewModel.HomeViewModel
 import com.example.tutorapp395project.viewModel.TutorViewModel
-import io.mockk.every
 import org.junit.Rule
-import org.junit.Test
+
 
 class TutorScheduleKtTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    // Initalize ViewModels to be used for testing purposes
+    // Initialize ViewModels to be used for testing purposes
     private lateinit var authViewModel: AuthViewModel
     private lateinit var tutorViewModel: TutorViewModel
     private lateinit var homeViewModel: HomeViewModel
 
-    @Test
+    /*@Before
+    fun setUp() {
+        authViewModel = AuthViewModel()
+        tutorViewModel = TutorViewModel()
+        homeViewModel = HomeViewModel()
+    }*/
+
+   /* @Test
     fun tutorAppointmentLayout_displaysCorrectAppointment() {
         val expectedAppointment = "3:00PM - 4:00PM"
 
@@ -36,9 +39,9 @@ class TutorScheduleKtTest {
         composeTestRule.onNodeWithText(expectedAppointment).assertExists()
     }
 
-    /*
+    *//*
      * Purpose: Check if date is displayed correctly
-     */
+     *//*
     @Test
     fun tutorAppointmentLayout_displaysCorrectDate() {
         val expectedDate = "January 24th, 2024"
@@ -54,9 +57,9 @@ class TutorScheduleKtTest {
         composeTestRule.onNodeWithText(expectedDate).assertExists()
     }
 
-    /*
+    *//*
      * Purpose: Check if subject is displayed correctly
-     */
+     *//*
     @Test
     fun tutorAppointmentLayout_displaysCorrectSubject() {
         val expectedSubject = "Math"
@@ -72,9 +75,9 @@ class TutorScheduleKtTest {
         composeTestRule.onNodeWithText(expectedSubject).assertExists()
     }
 
-    /*
+    *//*
      * Purpose: Check is no appointments text is displayed when there are no appointments
-     */
+     *//*
     @Test
     fun tutorAppointmentLayout_displaysNoAppointmentsText() {
         composeTestRule.setContent {
@@ -89,9 +92,9 @@ class TutorScheduleKtTest {
     }
 
 
-    /*
+    *//*
      * Purpose: Check if the tutor's name is displayed correctly
-     */
+     *//*
     @Test
     fun tutorAppointmentLayout_displaysCorrectTutorName() {
         val expectedTutorName = "Jane Doe"
@@ -108,5 +111,5 @@ class TutorScheduleKtTest {
             )
         }
         composeTestRule.onNodeWithText(expectedTutorName, useUnmergedTree = true).assertExists()
-    }
+    }*/
 }

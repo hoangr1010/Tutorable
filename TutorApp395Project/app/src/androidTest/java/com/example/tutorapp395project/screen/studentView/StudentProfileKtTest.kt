@@ -104,18 +104,19 @@ class StudentProfileKtTest {
      */
     @Test
     fun studentProfileColumn_displaysCorrectData() {
-        val expectedFirstName = "John"
-        val expectedLastName = "Doe"
+        val expectedName = "John Doe"
         val expectedGrade = "12"
         val expectedSchool = "High School"
         val expectedEmail = "johndoe@gmail.com"
 
         composeTestRule.setContent {
-            StudentProfileColumn(image = R.drawable.student_id_photo, authViewModel = authViewModel, modifier = Modifier)
+            StudentProfileColumn(
+                image = R.drawable.student_id_photo,
+                authViewModel = authViewModel,
+                modifier = Modifier)
         }
 
-        composeTestRule.onNodeWithText(expectedFirstName, useUnmergedTree = true).assertExists()
-        composeTestRule.onNodeWithText(expectedLastName, useUnmergedTree = true).assertExists()
+        composeTestRule.onNodeWithText(expectedName, useUnmergedTree = true).assertExists()
         composeTestRule.onNodeWithText(expectedGrade, useUnmergedTree = true).assertExists()
         composeTestRule.onNodeWithText(expectedSchool, useUnmergedTree = true).assertExists()
         composeTestRule.onNodeWithText(expectedEmail, useUnmergedTree = true).assertExists()
