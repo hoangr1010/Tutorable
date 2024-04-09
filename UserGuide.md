@@ -89,7 +89,7 @@ On your profile page, it tells you all your registered personal information.
 ### 4. Schedule Page
 The schedule page will show you all of the appointments you have coming up with your tutor.When you click on it you will see more details about your appointment and have the ability to edit and cancel your appointments.
 
-**When there is no available session slot to choose**
+**When there is no available session slot to choose**  
 ![](TutorApp395Project/imgmd/s-schedulePage-void.png)
 
 **When there are added sessions**
