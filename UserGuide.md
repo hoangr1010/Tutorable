@@ -35,7 +35,11 @@ A few notes:
 ## USER INTERFACE OVERVIEW
 ### A - FOR TUTORS
 ### 1. Landing Page
+When you first open the app you will be navigated to the landing page featuring our logo and mascot Tutor-Apple. 
+As you click the **login** button you will then be sent to the login screen.  
+
 ![](TutorApp395Project/imgmd/landingPage.png)
+  
 ### 2. Login/Registeration Page
 When you first open the app and hit **login** button, you will be transferred to the login/registeration page.
 
@@ -68,10 +72,14 @@ On the settings page there is only one button which is the **logout** button.
 After press **logout** button, it logs the user out of their account and the user is then returned to the landing page.  
   
 ![](TutorApp395Project/imgmd/logoutPage.png)
-
+  
 ### B - FOR STUDENTS
 ### 1. Landing Page
+When you first open the app you will be navigated to the landing page featuring our logo and mascot Tutor-Apple.
+As you click the **login** button you will then be sent to the login screen.  
+  
 ![](TutorApp395Project/imgmd/landingPage.png)
+  
 ### 2. Login/Registeration Page
 When you first open the app and hit **login** button, you will be transferred to the login/registeration page.
 
@@ -104,9 +112,11 @@ If you need to edit/cancel a session or contact your tutor, click on the target 
 
 
 ### 5. Logout Page
-After clicking on setting, you can log out of your account.  
+On the settings page there is only one button which is the **logout** button.
+After press **logout** button, it logs the user out of their account and the user is then returned to the landing page.
+  
 ![](TutorApp395Project/imgmd/logoutPage.png)
-
+  
 ## FEATURE DESCRIPTIONS AND USER MANUAL
 ## A - FOR TUTORS
 ### After downloading the app you will need to **create an account**.
