@@ -9,8 +9,9 @@ This user guide can assist you in quickly setting up **TutorMe** and how to use 
 ## INSTALLATION
 To download our app, please go to the following link:
 https://github.com/macewanCS/w24MacroHard
-and following the contribute instruction to download our app.
-
+and clone the program by using the command  
+   git clone https://github.com/macewanCS/w24MacroHard.git
+  
 ### Database (Server)
 After downloading the app from the GitHub repository, you will need to create a **.env** file.
 1. Navigate to the installation destination
