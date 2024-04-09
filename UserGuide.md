@@ -209,11 +209,14 @@ Appointments will be given to you as students book their own appointments with y
 3. App will automatically navigate to the login page and your account will be logged out of
 
 ## REQUESTING A FULL SCHEDULE
-For security reason, we only offer a full schedule per request.
+For security reasons, we only offer a full schedule per request.
 1. Send an email to macrohard2024@gmail.com
 2. Wait for evaluation of your account
-3. If approved, we will send the master schedule, if not then you will be sent an email of refusal.
+3. If approved, we will send the master schedule, if not then you will be sent an email of refusal. 
 
+A sample of a full schedule  
+![](TutorApp395Project/imgmd/fullschedulesample.png)  
+  
 ## BEST PRACTICE AND TIPS
 * Only add availability one month in advance for tutors
 * Cancel or change appointments more than 24 hours in advance to give ample notice to the tutor/student.
