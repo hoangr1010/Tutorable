@@ -1,4 +1,4 @@
-# USERGUIDE
+# USER GUIDE
 ## INTRODUCTION
 Thank you for choosing **TutorMe**!
 
@@ -9,7 +9,7 @@ This user guide can assist you in quickly setting up **TutorMe** and how to use 
 ## INSTALLATION
 To download our app, please go to the following link:
 https://github.com/macewanCS/w24MacroHard
-and download our app.
+and following the contribute instruction to download our app.
 
 ### Database (Server)
 After downloading the app from the GitHub repository, you will need to create a **.env** file.
@@ -63,9 +63,11 @@ When you click on **+Availability**, it will allow you to register your availabi
 **Choosing timeslot to add your availability**
 
 ![](TutorApp395Project/imgmd/t-addingAvai.png)
-### 5. Logout Page
-After clicking on setting, you can log out of your account.  
-![](logoutPage.png)
+### 5. Setting/Logout Page
+On the settings page there is only one button which is the **logout** button.
+After press **logout** button, it logs the user out of their account and the user is then returned to the landing page.  
+  
+![](TutorApp395Project/imgmd/logoutPage.png)
 
 ### B - FOR STUDENTS
 ### 1. Landing Page
