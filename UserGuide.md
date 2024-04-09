@@ -42,14 +42,14 @@ As you click the **login** button you will then be sent to the login screen.
 
 ![](TutorApp395Project/imgmd/landingPage.png)
   
-### 2. Login/Registeration Page
-When you first open the app and hit **login** button, you will be transferred to the login/registeration page.
+### 2. Login/Registration Page
+When you first open the app and hit **login** button, you will be transferred to the login/registration page.
 
 ![](TutorApp395Project/imgmd/loginPage.png)
 
 On this page you login to the TutorMe app. If you do not already have an account, please click the bottom text where it says **“Don’t have an Account? Register Here!”**. Otherwise input your email and password into the specified fields along with your student or tutor role in the dropdown box. Once completed, hit the **login** button.
 
-The following page is called **Registeration Page**. Here, you can register an account as a **tutor**.
+The following page is called **Registration Page**. Here, you can register an account as a **tutor**.
 
 ![](TutorApp395Project/imgmd/t-registerPage.png)
 
@@ -82,14 +82,14 @@ As you click the **login** button you will then be sent to the login screen.
   
 ![](TutorApp395Project/imgmd/landingPage.png)
   
-### 2. Login/Registeration Page
-When you first open the app and hit **login** button, you will be transferred to the login/registeration page.
+### 2. Login/Registration Page
+When you first open the app and hit **login** button, you will be transferred to the login/registration page.
 
 ![](TutorApp395Project/imgmd/loginPage.png)
 
 On this page you login to the TutorMe app. If you do not already have an account, please click the bottom text where it says **“Don’t have an Account? Register Here!”**. Otherwise input your email and password into the specified fields along with your student or tutor role in the dropdown box. Once completed, hit the **login** button.
 
-The following page is called **Registeration Page**. Here, you can register an account as a **student**.
+The following page is called **Registration Page**. Here, you can register an account as a **student**.
 
 ![](TutorApp395Project/imgmd/s-registerPage.png)
 
