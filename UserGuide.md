@@ -51,7 +51,7 @@ On this page you login to the TutorMe app. If you do not already have an account
 
 The following page is called **Registration Page**. Here, you can register an account as a **tutor**.
 
-![](TutorApp395Project/imgmd/t-registerPage.png)
+![](TutorApp395Project/imgmd/t-registrationPage.png)
 
 ### 3. Profile Page
 
